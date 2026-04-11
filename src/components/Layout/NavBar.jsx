@@ -63,7 +63,10 @@ function NavBar() {
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
         >
-          <button className="hover:text-gray-300 transition flex items-center gap-1">
+          <button
+            className="hover:text-gray-300 transition flex items-center gap-1"
+            onClick={() => setIsOpen(false)}
+          >
             Resources
             <span
               className={`transform transition-transform ${isOpen ? "rotate-180" : ""}`}
