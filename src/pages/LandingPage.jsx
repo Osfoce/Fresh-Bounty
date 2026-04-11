@@ -38,7 +38,7 @@ function LandingPage() {
   }, []);
 
   return (
-    <div className="bg-black text-white overflow-x-hidden ">
+    <div className="bg-black text-white overflow-x-hidden flex flex-col min-h-screen">
       <div className=" py-2 mt-2 w-full">
         <NavBar />
       </div>
