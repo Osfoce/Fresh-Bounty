@@ -1,8 +1,12 @@
 import { useState } from "react";
 import NavBar from "../components/Layout/NavBar";
 import Footer from "../components/Layout/Footer";
+import { Link } from "react-router-dom";
 
 function Dashboard() {
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all");
+  const [pagination, setPagination] = useState(null);
   const [stats, setStats] = useState({
     completed: 0,
     inProgress: 0,
@@ -75,6 +79,47 @@ function Dashboard() {
           </div>
         </div>
       </main>
+
+      {/* Filter Section */}
+      <div className="flex flex-wrap items-center gap-2 mb-6">
+        <button
+          onClick={() => setFilter("all")}
+          className={`flex items-center gap-2 border border-white/70 rounded-lg px-4 py-1 text-white ${filter === "all" ? "bg-[#FF1AC69E]" : "bg-gray-800"}`}
+        >
+          All Tasks
+          <span className="border border-white/70 rounded-lg px-2 text-xs">
+            {pagination?.total || 0}
+          </span>
+        </button>
+        <Link
+          to="/create"
+          className="flex items-center border border-white/70 rounded-lg px-4 py-1 text-white bg-gray-800 hover:bg-[#FF1AC69E]"
+        >
+          Create task
+        </Link>
+      </div>
+
+      {/* Bounties Grid */}
+      {loading ? (
+        <div className="flex justify-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {bounties.map((bounty) => (
+              <BountyCard key={bounty._id} bounty={bounty} />
+            ))}
+          </div>
+          {pagination && pagination.pages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={pagination.pages}
+              onPageChange={setCurrentPage}
+            />
+          )}
+        </>
+      )}
       <Footer />
     </div>
   );
