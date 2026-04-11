@@ -6,6 +6,7 @@ import config from "./rainbowKitConfig";
 import { WagmiProvider } from "wagmi";
 import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
@@ -13,6 +14,17 @@ createRoot(document.getElementById("root")).render(
   <WagmiProvider config={config}>
     <QueryClientProvider client={queryClient}>
       <RainbowKitProvider theme={darkTheme()}>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: "#1a1a1a",
+              color: "#fff",
+              borderRadius: "8px",
+              padding: "12px",
+            },
+          }}
+        />
         <App />
       </RainbowKitProvider>
     </QueryClientProvider>
