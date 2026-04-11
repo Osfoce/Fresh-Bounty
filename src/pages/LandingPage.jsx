@@ -5,6 +5,7 @@ import { showToast } from "../components/UI/Toast";
 import toast from "react-hot-toast";
 import Footer from "../components/Layout/Footer";
 import NavBar from "../components/Layout/NavBar";
+import LiveTricker from "../components/Layout/LiveTricker";
 
 function LandingPage() {
   // Create a ref for each card
@@ -39,14 +40,15 @@ function LandingPage() {
   }, []);
 
   return (
-    <div className="bg-black text-white overflow-x-hidden flex flex-col min-h-screen">
+    <div className="bg-black text-white overflow-x-hidden flex flex-col ">
       <div className=" py-2 mt-2 w-full">
         <NavBar />
+        <LiveTricker />
       </div>
 
       {/* HERO */}
       <div
-        className="relative rounded-lg mx-6 my-2 md:mx-10 lg:mx-16 py-6 bg-cover bg-center mt-14"
+        className="relative rounded-lg mx-6 my-2 md:mx-10 lg:mx-16 py-6 bg-cover bg-center mt-6"
         style={{
           backgroundImage: `url(${hero})`,
           backgroundSize: "cover",

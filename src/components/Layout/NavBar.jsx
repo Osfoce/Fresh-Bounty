@@ -51,7 +51,7 @@ function NavBar() {
             </Link>
           ) : (
             <img
-              className="h-[100px] mt-4 object-contain"
+              className="h-[100px] w-20 mt-4 object-contain"
               src={HappyBounty}
               alt="Happy Bounty"
             />
@@ -68,7 +68,7 @@ function NavBar() {
             <button className="hover:text-gray-300 transition flex items-center gap-2">
               Resources
               <span
-                className={`transform transition-transform ${isOpen ? "rotate-180" : ""}`}
+                className={`transform transition-transform ${isOpen ? "rotate-180" : ""} text-md`}
               >
                 ▼
               </span>

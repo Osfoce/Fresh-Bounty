@@ -7,7 +7,7 @@ function SignUp() {
     <>
       <button
         onClick={() => setShowAuthModal(true)}
-        className="border border-white px-4 py-1 rounded-lg"
+        className="border border-white px-4 py-1 rounded-lg w-fit"
       >
         Sign up
       </button>
