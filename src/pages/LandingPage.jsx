@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import hero from "../assets/images/hero.jpg";
 import { showToast } from "../components/UI/Toast";
 
 import toast from "react-hot-toast";
@@ -47,7 +48,7 @@ function LandingPage() {
       <div
         className="relative rounded-lg mx-6 my-2 md:mx-10 lg:mx-16 py-6 bg-cover bg-center mt-14"
         style={{
-          backgroundImage: `url('/src/assets/images/hero.jpg')`,
+          backgroundImage: `url(${hero})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           border: "1px solid white",
