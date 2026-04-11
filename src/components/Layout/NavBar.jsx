@@ -43,7 +43,11 @@ function NavBar() {
         <div>
           {pathname !== "/" ? (
             <Link to="/dashboard">
-              <img src={HappyBounty} alt="" />
+              <img
+                className="h-[100px] mt-4 object-contain"
+                src={HappyBounty}
+                alt=""
+              />
             </Link>
           ) : (
             <img
