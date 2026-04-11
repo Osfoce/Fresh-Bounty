@@ -1,3 +1,7 @@
+import { FaTwitter, FaDiscord, FaGithub } from "react-icons/fa";
+
+
+
 function Footer() {
   return (
     <footer className="bg-[#111] text-white  mt-auto p-10">
@@ -26,14 +30,17 @@ function Footer() {
             <li>Community</li>
           </ul>
         </div>
-        <div>
+
+          <div>
           <h4 className="font-semibold mb-3">Follow Us</h4>
-          <div className="flex gap-4 text-xl">
-            <i className="bi bi-twitter"></i>
-            <i className="bi bi-discord"></i>
-            <i className="bi bi-github"></i>
+         <div className="flex flex-row gap-4 cursor-pointer">
+          <FaDiscord />
+          <FaGithub />
+          <FaTwitter />
+</div>
           </div>
-        </div>
+         
+        
       </div>
       <div className="border-t border-white/20 mt-8 pt-4 text-center text-gray-500 text-sm">
         © 2026 Happy Bounty. All rights reserved.
