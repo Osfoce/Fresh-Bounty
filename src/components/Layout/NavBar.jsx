@@ -1,3 +1,4 @@
+import HappyBounty from "../../assets/images/HappyBounty.png";
 import Connect from "../Connect";
 import SignUp from "../SignUp";
 import { useAccountEffect } from "wagmi";
@@ -36,37 +37,31 @@ function NavBar() {
   }, [address, navigate]);
 
   return (
-    <div className="flex justify-between items-center p-2 md:p-6 bg-[#050505] h-[55px] border border-black/40 w-full sticky top-2 z-50">
+    <div className="fixed w-full top-0 z-50">
+    <div className="flex justify-between items-center gap-6 px-4  bg-black h-[55px] border border-black/40">
       {/* LOGO */}
       <div>
         {pathname !== "/" ? (
           <Link to="/dashboard">
-            <img
-              className="h-[100px] mt-2.5 object-contain"
-              src="/src/assets/images/HappyBounty.png"
-              alt="Happy Bounty"
-            />
+        <img src= {HappyBounty} alt="" />
           </Link>
         ) : (
           <img
-            className="h-[100px] mt-2.5 object-contain"
-            src="/src/assets/images/HappyBounty.png"
+            className="h-[100px] mt-4 object-contain"
+            src={HappyBounty}
             alt="Happy Bounty"
           />
         )}
       </div>
 
       {/* RIGHT SECTION */}
-      <div className="flex flex-row items-center gap-2 font-semibold text-white">
+      <div className="flex flex-row items-center gap-4 font-semibold text-white">
         <div
           className="relative"
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
         >
-          <button
-            className="hover:text-gray-300 transition flex items-center gap-1"
-            onClick={() => setIsOpen(false)}
-          >
+          <button className="hover:text-gray-300 transition flex items-center gap-2">
             Resources
             <span
               className={`transform transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -107,6 +102,7 @@ function NavBar() {
         {/* CONNECT BUTTON */}
         {pathname !== "/" ? <Connect /> : <SignUp />}
       </div>
+    </div>
     </div>
   );
 }
