@@ -17,6 +17,12 @@ function Create() {
     if (currentStep > 1) setCurrentStep((prev) => prev - 1);
   };
 
+
+   const [multipleWinner, setMultipleWinner] = useState(false);
+
+
+  
+
   return (
     <div className="min-h-screen bg-black text-white">
       <NavBar />
@@ -77,9 +83,9 @@ function Create() {
 
             <textarea className="h-40 bg-[#1c1c1c] border border-white p-3 rounded-lg" placeholder="Description" />
 
-            <div className="flex gap-4">
-              <input type="date" className="h-[40px] bg-[#1c1c1c] border border-white px-2 rounded-lg" />
-              <input type="date" className="h-[40px] bg-[#1c1c1c] border border-white px-2 rounded-lg" />
+            <div className="flex flex-col md:flex-row gap-4">
+              <input type="date" className="h-[40px] w-fit bg-[#1c1c1c] border border-white px-2 rounded-lg" />
+              <input type="date" className="h-[40px] w-fit bg-[#1c1c1c] border border-white px-2 rounded-lg" />
             </div>
 
             <input className="h-[40px] bg-[#1c1c1c] border border-white px-3 rounded-lg" placeholder="Origin link" />
@@ -116,41 +122,46 @@ function Create() {
     </p>
 
     <div className="flex flex-col justify-center gap-4 mt-8 m-4">
-      <div className="flex flex-col justify-center gap-4 mt-8 m-4">
-
+     
+<div>
         {/* Toggle Switch */}
         <div className="flex flex-row items-center gap-2">
           <h3 className="text-white text-md">Multiple winner</h3>
 
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="toggle" className="sr-only peer" />
+           <div className="flex flex-row items-center gap-2">
+      {/* Toggle */}
+      <label className="relative inline-flex items-center cursor-pointer">
+        <input
+          type="checkbox"
+          className="sr-only peer"
+          checked={multipleWinner}
+          onChange={() => setMultipleWinner(!multipleWinner)}
+        />
 
-            <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-[#FF1AC69E] transition-all"></div>
+        <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-[#FF1AC69E] transition-all"></div>
 
-            <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-all"></div>
-          </label>
-        </div>
-
-        {/* Dropdown */}
-        <div
-          id="dropdown"
-          className="hidden bg-[#2D2D2D] border border-white rounded-lg w-fit h-auto py-1 px-4 text-black shadow-lg flex flex-row gap-2 items-center"
-        >
-          {/* Equal Split */}
-          <button
-            id="equalBtn"
-            className="border border-white rounded-lg w-fit h-auto py-1 px-2 text-white text-[11px] md:text-sm"
-          >
+        <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-all"></div>
+      </label>
+  </div>
+</div>
+  
+      {/* Dropdown */}
+      {multipleWinner && (
+        <div className="bg-[#2D2D2D] border border-white rounded-lg w-fit p-2 flex gap-2 flex-row items-center mt-3">
+          <button className="border border-white rounded-lg py-1 px-3 text-white text-sm hover:bg-[#FF1AC69E]">
             Equal Split
           </button>
 
-          {/* Percentage Split */}
-          <button
-            id="percentBtn"
-            className="border border-white rounded-lg w-fit h-auto py-1 px-2 text-white text-[11px] md:text-sm"
-          >
-            % Split
-          </button>
+
+           <button id="percentBtn"
+                class="border border-white rounded-lg w-fit h-auto py-1 px-2 text-white text-[11px] md:text-sm hover:bg-[#FF1AC69E]">
+                % Split
+            </button>
+        </div>
+      )}
+
+  
+
 
           {/* INFO BUTTON */}
           <button id="infom" className="relative">
@@ -195,7 +206,7 @@ function Create() {
               </div>
             </div>
           </button>
-        </div>
+        
       </div>
 
       {/* EQUAL SPLIT MODAL */}
@@ -303,7 +314,7 @@ function Create() {
           className="border border-white w-[60%] md:w-[25vw] h-[40px] bg-[#1c1c1c] rounded-lg px-2 text-white"
         >
           <option value="INJ">Injective (INJ)</option>
-          <option value="WINJ">Wrapped Injective (wINJ)</option>
+          <option className="text-md" value="WINJ">Wrapped Inj(wINJ)</option>
         </select>
       </div>
 
