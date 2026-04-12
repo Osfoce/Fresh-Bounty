@@ -18,7 +18,7 @@ function Dashboard() {
     // FIX 1: Changed from container to full width with flex column
     // FIX 2: Added min-h-screen to ensure full height
     // FIX 3: Added bg-black to match landing page theme
-    <div className="bg-black text-white min-h-screen flex flex-col">
+    <div className="bg-black text-white min-h-screen flex flex-col mt-14">
       {/* FIX 4: NavBar now sits at top naturally */}
       <NavBar />
 
