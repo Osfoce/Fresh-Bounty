@@ -28,7 +28,7 @@ function Dashboard() {
         <div className="container mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8">
           {/* FIX 7: Changed border color to white/30 for consistency */}
           {/* FIX 8: Added responsive margins and padding */}
-          <div className="bg-[#2D2D2D] border border-white/30 rounded-lg overflow-hidden">
+          <div className="bg-[#2D2D2D] rounded-lg shadow-lg overflow-hidden">
             {/* FIX 9: Improved text sizing and spacing */}
             <div className="px-4 sm:px-6 md:px-8 pt-6 pb-4">
               <h3 className="text-white text-sm sm:text-base">
@@ -81,7 +81,7 @@ function Dashboard() {
       </main>
 
       {/* Filter Section */}
-      <div className="flex flex-wrap items-center gap-2 mb-6">
+      <div className="flex flex-wrap items-center gap-2 mb-6 m-4">
         <button
           onClick={() => setFilter("all")}
           className={`flex items-center gap-2 border border-white/70 rounded-lg px-4 py-1 text-white ${filter === "all" ? "bg-[#FF1AC69E]" : "bg-gray-800"}`}

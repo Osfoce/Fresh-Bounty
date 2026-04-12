@@ -1,8 +1,24 @@
+import NavBar from "../components/Layout/NavBar";
+
+
 function Create() {
   return (
     <div>
-      <h1>Welcome to the create page</h1>
+      <span>
+<NavBar />
+</span>
+      
+
+
+
+
+
+      
     </div>
   );
 }
+
+
+
+
 export default Create;

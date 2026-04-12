@@ -15,7 +15,6 @@ function LiveTricker() {
           overflow: hidden;
           white-space: nowrap;
           background: #111827;
-         
           padding: 10px;
         }
 

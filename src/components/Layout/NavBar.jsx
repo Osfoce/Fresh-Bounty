@@ -46,7 +46,7 @@ function NavBar() {
               <img
                 className="h-[100px] mt-4 object-contain"
                 src={HappyBounty}
-                alt=""
+                alt="Happy-Bounty"
               />
             </Link>
           ) : (
