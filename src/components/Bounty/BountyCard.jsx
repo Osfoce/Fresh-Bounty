@@ -22,7 +22,7 @@ const BountyCard = ({ bounty }) => {
       : bounty.description || "No description provided";
 
   return (
-    <div className="bg-[#2D2D2D] rounded-[17px] border border-white/50 h-auto flex flex-col justify-between min-w-[260px]">
+    <div className="bg-[#2D2D2D] rounded-[17px] border border-white/50 h-auto flex flex-col justify-between min-w-[260px] m-4">
       <div className="flex justify-between items-center px-4 pt-4">
         <h3 className="text-white text-sm md:text-[18px]">
           {bounty.category || "Uncategorized"}

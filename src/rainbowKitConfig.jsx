@@ -11,7 +11,7 @@ const injectiveTestnetExplorerUrl =
 // Injective Testnet Configuration
 export const injectiveTestnet = {
   id: 1439,
-  name: "Injective Testnet",
+  name: "INJ Testnet",
   nativeCurrency: { name: "Injective", symbol: "INJ", decimals: 18 },
   rpcUrls: {
     default: { http: [injectiveTestnetRpcUrl] },
