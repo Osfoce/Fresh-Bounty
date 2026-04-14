@@ -3,6 +3,7 @@ import NavBar from "../components/Layout/NavBar";
 import Footer from "../components/Layout/Footer";
 import { supportedChains } from "../rainbowChains";
 import { useSwitchChain } from "wagmi";
+import { Link } from "react-router-dom";
 
 function Create() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -373,12 +374,21 @@ function Create() {
       {/* BUTTONS */}
       <div className="flex justify-center mt-20">
         <div className="flex gap-6">
-          <button
-            onClick={prevStep}
-            className="border border-white px-4 py-2 rounded-lg"
-          >
-            Back
-          </button>
+          {currentStep === 1 ? (
+            <Link
+              to="/dashboard"
+              className="border border-white px-4 py-2 rounded-lg inline-block"
+            >
+              Back
+            </Link>
+          ) : (
+            <button
+              onClick={prevStep}
+              className="border border-white px-4 py-2 rounded-lg"
+            >
+              Back
+            </button>
+          )}
 
           <button
             onClick={nextStep}

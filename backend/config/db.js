@@ -8,7 +8,7 @@ const uri = process.env.MONGODB_URI;
 const connectToDb = async (callback) => {
   try {
     const client = await MongoClient.connect(uri);
-    dbConnection = client.db("Happy-Bounty"); // you can pass db name if needed
+    dbConnection = client.db(); // you can pass db name if needed
     console.log("Connected to MongoDB");
     callback();
   } catch (err) {
