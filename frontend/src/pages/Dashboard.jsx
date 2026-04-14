@@ -129,7 +129,7 @@ function Dashboard() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
                 {bounties.map((bounty) => (
                   <BountyCard key={bounty._id} bounty={bounty} />
                 ))}

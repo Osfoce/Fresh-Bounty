@@ -40,7 +40,7 @@ const BountyCard = ({ bounty }) => {
 
   return (
     <div
-      className="group relative bg-gradient-to-br from-[#2D2D2D] to-[#252525] rounded-2xl border border-white/10 hover:border-white/30 transition-all duration-300 h-auto flex flex-col justify-between min-w-[280px] max-w-[360px] m-3 shadow-lg hover:shadow-2xl hover:-translate-y-1"
+      className="group relative w-full h-full bg-gradient-to-br from-[#2D2D2D] to-[#252525] rounded-2xl border border-white/10 hover:border-white/30 transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-2xl hover:-translate-y-1"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
