@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { shortenAddress } from "../../utils/formatters";
+// import { shortenAddress } from "../../utils/formatters";
 
 const BountyCard = ({ bounty }) => {
   const deadline = new Date(bounty.deadline).toLocaleDateString("en-US", {
