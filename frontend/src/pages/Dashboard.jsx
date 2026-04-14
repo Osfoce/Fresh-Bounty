@@ -48,11 +48,13 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className="bg-black text-white min-h-screen flex flex-col py-[5em]">
+    <div className="bg-black text-white min-h-screen flex flex-col">
       <NavBar />
 
-      <main className="flex-grow">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8">
+      <main className="flex-grow py-[2em]">
+        {/* SINGLE LAYOUT CONTAINER */}
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8 space-y-6">
+          {/* DASHBOARD HEADER CARD */}
           <div className="bg-[#2D2D2D] rounded-lg shadow-lg overflow-hidden">
             <div className="px-4 sm:px-6 md:px-8 pt-6 pb-4">
               <h3 className="text-white text-sm sm:text-base">
@@ -67,8 +69,9 @@ function Dashboard() {
               </h4>
             </div>
 
+            {/* STATS GRID */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-6 md:px-8 pb-6">
-              <div className="bg-[#2D2D2D] border border-white/30 rounded-lg p-4 hover:border-white/60 transition">
+              <div className="bg-[#2D2D2D] border border-white/20 rounded-lg p-4 hover:border-white/50 transition">
                 <p className="text-white text-center text-xs sm:text-sm">
                   Completed bounty or tasks
                 </p>
@@ -77,7 +80,7 @@ function Dashboard() {
                 </h5>
               </div>
 
-              <div className="bg-[#2D2D2D] border border-white/30 rounded-lg p-4 hover:border-white/60 transition">
+              <div className="bg-[#2D2D2D] border border-white/20 rounded-lg p-4 hover:border-white/50 transition">
                 <p className="text-white text-center text-xs sm:text-sm">
                   Task in progress
                 </p>
@@ -86,7 +89,7 @@ function Dashboard() {
                 </h5>
               </div>
 
-              <div className="bg-[#2D2D2D] border border-white/30 rounded-lg p-4 hover:border-white/60 transition">
+              <div className="bg-[#2D2D2D] border border-white/20 rounded-lg p-4 hover:border-white/50 transition">
                 <p className="text-white text-center text-xs sm:text-sm">
                   Competence score
                 </p>
@@ -96,49 +99,54 @@ function Dashboard() {
               </div>
             </div>
           </div>
+
+          {/* FILTER SECTION (NOW PROPERLY ALIGNED) */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setFilter("all")}
+              className={`flex items-center gap-2 border border-white/70 rounded-lg px-4 py-1 text-white ${
+                filter === "all" ? "bg-[#FF1AC69E]" : "bg-gray-800"
+              }`}
+            >
+              All Tasks
+              <span className="border border-white/70 rounded-lg px-2 text-xs">
+                {pagination?.total || 0}
+              </span>
+            </button>
+
+            <Link
+              to="/create"
+              className="flex items-center border border-white/70 rounded-lg px-4 py-1 text-white bg-gray-800 hover:bg-[#FF1AC69E] transition"
+            >
+              Create task
+            </Link>
+          </div>
+
+          {/* BOUNTIES SECTION */}
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {bounties.map((bounty) => (
+                  <BountyCard key={bounty._id} bounty={bounty} />
+                ))}
+              </div>
+
+              {pagination && pagination.pages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={pagination.pages}
+                  onPageChange={setCurrentPage}
+                />
+              )}
+            </>
+          )}
         </div>
       </main>
 
-      {/* Filter Section */}
-      <div className="flex flex-wrap items-center gap-2 mb-6 m-4">
-        <button
-          onClick={() => setFilter("all")}
-          className={`flex items-center gap-2 border border-white/70 rounded-lg px-4 py-1 text-white ${filter === "all" ? "bg-[#FF1AC69E]" : "bg-gray-800"}`}
-        >
-          All Tasks
-          <span className="border border-white/70 rounded-lg px-2 text-xs">
-            {pagination?.total || 0}
-          </span>
-        </button>
-        <Link
-          to="/create"
-          className="flex items-center border border-white/70 rounded-lg px-4 py-1 text-white bg-gray-800 hover:bg-[#FF1AC69E]"
-        >
-          Create task
-        </Link>
-      </div>
-
-      {/* Bounties Grid */}
-      {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {bounties.map((bounty) => (
-              <BountyCard key={bounty._id} bounty={bounty} />
-            ))}
-          </div>
-          {pagination && pagination.pages > 1 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={pagination.pages}
-              onPageChange={setCurrentPage}
-            />
-          )}
-        </>
-      )}
       <Footer />
     </div>
   );
