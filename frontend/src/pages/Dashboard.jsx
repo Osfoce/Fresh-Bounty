@@ -20,7 +20,7 @@ function Dashboard() {
   });
   console.log("Welcome to your dashboard!");
 
-  const bounty = "http://localhost:5000/bounty";
+  const bounty = "https://fresh-bounty.onrender.com/bounty";
   // const fetchBounties = async () => {
   //   const res = await axios.get(bounties);
   //   console.log(res.data);

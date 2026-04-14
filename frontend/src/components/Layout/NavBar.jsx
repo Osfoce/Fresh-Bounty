@@ -31,10 +31,10 @@ function NavBar() {
 
   // Redirect when connected
   useEffect(() => {
-    if (address) {
+    if (address && isConnected) {
       navigate("/dashboard");
     }
-  }, [address, navigate]);
+  }, [address, isConnected]);
 
   return (
     <div className="fixed w-full top-0 z-50">
