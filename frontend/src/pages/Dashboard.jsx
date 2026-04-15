@@ -21,6 +21,7 @@ function Dashboard() {
   console.log("Welcome to your dashboard!");
 
   const bounty = "https://fresh-bounty.onrender.com/bounty";
+  // const bounty = "http://localhost:5000/api/task";
   // const fetchBounties = async () => {
   //   const res = await axios.get(bounties);
   //   console.log(res.data);

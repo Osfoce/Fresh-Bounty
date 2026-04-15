@@ -1,6 +1,7 @@
 import HappyBounty from "../../assets/images/HappyBounty.png";
 import Connect from "../Connect";
 import SignUp from "../SignUp";
+import toast from "react-hot-toast";
 import { useAccountEffect } from "wagmi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";

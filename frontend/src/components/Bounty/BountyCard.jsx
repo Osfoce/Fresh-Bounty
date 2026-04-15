@@ -1,8 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const BountyCard = ({ bounty }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isEnrolling, setIsEnrolling] = useState(false);
+  const navigate = useNavigate();
 
   const deadline = new Date(bounty.deadline).toLocaleDateString("en-US", {
     month: "short",
@@ -37,6 +41,67 @@ const BountyCard = ({ bounty }) => {
     bounty.description?.length > 100
       ? bounty.description.substring(0, 100) + "..."
       : bounty.description || "No description provided";
+
+  // Get user wallet address (assuming you have a way to get connected wallet)
+  const getUserWallet = () => {
+    // Replace this with your actual wallet connection logic
+    // For example, from wagmi useAccount hook
+    const wallet = localStorage.getItem("walletAddress");
+    if (!wallet) {
+      toast.error("Please connect your wallet first");
+      return null;
+    }
+    return wallet;
+  };
+
+  const handleEnroll = async (e) => {
+    e.preventDefault(); // Prevent navigation if Link is clicked
+
+    const userWallet = getUserWallet();
+    if (!userWallet) return;
+
+    setIsEnrolling(true);
+    const loadingToast = toast.loading("Enrolling in bounty...");
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/enroll`,
+        {
+          bountyId: bounty._id,
+          user: userWallet,
+        },
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        toast.success("Successfully enrolled in bounty!", {
+          id: loadingToast,
+          duration: 3000,
+        });
+        // Optional: Navigate to bounty detail page after enrollment
+        // navigate(`/bounty/${bounty._id}`);
+      }
+    } catch (error) {
+      console.error("Enrollment error:", error);
+      if (error.response?.status === 400) {
+        toast.error("You are already enrolled in this bounty", {
+          id: loadingToast,
+          duration: 3000,
+        });
+      } else {
+        toast.error("Failed to enroll. Please try again.", {
+          id: loadingToast,
+          duration: 3000,
+        });
+      }
+    } finally {
+      setIsEnrolling(false);
+    }
+  };
+
+  const handleViewDetails = (e) => {
+    // This is just a regular link navigation
+    // No need to prevent default
+  };
 
   return (
     <div
@@ -116,7 +181,9 @@ const BountyCard = ({ bounty }) => {
             className={`flex items-center gap-2 px-2.5 py-1 rounded-full ${statusConfig.bg}`}
           >
             <span
-              className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot} animate-pulse`}
+              className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot} ${
+                bounty.status === "active" ? "animate-pulse" : ""
+              }`}
             />
             <span className={`text-xs font-medium ${statusConfig.color}`}>
               {bounty.status?.toUpperCase()}
@@ -132,12 +199,29 @@ const BountyCard = ({ bounty }) => {
           >
             View Details →
           </Link>
-          <Link
-            to={`/bounty/${bounty._id}`}
-            className="flex-1 text-center px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 text-white text-sm font-semibold hover:from-[#FF1AC6]/90 hover:to-[#FF1AC6] hover:shadow-lg hover:shadow-[#FF1AC6]/25 transition-all duration-200 transform hover:scale-[1.02]"
-          >
-            Start Task
-          </Link>
+
+          {/* Start Task Button - Now with enrollment logic */}
+          {bounty.status === "active" ? (
+            <button
+              onClick={handleEnroll}
+              disabled={isEnrolling}
+              className="flex-1 text-center px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 text-white text-sm font-semibold hover:from-[#FF1AC6]/90 hover:to-[#FF1AC6] hover:shadow-lg hover:shadow-[#FF1AC6]/25 transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            >
+              {isEnrolling ? "Enrolling..." : "Start Task"}
+            </button>
+          ) : (
+            <button
+              disabled
+              className="flex-1 text-center px-4 py-2.5 rounded-xl bg-gray-500/20 border border-gray-500/30 text-gray-400 text-sm font-semibold cursor-not-allowed"
+              title={
+                bounty.status === "completed"
+                  ? "Bounty completed"
+                  : "Bounty not started yet"
+              }
+            >
+              {bounty.status === "completed" ? "Ended" : "Coming Soon"}
+            </button>
+          )}
         </div>
       </div>
     </div>

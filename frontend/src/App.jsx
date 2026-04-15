@@ -3,6 +3,8 @@ import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Create from "./pages/Create";
+import BountyDetail from "./pages/BountyDetail";
+import FAQs from "./pages/Faqs";
 
 function App() {
   return (
@@ -12,6 +14,8 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="profile" element={<Profile />} />
         <Route path="create" element={<Create />} />
+        <Route path="/faqs" element={<FAQs />} />
+        <Route path="/bounty/:id" element={<BountyDetail />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </BrowserRouter>
