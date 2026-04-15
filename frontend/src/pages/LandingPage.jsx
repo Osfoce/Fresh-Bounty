@@ -40,7 +40,7 @@ function LandingPage() {
   }, []);
 
   return (
-    <div className="bg-black text-white overflow-x-hidden flex flex-col ">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden flex flex-col ">
       <div className=" py-2 mt-2 w-full">
         <NavBar />
         <LiveTricker />
@@ -146,7 +146,11 @@ function LandingPage() {
           </div>
         </div>
       </section>
-      <Footer />
+      
+      <div className="mt-auto">
+  <Footer />
+</div>
+     
     </div>
   );
 }

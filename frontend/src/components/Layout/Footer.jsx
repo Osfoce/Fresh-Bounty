@@ -4,7 +4,7 @@ import { FaTwitter, FaDiscord, FaGithub } from "react-icons/fa";
 
 function Footer() {
   return (
-    <footer className="bg-[#111] text-white  mt-auto p-10">
+    <footer className="bg-[#111] text-white py-8">
       <div className="max-w-screen-2xl mx-auto grid md:grid-cols-4 gap-14">
         <div>
           <h3 className="text-xl font-semibold mb-3">Happy Bounty</h3>
