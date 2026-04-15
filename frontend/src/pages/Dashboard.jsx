@@ -7,8 +7,10 @@ import BountyCard from "../components/Bounty/BountyCard";
 import { Link } from "react-router-dom";
 import Pagination from "../components/Common/Pagination";
 import { useEffect } from "react";
+import { useAccount } from "wagmi";
 
 function Dashboard() {
+  const { address, isConnected } = useAccount();
   const [loading, setLoading] = useState(true);
   const [bounties, setBounties] = useState([]);
   const [filter, setFilter] = useState("all");
@@ -18,9 +20,10 @@ function Dashboard() {
     inProgress: 0,
     earnings: 0,
   });
-  console.log("Welcome to your dashboard!");
+  console.log(`Welcome to your dashboard with user ${address}`);
 
   const bounty = "https://fresh-bounty.onrender.com/api/task";
+  const userInfo = `https://fresh-bounty.onrender.com/api/dashboard/${address}`;
   // const bounty = "http://localhost:5000/api/task";
   // const fetchBounties = async () => {
   //   const res = await axios.get(bounties);
@@ -36,17 +39,34 @@ function Dashboard() {
       const response = await axios.get(bounty);
       setBounties(response.data.bounties || []);
       // setPagination(response.pagination);
-    } catch (error) {
-      console.error("Error loading bounties:", error);
+    } catch (err) {
+      console.error("Error loading bounties:", err);
       toast.error("Couldn't fetch bounty");
     } finally {
       setLoading(false);
     }
   };
 
+  const loadDashboardStats = async () => {
+    try {
+      const { data } = await axios.get(userInfo);
+      setStats({
+        completed: data.submissions?.accepted || 0,
+        inProgress: data.submissions?.pending || 0,
+        earnings: data.user?.totalEarnings || 0,
+      });
+    } catch (err) {
+      console.error("Error loading userInfo:", err);
+      toast.error("Couldn't fetch userInfo");
+    }
+  };
+
   useEffect(() => {
     loadBounties();
-  }, []);
+    if (isConnected && address) {
+      loadDashboardStats();
+    }
+  }, [address, isConnected]);
 
   return (
     <div className="bg-black text-white min-h-screen flex flex-col">
