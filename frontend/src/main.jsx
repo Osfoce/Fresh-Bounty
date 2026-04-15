@@ -7,13 +7,14 @@ import { WagmiProvider } from "wagmi";
 import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+import { supportedChains } from "./rainbowChains.jsx";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
   <WagmiProvider config={config}>
     <QueryClientProvider client={queryClient}>
-      <RainbowKitProvider theme={darkTheme()}>
+      <RainbowKitProvider theme={darkTheme()} chains={supportedChains}>
         <Toaster
           position="top-right"
           toastOptions={{

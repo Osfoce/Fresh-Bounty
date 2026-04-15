@@ -1,48 +1,38 @@
 import HappyBounty from "../../assets/images/HappyBounty.png";
 import Connect from "../Connect";
 import SignUp from "../SignUp";
-import toast from "react-hot-toast";
-import { useAccountEffect } from "wagmi";
+import { useAccount } from "wagmi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 function NavBar() {
-  const [address, setAddress] = useState(null);
-  const [isConnected, setIsConnected] = useState(false);
+  const { address, isConnected } = useAccount();
   const [isOpen, setIsOpen] = useState(false);
-
-  const [showPlusMenu, setShowPlusMenu] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  // Wallet connection
-  useAccountEffect({
-    onConnect(data) {
-      setAddress(data.address);
-      setIsConnected(true);
-    },
-    onDisconnect() {
-      setAddress(null);
-      setIsConnected(false);
-      navigate("/");
-    },
-  });
-
   // Redirect when connected
   useEffect(() => {
-    if (address && isConnected) {
-      navigate("/dashboard");
-    }
-  }, [address, isConnected]);
+    // Only proceed if we're on the landing page
+    if (pathname !== "/") return;
+
+    const timer = setTimeout(() => {
+      if (address && isConnected) {
+        navigate("/dashboard");
+        console.log(`Connected account: ${address}`);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [address, isConnected, pathname, navigate]);
 
   return (
     <div className="fixed w-full top-0 z-50">
       <div className="flex justify-between items-center gap-6 px-4 bg-black h-[60px] border border-black/40">
         {/* LOGO */}
         <div>
-          {pathname !== "/" ? (
+          {pathname !== "/dashboard" && pathname !== "/" ? (
             <Link to="/dashboard">
               <img
                 className="h-[100px] mt-4 object-contain"
@@ -105,7 +95,7 @@ function NavBar() {
           </div>
 
           {/* CONNECT BUTTON */}
-          {pathname !== "/" ? <Connect /> : <SignUp />}
+          {!isConnected && pathname === "/" ? <SignUp /> : <Connect />}
         </div>
       </div>
     </div>

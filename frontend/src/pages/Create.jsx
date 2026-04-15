@@ -182,7 +182,7 @@ function Create() {
 
                   <button
                     id="percentBtn"
-                    class="border border-white rounded-lg w-fit h-auto py-1 px-2 text-white text-[11px] md:text-sm hover:bg-[#FF1AC69E]"
+                    className="border border-white rounded-lg w-fit h-auto py-1 px-2 text-white text-[11px] md:text-sm hover:bg-[#FF1AC69E]"
                   >
                     % Split
                   </button>
@@ -348,9 +348,18 @@ function Create() {
                 id="network1"
                 className="border border-white w-[60%] md:w-[25vw] h-[40px] bg-[#1c1c1c] rounded-lg px-2 text-white"
               >
-                <option value="INJ">Injective (INJ)</option>
-                <option className="text-md" value="WINJ">
-                  Wrapped Inj(wINJ)
+                <option value="INJ">select token</option>
+                <option className="text-md" value="USDC">
+                  USDC
+                </option>
+                <option className="text-md" value="USDT">
+                  USDT
+                </option>
+                <option className="text-md" value="ETH">
+                  ETH
+                </option>
+                <option className="text-md" value="INJ">
+                  Injective
                 </option>
               </select>
             </div>

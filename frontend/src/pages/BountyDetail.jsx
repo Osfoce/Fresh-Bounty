@@ -13,6 +13,7 @@ const BountyDetail = () => {
   const [isEnrolled, setIsEnrolled] = useState(false);
 
   const API_URL = "http://localhost:5000";
+  //   process.env.REACT_APP_API_URL ||
 
   // Get user wallet
   const getUserWallet = () => {

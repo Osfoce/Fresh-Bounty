@@ -1,4 +1,4 @@
-import { sepolia, baseSepolia, opBNBTestnet } from "viem/chains";
+import { sepolia, baseSepolia, opBNBTestnet } from "wagmi/chains";
 
 const injectiveTestnetRpcUrl =
   "https://k8s.testnet.json-rpc.injective.network/";
@@ -6,7 +6,7 @@ const injectiveTestnetExplorerUrl =
   "https://testnet.explorer.injective.network/";
 
 // Injective Testnet Configuration
-export const injectiveTestnet = {
+const injectiveTestnet = {
   id: 1439,
   name: "INJ Testnet",
   nativeCurrency: { name: "Injective", symbol: "INJ", decimals: 18 },
