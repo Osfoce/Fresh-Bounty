@@ -2,8 +2,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useAccount } from "wagmi";
 
 const BountyCard = ({ bounty }) => {
+  const { address, isConnected } = useAccount();
   const [isHovered, setIsHovered] = useState(false);
   const [isEnrolling, setIsEnrolling] = useState(false);
   const navigate = useNavigate();
@@ -43,15 +45,13 @@ const BountyCard = ({ bounty }) => {
       : bounty.description || "No description provided";
 
   // Get user wallet address (assuming you have a way to get connected wallet)
+  // Get user wallet
   const getUserWallet = () => {
-    // Replace this with your actual wallet connection logic
-    // For example, from wagmi useAccount hook
-    const wallet = localStorage.getItem("walletAddress");
-    if (!wallet) {
+    if (!isConnected || !address) {
       toast.error("Please connect your wallet first");
       return null;
     }
-    return wallet;
+    return address;
   };
 
   const handleEnroll = async (e) => {
