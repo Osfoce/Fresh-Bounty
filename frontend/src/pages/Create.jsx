@@ -226,7 +226,7 @@ function Create() {
                       <select
                         onChange={handleChainChange}
                         value={bountyData.network}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#FF1AC6]/50 focus:ring-1 focus:ring-[#FF1AC6]/50 transition"
+                        className="w-full bg-[#2D2D2D] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#FF1AC6]/50 focus:ring-1 focus:ring-[#FF1AC6]/50 transition"
                       >
                         <option value="">Select Network</option>
                         {supportedChains.map((chain) => (
@@ -246,7 +246,7 @@ function Create() {
                         onChange={(e) =>
                           updateBountyData("category", e.target.value)
                         }
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#FF1AC6]/50 focus:ring-1 focus:ring-[#FF1AC6]/50 transition"
+                        className="w-full bg-[#2D2D2D] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#FF1AC6]/50 focus:ring-1 focus:ring-[#FF1AC6]/50 transition"
                       >
                         <option value="">Select Category</option>
                         <option value="Development">Development</option>
@@ -310,7 +310,7 @@ function Create() {
                         onChange={(e) =>
                           updateBountyData("tags", e.target.value)
                         }
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#FF1AC6]/50 transition"
+                        className="w-full bg-[#2D2D2D] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#FF1AC6]/50 transition"
                       >
                         <option value="">Select a tag</option>
                         <option value="smart-contract">Smart Contract</option>

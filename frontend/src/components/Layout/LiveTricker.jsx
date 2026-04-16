@@ -1,15 +1,16 @@
 function LiveTricker() {
   return (
     <div className="w-full">
-
       {/* Ticker */}
       <div className="ticker mt-8 ">
         <div className="ticker-text text-green-400 font-semibold">
-          🚀 Welcome to Happy Bounty • 💰 Earn Rewards • 🧩 Complete Tasks • ⚡ Instant Payouts • 🎯 New Bounties Added Daily •
+          🚀 Welcome to Happy Bounty • 💰 Earn Rewards • 🧩 Complete Tasks • ⚡
+          Instant Payouts • 🎯 New Bounties Added Daily • 🚀 Welcome to Happy
+          Bounty • 💰 Earn Rewards • 🧩 Complete Tasks • ⚡ Instant Payouts • 🎯
+          New Bounties Added Daily •
         </div>
       </div>
 
-      
       <style>{`
         .ticker {
           overflow: hidden;
@@ -33,7 +34,6 @@ function LiveTricker() {
           }
         }
       `}</style>
-
     </div>
   );
 }
