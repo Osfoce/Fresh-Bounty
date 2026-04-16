@@ -390,7 +390,7 @@ function Create() {
       )}
 
       {/* BUTTONS */}
-      <div className="flex justify-center py-6">
+      <div className="flex justify-center py-6 md:py-[1rem]">
         <div className="flex gap-6">
           {currentStep === 1 ? (
             <Link
