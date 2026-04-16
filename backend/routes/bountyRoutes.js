@@ -162,12 +162,10 @@ router.patch("/task/:id", async (req, res) => {
       .updateOne({ _id: new ObjectId(id) }, { $set: updates });
     if (result.matchedCount === 0)
       return res.status(404).json({ error: "Bounty not found" });
-    res
-      .status(200)
-      .json({
-        message: "Bounty updated successfully",
-        modified: result.modifiedCount > 0,
-      });
+    res.status(200).json({
+      message: "Bounty updated successfully",
+      modified: result.modifiedCount > 0,
+    });
   } catch (err) {
     console.error("Failed to update bounty", err);
     res.status(500).json({ error: "Failed to update bounty" });

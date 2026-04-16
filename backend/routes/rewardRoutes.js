@@ -99,13 +99,11 @@ router.post("/task/:id/distribute", async (req, res) => {
         { upsert: true },
       );
     }
-    res
-      .status(200)
-      .json({
-        message: "Rewards distributed successfully",
-        winners: winnerDetails,
-        distributionTxHash: txHash,
-      });
+    res.status(200).json({
+      message: "Rewards distributed successfully",
+      winners: winnerDetails,
+      distributionTxHash: txHash,
+    });
   } catch (err) {
     console.error("Failed to distribute rewards:", err);
     res.status(500).json({ error: "Failed to distribute rewards" });
@@ -230,13 +228,11 @@ router.post("/task/:id/claim", async (req, res) => {
       },
       { upsert: true },
     );
-    res
-      .status(200)
-      .json({
-        message: "Reward claimed successfully",
-        amount: winner.amount,
-        claimedAt: new Date().toISOString(),
-      });
+    res.status(200).json({
+      message: "Reward claimed successfully",
+      amount: winner.amount,
+      claimedAt: new Date().toISOString(),
+    });
   } catch (err) {
     console.error("Failed to claim reward:", err);
     res.status(500).json({ error: "Failed to claim reward" });

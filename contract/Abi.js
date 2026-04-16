@@ -1,4 +1,4 @@
-const BOUNTY_ABI = [
+export const BOUNTY_ABI = [
   {
     inputs: [
       { internalType: "address", name: "initialOwner", type: "address" },

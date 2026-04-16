@@ -194,7 +194,7 @@ const BountyCard = ({ bounty }) => {
         {/* Action Buttons */}
         <div className="flex gap-3">
           <Link
-            to={`/bounty/${bounty._id}`}
+            to={`/task/${bounty._id}`}
             className="flex-1 text-center px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/80 text-sm font-medium hover:bg-white/10 hover:border-white/20 hover:text-white transition-all duration-200"
           >
             View Details →

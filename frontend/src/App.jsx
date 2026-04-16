@@ -16,7 +16,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="create" element={<Create />} />
           <Route path="/faqs" element={<FAQs />} />
-          <Route path="/bounty/:id" element={<BountyDetail />} />
+          <Route path="/task/:id" element={<BountyDetail />} />
           <Route path="*" element={<h1>404 Not Found</h1>} />
         </Routes>
       </BrowserRouter>
