@@ -1,13 +1,12 @@
 import { useState } from "react";
 import NavBar from "../components/Layout/NavBar";
 import { supportedChains } from "../rainbowChains";
-import { useSwitchChain, useAccount } from "wagmi";
+import { useSwitchChain } from "wagmi";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import Footer from "../components/Layout/Footer";
 
 function Create() {
-  const { address, isConnected } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
 

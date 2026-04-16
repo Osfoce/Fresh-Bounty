@@ -1,47 +1,217 @@
 // BountyDetail.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useAccount } from "wagmi";
+import Footer from "../components/Layout/Footer";
+import NavBar from "../components/Layout/NavBar";
 
 const BountyDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { address, isConnected } = useAccount();
+
+  // State
   const [bounty, setBounty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [isCreator, setIsCreator] = useState(false);
+  const [hasUserSubmitted, setHasUserSubmitted] = useState(false);
+  const [userSubmission, setUserSubmission] = useState(null);
+  const [winnersData, setWinnersData] = useState(null);
+  const [claimableAmount, setClaimableAmount] = useState(0);
+  const [hasUserClaimed, setHasUserClaimed] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+
+  // Modal states
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [showDistributeModal, setShowDistributeModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [distributing, setDistributing] = useState(false);
+
+  // Form states
+  const [submissionImage, setSubmissionImage] = useState(null);
+  const [submissionDescription, setSubmissionDescription] = useState("");
+  const [submissionLink, setSubmissionLink] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageSizeWarning, setImageSizeWarning] = useState("");
+
+  // Winners distribution
+  const [winnerAddresses, setWinnerAddresses] = useState([]);
 
   const API_URL = "http://localhost:5000";
-  //   process.env.REACT_APP_API_URL ||
+  // process.env.REACT_APP_API_URL ||
+  const fileInputRef = useRef(null);
 
   // Get user wallet
   const getUserWallet = () => {
-    const wallet = localStorage.getItem("walletAddress");
-    if (!wallet) {
+    if (!isConnected || !address) {
       toast.error("Please connect your wallet first");
       return null;
     }
-    return wallet;
+    return address;
+  };
+
+  // Helper functions
+  const formatDate = (dateString) => {
+    if (!dateString) return "Not set";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const shortenAddress = (addr) => {
+    if (!addr) return "";
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
+
+  const compressImage = (file, maxWidth = 1024, quality = 0.7) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(
+            (blob) => {
+              const compressedFile = new File([blob], file.name, {
+                type: file.type,
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            },
+            file.type,
+            quality,
+          );
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Check user enrollment
+  const checkUserEnrollment = async (wallet, bountyId) => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/enrollments/user/${wallet}`,
+      );
+      const enrollments = response.data.enrollments || [];
+      return enrollments.some((e) => e.bountyId === bountyId);
+    } catch (error) {
+      console.error("Error checking enrollment:", error);
+      return false;
+    }
+  };
+
+  // Check user submission
+  const checkUserSubmission = async (wallet, bountyId) => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/submissions/user/${wallet}`,
+      );
+      const submissions = response.data.submissions || [];
+      const existing = submissions.find(
+        (sub) => sub.bountyId === bountyId && sub.isSubmitted === true,
+      );
+      if (existing) {
+        setHasUserSubmitted(true);
+        setUserSubmission(existing);
+      }
+    } catch (error) {
+      console.error("Error checking submission:", error);
+    }
+  };
+
+  // Load winners data
+  const loadWinnersData = async (bountyId) => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/task/${bountyId}/winners`,
+      );
+      setWinnersData(response.data);
+
+      // Check claimable amount for current user
+      if (address && response.data.isDistributed) {
+        const claimableRes = await axios.get(
+          `${API_URL}/api/task/${bountyId}/claimable/${address}`,
+        );
+        setClaimableAmount(claimableRes.data.claimable || 0);
+
+        const claimedRes = await axios.get(
+          `${API_URL}/api/task/${bountyId}/has-claimed/${address}`,
+        );
+        setHasUserClaimed(claimedRes.data.hasClaimed);
+      }
+    } catch (error) {
+      console.error("Error loading winners:", error);
+    }
+  };
+
+  // Load comments
+  const loadComments = async (bountyId) => {
+    try {
+      const stored = localStorage.getItem(`comments_${bountyId}`);
+      if (stored) {
+        setComments(JSON.parse(stored));
+      }
+    } catch (error) {
+      console.error("Error loading comments:", error);
+    }
+  };
+
+  // Save comment
+  const saveComment = async (bountyId, comment) => {
+    const updated = [...comments, comment];
+    setComments(updated);
+    localStorage.setItem(`comments_${bountyId}`, JSON.stringify(updated));
   };
 
   // Fetch bounty details
   useEffect(() => {
     const fetchBounty = async () => {
+      if (!id) return;
+
       try {
         const response = await axios.get(`${API_URL}/api/task/${id}`);
-        setBounty(response.data);
+        const bountyData = response.data;
+        setBounty(bountyData);
 
-        // Check if user is already enrolled
         const wallet = getUserWallet();
         if (wallet) {
-          const enrollmentsRes = await axios.get(
-            `${API_URL}/api/enrollments/user/${wallet}`,
-          );
-          const isUserEnrolled = enrollmentsRes.data.enrollments.some(
-            (enrollment) => enrollment.bountyId === id,
-          );
-          setIsEnrolled(isUserEnrolled);
+          // Check if user is creator
+          setIsCreator(bountyData.creator === wallet);
+
+          // Check enrollment
+          const enrolled = await checkUserEnrollment(wallet, id);
+          setIsEnrolled(enrolled);
+
+          // Check submission
+          await checkUserSubmission(wallet, id);
+
+          // Load winners data
+          await loadWinnersData(id);
+
+          // Load comments
+          await loadComments(id);
         }
       } catch (error) {
         console.error("Error fetching bounty:", error);
@@ -53,11 +223,12 @@ const BountyDetail = () => {
     };
 
     fetchBounty();
-  }, [id, navigate]);
+  }, [id, navigate, address, isConnected]);
 
+  // Handle enrollment
   const handleEnroll = async () => {
-    const userWallet = getUserWallet();
-    if (!userWallet) return;
+    const wallet = getUserWallet();
+    if (!wallet) return;
 
     setIsEnrolling(true);
     const loadingToast = toast.loading("Enrolling in bounty...");
@@ -65,7 +236,7 @@ const BountyDetail = () => {
     try {
       const response = await axios.post(`${API_URL}/api/enroll`, {
         bountyId: id,
-        user: userWallet,
+        user: wallet,
       });
 
       if (response.status === 200 || response.status === 201) {
@@ -93,100 +264,750 @@ const BountyDetail = () => {
     }
   };
 
+  // Handle image upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setImageSizeWarning("⚠️ Image is too large! Maximum 5MB.");
+      } else {
+        setImageSizeWarning("");
+      }
+      setSubmissionImage(file);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImagePreview(event.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Handle submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const wallet = getUserWallet();
+    if (!wallet) return;
+
+    if (!submissionImage) {
+      toast.error("Please upload an image");
+      return;
+    }
+    if (!submissionDescription) {
+      toast.error("Please enter a description");
+      return;
+    }
+    if (!submissionLink) {
+      toast.error("Please provide a proof link");
+      return;
+    }
+
+    setSubmitting(true);
+    const loadingToast = toast.loading("Submitting task...");
+
+    try {
+      let imageBase64 = null;
+      if (submissionImage) {
+        const compressed = await compressImage(submissionImage);
+        const reader = new FileReader();
+        imageBase64 = await new Promise((resolve) => {
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(compressed);
+        });
+      }
+
+      const submissionData = {
+        bountyId: id,
+        user: wallet,
+        description: submissionDescription,
+        projectLink: submissionLink,
+        image: imageBase64,
+      };
+
+      const response = await axios.post(
+        `${API_URL}/api/submission`,
+        submissionData,
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        toast.success("Task submitted successfully! Pending review.", {
+          id: loadingToast,
+          duration: 3000,
+        });
+        setHasUserSubmitted(true);
+        setUserSubmission({
+          ...submissionData,
+          _id: response.data._id,
+          status: "pending",
+          submittedAt: new Date().toISOString(),
+        });
+        setShowSubmitModal(false);
+        resetSubmissionForm();
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      toast.error("Failed to submit task", { id: loadingToast });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const resetSubmissionForm = () => {
+    setSubmissionImage(null);
+    setSubmissionDescription("");
+    setSubmissionLink("");
+    setImagePreview(null);
+    setImageSizeWarning("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  // Handle claim reward
+  const handleClaimReward = async () => {
+    const wallet = getUserWallet();
+    if (!wallet) return;
+
+    if (hasUserClaimed) {
+      toast.error("Reward already claimed");
+      return;
+    }
+    if (claimableAmount === 0) {
+      toast.error("No reward assigned to you");
+      return;
+    }
+
+    const loadingToast = toast.loading("Claiming reward...");
+
+    try {
+      const response = await axios.post(`${API_URL}/api/task/${id}/claim`, {
+        winnerAddress: wallet,
+        txHash: null,
+      });
+
+      if (response.status === 200) {
+        toast.success(`Claimed ${claimableAmount} ${bounty?.token || "INJ"}!`, {
+          id: loadingToast,
+          duration: 3000,
+        });
+        setHasUserClaimed(true);
+        setClaimableAmount(0);
+        await loadWinnersData(id);
+      }
+    } catch (error) {
+      console.error("Claim error:", error);
+      toast.error("Failed to claim reward", { id: loadingToast });
+    }
+  };
+
+  // Handle distribute reward
+  const handleDistributeReward = async () => {
+    if (!winnerAddresses.length) {
+      toast.error("Please enter winner addresses");
+      return;
+    }
+
+    const validAddresses = winnerAddresses.filter(
+      (addr) => addr && addr.startsWith("0x"),
+    );
+    if (validAddresses.length !== winnerAddresses.length) {
+      toast.error("Invalid wallet addresses");
+      return;
+    }
+
+    setDistributing(true);
+    const loadingToast = toast.loading("Distributing rewards...");
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/api/task/${id}/distribute`,
+        {
+          winners: winnerAddresses,
+          payoutType:
+            bounty?.winnersAllowed > 1
+              ? bounty?.payoutType || "equal"
+              : "single",
+          percentages: bounty?.percentages || [],
+          txHash: null,
+        },
+      );
+
+      if (response.status === 200) {
+        toast.success("Rewards distributed successfully!", {
+          id: loadingToast,
+        });
+        setShowDistributeModal(false);
+        await loadWinnersData(id);
+      }
+    } catch (error) {
+      console.error("Distribution error:", error);
+      toast.error("Failed to distribute rewards", { id: loadingToast });
+    } finally {
+      setDistributing(false);
+    }
+  };
+
+  // Open distribute modal
+  const openDistributeModal = () => {
+    const winnerCount = bounty?.winnersAllowed || 1;
+    setWinnerAddresses(Array(winnerCount).fill(""));
+    setShowDistributeModal(true);
+  };
+
+  // Handle comment submission
+  const handleAddComment = async () => {
+    const wallet = getUserWallet();
+    if (!wallet) return;
+
+    if (!newComment.trim()) {
+      toast.error("Please enter a comment");
+      return;
+    }
+
+    const hasCommented = comments.some((c) => c.user === wallet);
+    if (hasCommented) {
+      toast.error("You can only comment once per bounty");
+      return;
+    }
+
+    const comment = {
+      id: Date.now(),
+      user: wallet,
+      text: newComment,
+      timestamp: new Date().toISOString(),
+    };
+
+    await saveComment(id, comment);
+    setNewComment("");
+    toast.success("Comment added!");
+  };
+
+  // Check if user can submit (implemented and ready to use)
+  const canSubmit = () => {
+    if (isCreator) return false;
+    if (!isEnrolled) return false;
+    if (hasUserSubmitted) return false;
+    if (bounty?.status !== "active") return false;
+    return true;
+  };
+
+  // Check if user can claim
+  const canClaim = () => {
+    if (isCreator) return false;
+    if (!isEnrolled) return false;
+    if (hasUserClaimed) return false;
+    if (claimableAmount === 0) return false;
+    if (bounty?.status !== "completed") return false;
+    return true;
+  };
+
+  // Check if creator can distribute
+  const canDistribute = () => {
+    if (!isCreator) return false;
+    const isEnded = new Date(bounty?.deadline) < new Date();
+    if (!isEnded) return false;
+    if (winnersData?.isDistributed) return false;
+    return true;
+  };
+
+  // Loading state with NavBar and Footer
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-white">Loading...</div>
+      <div className="bg-black text-white min-h-screen flex flex-col">
+        <NavBar />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-white/10 border-t-[#FF1AC6] rounded-full animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+            </div>
+          </div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
+  // Error state (bounty not found)
   if (!bounty) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-white">Bounty not found</div>
+      <div className="bg-black text-white min-h-screen flex flex-col">
+        <NavBar />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🔍</div>
+            <p className="text-white text-xl">Bounty not found</p>
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="mt-4 px-6 py-2 rounded-xl bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 text-white font-semibold hover:shadow-lg transition"
+            >
+              Go to Dashboard
+            </button>
+          </div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
+  // Main content
   return (
-    <div className="container mx-auto px-4 py-8 mt-20">
-      <div className="bg-gradient-to-br from-[#2D2D2D] to-[#252525] rounded-2xl border border-white/10 p-8">
-        <h1 className="text-3xl font-bold text-white mb-4">{bounty.title}</h1>
-
-        <div className="flex justify-between items-center mb-6">
-          <div className="bg-gradient-to-r from-[#FF1AC6]/20 to-[#FF1AC6]/5 rounded-xl px-4 py-2 border border-[#FF1AC6]/30">
-            <span className="text-white/60 text-sm">Reward</span>
-            <p className="text-white font-bold text-2xl">
-              {bounty.reward} {bounty.token || "INJ"}
-            </p>
-          </div>
-
-          {bounty.status === "active" && !isEnrolled && (
-            <button
-              onClick={handleEnroll}
-              disabled={isEnrolling}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 text-white font-semibold hover:shadow-lg hover:shadow-[#FF1AC6]/25 transition-all duration-200 disabled:opacity-50"
-            >
-              {isEnrolling ? "Enrolling..." : "Start Task"}
-            </button>
-          )}
-
-          {isEnrolled && (
-            <div className="px-6 py-3 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 font-semibold">
-              ✓ Enrolled
+    <div className="bg-black text-white min-h-screen flex flex-col">
+      <NavBar />
+      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-20">
+        <div className="max-w-5xl mx-auto">
+          {/* Main Bounty Card */}
+          <div className="bg-gradient-to-br from-[#2D2D2D] to-[#252525] rounded-2xl border border-white/10 p-4 sm:p-6 md:p-8">
+            {/* Header: Title & Status */}
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white break-words">
+                {bounty.title}
+              </h1>
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap ${
+                  bounty.status === "active"
+                    ? "bg-green-900 text-green-300"
+                    : bounty.status === "upcoming"
+                      ? "bg-yellow-900 text-yellow-300"
+                      : "bg-gray-700 text-gray-300"
+                }`}
+              >
+                {bounty.status === "active"
+                  ? "🟢 Active"
+                  : bounty.status === "upcoming"
+                    ? "🟡 Upcoming"
+                    : "⚫ Completed"}
+              </span>
             </div>
-          )}
-        </div>
 
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-white/60 text-sm mb-2">Description</h3>
-            <p className="text-white">{bounty.description}</p>
-          </div>
+            {/* Description */}
+            <p className="text-gray-300 mb-6 text-sm sm:text-base leading-relaxed">
+              {bounty.description}
+            </p>
 
-          <div>
-            <h3 className="text-white/60 text-sm mb-2">Category</h3>
-            <p className="text-white">{bounty.category || "Uncategorized"}</p>
-          </div>
-
-          {bounty.tags && bounty.tags.length > 0 && (
-            <div>
-              <h3 className="text-white/60 text-sm mb-2">Tags</h3>
-              <div className="flex flex-wrap gap-2">
-                {bounty.tags.map((tag, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/70 text-sm"
+            {/* Details Grid - responsive 1 col on mobile, 2 on larger */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              <div>
+                <p className="text-white/60 text-xs sm:text-sm">📅 Deadline</p>
+                <p className="text-white font-semibold text-sm sm:text-base">
+                  {formatDate(bounty.deadline)}
+                </p>
+              </div>
+              <div>
+                <p className="text-white/60 text-xs sm:text-sm">💰 Reward</p>
+                <p className="text-green-400 font-bold text-lg sm:text-xl">
+                  {bounty.reward} {bounty.token || "INJ"}
+                </p>
+              </div>
+              <div>
+                <p className="text-white/60 text-xs sm:text-sm">👤 Creator</p>
+                <p className="text-white font-mono text-xs sm:text-sm break-all">
+                  {shortenAddress(bounty.creator)}
+                </p>
+              </div>
+              <div>
+                <p className="text-white/60 text-xs sm:text-sm">🏷️ Category</p>
+                <p className="text-white text-sm sm:text-base">
+                  {bounty.category || "Uncategorized"}
+                </p>
+              </div>
+              {bounty.tags && bounty.tags.length > 0 && (
+                <div>
+                  <p className="text-white/60 text-xs sm:text-sm">🔖 Tags</p>
+                  <div className="flex flex-wrap gap-1">
+                    {bounty.tags.map((tag, idx) => (
+                      <span key={idx} className="text-white text-xs sm:text-sm">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div>
+                <p className="text-white/60 text-xs sm:text-sm">
+                  🔗 Project Link
+                </p>
+                {bounty.originLink ? (
+                  <a
+                    href={bounty.originLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:underline text-xs sm:text-sm break-all"
                   >
-                    #{tag}
-                  </span>
-                ))}
+                    {bounty.originLink.length > 50
+                      ? bounty.originLink.substring(0, 50) + "..."
+                      : bounty.originLink}
+                  </a>
+                ) : (
+                  <p className="text-white/50 text-sm">No link provided</p>
+                )}
               </div>
             </div>
-          )}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h3 className="text-white/60 text-sm mb-2">Start Date</h3>
-              <p className="text-white">
-                {new Date(bounty.startDate).toLocaleDateString()}
-              </p>
+            {/* Action Buttons - responsive wrap */}
+            <div className="flex flex-wrap gap-3">
+              {bounty.status === "active" && !isEnrolled && !isCreator && (
+                <button
+                  onClick={handleEnroll}
+                  disabled={isEnrolling}
+                  className="px-4 py-2 sm:px-6 sm:py-2 rounded-xl bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 text-white font-semibold text-sm sm:text-base hover:shadow-lg transition disabled:opacity-50"
+                >
+                  {isEnrolling ? "Enrolling..." : "🚀 Start Task"}
+                </button>
+              )}
+
+              {/* Submit button using canSubmit() */}
+              {canSubmit() && (
+                <button
+                  onClick={() => setShowSubmitModal(true)}
+                  className="px-4 py-2 sm:px-6 sm:py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm sm:text-base hover:bg-white/10 transition"
+                >
+                  📝 Submit Task
+                </button>
+              )}
+
+              {canClaim() && (
+                <button
+                  onClick={handleClaimReward}
+                  className="px-4 py-2 sm:px-6 sm:py-2 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold text-sm sm:text-base hover:shadow-lg transition"
+                >
+                  💰 Claim Reward ({claimableAmount} {bounty.token})
+                </button>
+              )}
+
+              {canDistribute() && (
+                <button
+                  onClick={openDistributeModal}
+                  className="px-4 py-2 sm:px-6 sm:py-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 text-white font-semibold text-sm sm:text-base hover:shadow-lg transition"
+                >
+                  🏆 Distribute Reward
+                </button>
+              )}
+
+              {hasUserSubmitted && userSubmission && (
+                <div className="px-3 py-2 rounded-xl bg-white/5 border border-white/10">
+                  <span className="text-xs sm:text-sm">
+                    {userSubmission.status === "pending" &&
+                      "⏳ Submission Pending"}
+                    {userSubmission.status === "accepted" &&
+                      "✅ Submission Accepted"}
+                    {userSubmission.status === "rejected" &&
+                      "❌ Submission Rejected"}
+                  </span>
+                </div>
+              )}
+
+              {isEnrolled &&
+                !isCreator &&
+                bounty.status === "completed" &&
+                claimableAmount === 0 &&
+                !hasUserClaimed && (
+                  <div className="px-3 py-2 rounded-xl bg-yellow-500/20 text-yellow-400 text-xs sm:text-sm">
+                    ⏳ Waiting for reward distribution
+                  </div>
+                )}
             </div>
-            <div>
-              <h3 className="text-white/60 text-sm mb-2">Deadline</h3>
-              <p className="text-white">
-                {new Date(bounty.deadline).toLocaleDateString()}
-              </p>
-            </div>
+
+            {/* Submission Status Display */}
+            {hasUserSubmitted && userSubmission && (
+              <div className="mt-4 p-4 rounded-lg border bg-white/5">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-white mb-2 text-sm sm:text-base">
+                      Your Submission
+                    </h4>
+                    <p className="text-sm text-gray-300 break-words">
+                      <strong>Description:</strong> {userSubmission.description}
+                    </p>
+                    <p className="text-sm text-gray-300 break-words">
+                      <strong>Link:</strong>{" "}
+                      <a
+                        href={userSubmission.projectLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 hover:underline break-all"
+                      >
+                        {userSubmission.projectLink}
+                      </a>
+                    </p>
+                    {userSubmission.image && (
+                      <button
+                        onClick={() =>
+                          window.open(userSubmission.image, "_blank")
+                        }
+                        className="text-sm text-blue-400 hover:underline mt-1"
+                      >
+                        View Submission Image
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Winners Info */}
+            {winnersData?.isDistributed && winnersData.winners.length > 0 && (
+              <div className="mt-4 p-4 rounded-lg border border-green-600 bg-green-900/20">
+                <h4 className="font-semibold text-green-400 mb-2 text-sm sm:text-base">
+                  🏆 Rewards Distributed
+                </h4>
+                <div className="space-y-2">
+                  {winnersData.winners.map((winner, idx) => {
+                    const isClaimed = winnersData.claimed?.some(
+                      (c) => c.address === winner.address,
+                    );
+                    return (
+                      <div
+                        key={idx}
+                        className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm border-b border-gray-700 pb-2 gap-2"
+                      >
+                        <span className="font-mono text-xs sm:text-sm break-all">
+                          {shortenAddress(winner.address)}
+                        </span>
+                        <div className="flex gap-4">
+                          <span className="text-green-400 text-xs sm:text-sm">
+                            {winner.amount.toFixed(4)} {bounty.token}
+                          </span>
+                          <span
+                            className={
+                              isClaimed ? "text-green-400" : "text-yellow-400"
+                            }
+                          >
+                            {isClaimed ? "✅ Claimed" : "⏳ Pending"}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
-          <div>
-            <h3 className="text-white/60 text-sm mb-2">Creator</h3>
-            <p className="text-white font-mono text-sm">{bounty.creator}</p>
+          {/* Comments Section */}
+          <div className="mt-6 bg-gradient-to-br from-[#2D2D2D] to-[#252525] rounded-2xl border border-white/10 p-4 sm:p-6">
+            <h3 className="text-lg sm:text-xl font-semibold text-white mb-4">
+              Comments
+            </h3>
+            <div className="space-y-3 max-h-96 overflow-y-auto mb-4">
+              {comments.length === 0 ? (
+                <p className="text-gray-400 text-center py-4 text-sm">
+                  No comments yet. Be the first to comment!
+                </p>
+              ) : (
+                comments.map((comment) => (
+                  <div
+                    key={comment.id}
+                    className="p-3 bg-white/5 border border-white/10 rounded-lg"
+                  >
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+                      <span className="font-semibold text-[#FF1AC6] text-sm">
+                        {shortenAddress(comment.user)}
+                      </span>
+                      <span className="text-xs text-white/50">
+                        {formatDate(comment.timestamp)}
+                      </span>
+                    </div>
+                    <p className="text-gray-300 text-sm break-words">
+                      {comment.text}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Add a comment..."
+                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF1AC6]/50 text-sm"
+              />
+              <button
+                onClick={handleAddComment}
+                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition text-sm sm:text-base"
+              >
+                Add Comment
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
+
+      {/* Submit Modal */}
+      {showSubmitModal && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setShowSubmitModal(false)}
+        >
+          <div
+            className="bg-gradient-to-br from-[#2D2D2D] to-[#252525] border border-white/20 rounded-2xl w-full max-w-md p-4 sm:p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg sm:text-xl font-semibold text-white">
+                Submit Task
+              </h2>
+              <button
+                onClick={() => setShowSubmitModal(false)}
+                className="text-white/60 hover:text-white text-2xl"
+              >
+                ✖
+              </button>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="text-sm text-white/60 block mb-1">
+                  Upload Image (Max 5MB)
+                </label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm file:mr-2 file:py-1 file:px-3 file:rounded-lg file:bg-white/10 file:text-white file:border-0"
+                  required
+                />
+                {imagePreview && (
+                  <div className="mt-2">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="max-h-32 rounded-lg"
+                    />
+                    {imageSizeWarning && (
+                      <p className="text-xs text-yellow-500 mt-1">
+                        {imageSizeWarning}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div>
+                <label className="text-sm text-white/60 block mb-1">
+                  Description
+                </label>
+                <input
+                  type="text"
+                  value={submissionDescription}
+                  onChange={(e) => setSubmissionDescription(e.target.value)}
+                  placeholder="What did you do?"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF1AC6]/50 text-sm"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-sm text-white/60 block mb-1">
+                  Proof Link
+                </label>
+                <input
+                  type="url"
+                  value={submissionLink}
+                  onChange={(e) => setSubmissionLink(e.target.value)}
+                  placeholder="https://..."
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF1AC6]/50 text-sm"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 text-white font-semibold hover:shadow-lg transition disabled:opacity-50 text-sm sm:text-base"
+              >
+                {submitting ? "Submitting..." : "📤 Submit"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Distribute Modal */}
+      {showDistributeModal && bounty && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setShowDistributeModal(false)}
+        >
+          <div
+            className="bg-gradient-to-br from-[#2D2D2D] to-[#252525] border border-white/20 rounded-2xl w-full max-w-md p-4 sm:p-6 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-white">
+                Distribute Reward
+              </h3>
+              <button
+                onClick={() => setShowDistributeModal(false)}
+                className="text-white/60 hover:text-white text-2xl"
+              >
+                ✖
+              </button>
+            </div>
+            <p className="text-gray-300 text-sm mb-2 break-words">
+              Bounty: {bounty.title}
+            </p>
+            <p className="text-gray-300 text-sm mb-4">
+              Reward: {bounty.reward} {bounty.token}
+            </p>
+            <div className="space-y-3 mb-6">
+              {winnerAddresses.map((addr, idx) => {
+                let amount = 0;
+                if (
+                  bounty.winnersAllowed > 1 &&
+                  bounty.payoutType === "equal"
+                ) {
+                  amount = bounty.reward / bounty.winnersAllowed;
+                } else if (
+                  bounty.winnersAllowed > 1 &&
+                  bounty.percentages &&
+                  bounty.percentages[idx]
+                ) {
+                  amount = (bounty.reward * bounty.percentages[idx]) / 100;
+                } else if (bounty.winnersAllowed === 1) {
+                  amount = bounty.reward;
+                }
+                return (
+                  <div key={idx}>
+                    <label className="text-white text-sm block mb-1">
+                      Winner {idx + 1} Address
+                    </label>
+                    <input
+                      type="text"
+                      value={addr}
+                      onChange={(e) => {
+                        const newAddrs = [...winnerAddresses];
+                        newAddrs[idx] = e.target.value;
+                        setWinnerAddresses(newAddrs);
+                      }}
+                      placeholder="0x..."
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#FF1AC6]/50 text-sm"
+                    />
+                    {amount > 0 && (
+                      <p className="text-green-400 text-xs mt-1">
+                        Will receive: {amount.toFixed(4)} {bounty.token}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => setShowDistributeModal(false)}
+                className="flex-1 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 transition text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDistributeReward}
+                disabled={distributing}
+                className="flex-1 px-4 py-2 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold hover:shadow-lg transition disabled:opacity-50 text-sm"
+              >
+                {distributing ? "Distributing..." : "Confirm Distribution"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Footer />
     </div>
   );
 };
