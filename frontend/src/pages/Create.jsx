@@ -31,7 +31,7 @@ function Create() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen flex flex-col overflow-x-hidden bg-black text-white">
       <NavBar />
 
       {/* STEP INDICATOR */}
@@ -56,7 +56,8 @@ function Create() {
 
       {/* ================= PAGE 1 ================= */}
       {currentStep === 1 && (
-        <div className="bg-[#2D2D2D] border border-white rounded-lg py-4 m-10">
+        <div className="md:flex md:justify-center">
+        <div className="bg-[#2D2D2D] border border-white rounded-lg py-4 m-10 md:w-[70vw]">
           <p className="px-4 text-sm">Step 1 of 4</p>
 
           <h2 className="px-4 text-xl font-semibold">Choose Network</h2>
@@ -64,7 +65,7 @@ function Create() {
           <div className="px-4 mt-4 flex flex-col gap-4">
             <select
               onChange={handleChange}
-              className="border border-white bg-[#1c1c1c] h-[40px] rounded-lg px-2"
+              className="border border-white bg-[#1c1c1c] h-[40px] rounded-lg px-2 md:w-[25vw]"
             >
               {/* Switch to selected chain  */}
               <option value="">Select Network</option>
@@ -75,7 +76,7 @@ function Create() {
               ))}
             </select>
 
-            <select className="border border-white bg-[#1c1c1c] h-[40px] rounded-lg px-2">
+            <select className="border border-white bg-[#1c1c1c] h-[40px] rounded-lg px-2 md:w-[25vw]">
               <option>Development</option>
               <option>Design</option>
               <option>Marketing</option>
@@ -83,42 +84,50 @@ function Create() {
             </select>
           </div>
         </div>
+        </div>
       )}
 
       {/* ================= PAGE 2 ================= */}
       {currentStep === 2 && (
-        <div className="bg-[#2D2D2D] border border-white rounded-lg py-4 m-10">
+<div className="md:flex md:justify-center">
+        <div className="bg-[#2D2D2D] border border-white rounded-lg py-4 m-10 md:w-[70vw]">
           <p className="px-4 text-sm">Step 2 of 4</p>
 
           <h2 className="px-4 text-xl font-semibold">Task Details</h2>
 
           <div className="px-4 mt-4 flex flex-col gap-4">
             <input
-              className="h-[40px] bg-[#1c1c1c] border border-white px-3 rounded-lg"
+              className="h-[40px] bg-[#1c1c1c] border border-white px-3 rounded-lg md:w-[50vw]"
               placeholder="Title"
             />
 
             <textarea
-              className="h-40 bg-[#1c1c1c] border border-white p-3 rounded-lg"
+              className="h-40 bg-[#1c1c1c] border border-white p-3 rounded-lg overflow-y-auto resize-none md:w-[50vw]"
               placeholder="Description"
             />
 
             <div className="flex flex-col md:flex-row gap-4">
+              <label className="text-xs text-gray-400 md:hidden">Start Date</label>
+
+  <input
+    type="date"
+    className="h-[40px] bg-[#1c1c1c] border border-white px-2 rounded-lg"
+  />
+
+              <label className="text-xs text-gray-400 md:hidden">End Date</label>
+
               <input
                 type="date"
-                className="h-[40px] w-fit bg-[#1c1c1c] border border-white px-2 rounded-lg"
-              />
-              <input
-                type="date"
-                className="h-[40px] w-fit bg-[#1c1c1c] border border-white px-2 rounded-lg"
+                className="h-[40px]  bg-[#1c1c1c] border border-white px-2 rounded-lg"
               />
             </div>
 
             <input
-              className="h-[40px] bg-[#1c1c1c] border border-white px-3 rounded-lg"
+              className="h-[40px] bg-[#1c1c1c] border border-white px-3 rounded-lg md:w-[50vw]"
               placeholder="Origin link"
             />
           </div>
+        </div>
         </div>
       )}
 
@@ -381,7 +390,7 @@ function Create() {
       )}
 
       {/* BUTTONS */}
-      <div className="flex justify-center mt-20">
+      <div className="flex justify-center py-6">
         <div className="flex gap-6">
           {currentStep === 1 ? (
             <Link
@@ -407,7 +416,7 @@ function Create() {
           </button>
         </div>
       </div>
-      <div className="mt-5">
+      <div className="mt-auto">
         <Footer />
       </div>
     </div>
