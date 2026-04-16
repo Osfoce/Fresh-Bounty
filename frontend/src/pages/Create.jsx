@@ -606,7 +606,7 @@ function Create() {
                         onChange={(e) =>
                           updateBountyData("token", e.target.value)
                         }
-                        className="w-full sm:w-64 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#FF1AC6]/50 transition"
+                        className="w-full sm:w-64 bg-[#2D2D2D] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#FF1AC6]/50 transition"
                       >
                         <option value="INJ">INJ (Injective)</option>
                         <option value="USDC">USDC</option>
