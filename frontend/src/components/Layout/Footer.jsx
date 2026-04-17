@@ -34,8 +34,8 @@ function Footer() {
           <div>
           <h4 className="font-semibold mb-3">Follow Us</h4>
          <div className="flex flex-row gap-4 cursor-pointer">
-          <FaDiscord />
-          <FaGithub />
+          {/* <FaDiscord />
+          <FaGithub /> */}
           <FaTwitter />
 </div>
           </div>
