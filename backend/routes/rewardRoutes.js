@@ -10,6 +10,11 @@ const router = express.Router();
 router.post("/task/:id/distribute", async (req, res) => {
   const id = req.params.id;
   const { winners, payoutType, percentages, txHash } = req.body;
+  console.log({
+    winners: winnerAddresses,
+    payoutType,
+    percentages,
+  });
   if (!ObjectId.isValid(id))
     return res.status(400).json({ error: "Invalid bounty ID" });
   if (!winners || !Array.isArray(winners) || winners.length === 0) {
@@ -25,7 +30,11 @@ router.post("/task/:id/distribute", async (req, res) => {
       return res.status(400).json({ error: "Rewards already distributed" });
     }
 
-    const rewardAmount = bounty.reward;
+    const rewardAmount = Number(bounty.reward);
+    if (isNaN(rewardAmount)) {
+      throw new Error("Invalid reward amount");
+    }
+    console.log(`reward amount ${rewardAmount}`);
     let winnerDetails = [];
 
     if (winners.length === 1) {
@@ -72,7 +81,7 @@ router.post("/task/:id/distribute", async (req, res) => {
         distributionTxHash: txHash || null,
         payoutType: payoutType,
       },
-      rewardsAssignedOnChain: true,
+      rewardsAssignedOnChain: !!txHash, // Becomes true only when txhash is not null
       updatedAt: new Date().toISOString(),
     };
     await db
@@ -105,8 +114,8 @@ router.post("/task/:id/distribute", async (req, res) => {
       distributionTxHash: txHash,
     });
   } catch (err) {
-    console.error("Failed to distribute rewards:", err);
-    res.status(500).json({ error: "Failed to distribute rewards" });
+    console.error("🔥 DISTRIBUTION ERROR:", err.message, err.stack);
+    res.status(500).json({ error: err.message });
   }
 });
 

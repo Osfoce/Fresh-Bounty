@@ -54,6 +54,8 @@ const BountyCard = ({ bounty }) => {
     return address;
   };
 
+  const API_URL = "https://fresh-bounty.onrender.com";
+
   const handleEnroll = async (e) => {
     e.preventDefault(); // Prevent navigation if Link is clicked
 
@@ -64,13 +66,10 @@ const BountyCard = ({ bounty }) => {
     const loadingToast = toast.loading("Enrolling in bounty...");
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/enroll`,
-        {
-          bountyId: bounty._id,
-          user: userWallet,
-        },
-      );
+      const response = await axios.post(`${API_URL}/api/enroll`, {
+        bountyId: bounty._id,
+        user: userWallet,
+      });
 
       if (response.status === 200 || response.status === 201) {
         toast.success("Successfully enrolled in bounty!", {

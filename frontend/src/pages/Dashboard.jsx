@@ -5,7 +5,7 @@ import NavBar from "../components/Layout/NavBar";
 import Footer from "../components/Layout/Footer";
 import BountyCard from "../components/Bounty/BountyCard";
 import { Link } from "react-router-dom";
-import Pagination from "../components/Common/Pagination";
+// import Pagination from "../components/Common/Pagination";
 import { useEffect } from "react";
 import { useAccount } from "wagmi";
 

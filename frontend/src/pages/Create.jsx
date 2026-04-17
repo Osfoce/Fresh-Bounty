@@ -11,18 +11,44 @@ function Create() {
   const totalSteps = 4;
 
   // Form state
+  // const [bountyData, setBountyData] = useState({
+  //   title: "",
+  //   description: "",
+  //   network: "",
+  //   category: "",
+  //   tags: "",
+  //   startDate: "",
+  //   deadline: "",
+  //   originLink: "",
+  //   reward: 0,
+  //   token: "INJ",
+  //   rewardType: "self-fund",
+  // });
+
   const [bountyData, setBountyData] = useState({
-    network: "",
-    category: "",
     title: "",
     description: "",
-    tags: "",
+    category: "",
+    network: "",
+    tags: "", // string for input (will convert later)
+
     startDate: "",
-    endDate: "",
+    deadline: "",
+
     originLink: "",
+
     reward: 0,
-    token: "INJ",
+    token: "USDC", // pick your default
+
+    // payout logic (needed for contract/backend)
+    winnersAllowed: 1,
+    payoutType: "",
+    percentages: [],
+
+    // UI-specific logic
     rewardType: "self-fund",
+
+    creator: "", // will be filled from wallet
   });
 
   // Multi-winner state
@@ -82,7 +108,7 @@ function Create() {
           toast.error("Description must be at least 20 characters");
           return false;
         }
-        if (!bountyData.startDate || !bountyData.endDate) {
+        if (!bountyData.startDate || !bountyData.deadline) {
           toast.error("Please select start and end dates");
           return false;
         }
@@ -342,9 +368,9 @@ function Create() {
                         </label>
                         <input
                           type="date"
-                          value={bountyData.endDate}
+                          value={bountyData.deadline}
                           onChange={(e) =>
-                            updateBountyData("endDate", e.target.value)
+                            updateBountyData("deadline", e.target.value)
                           }
                           className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#FF1AC6]/50 transition"
                         />
@@ -694,7 +720,7 @@ function Create() {
                       <span className="text-white/60 text-sm">Timeline</span>
                       <span className="text-white text-sm">
                         {formatDate(bountyData.startDate)} →{" "}
-                        {formatDate(bountyData.endDate)}
+                        {formatDate(bountyData.deadline)}
                       </span>
                     </div>
 

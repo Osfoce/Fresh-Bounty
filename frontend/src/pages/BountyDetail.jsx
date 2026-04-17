@@ -3,14 +3,21 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useAccount } from "wagmi";
 import Footer from "../components/Layout/Footer";
 import NavBar from "../components/Layout/NavBar";
+import { BOUNTY_ABI, CONTRACT_ADDRESSES } from "contract";
+import {
+  useAccount,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useReadContract,
+} from "wagmi";
+import { useBounty } from "../hooks/useBounty";
 
 const BountyDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chain } = useAccount();
 
   // State
   const [bounty, setBounty] = useState(null);
@@ -25,6 +32,19 @@ const BountyDetail = () => {
   const [hasUserClaimed, setHasUserClaimed] = useState(false);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+
+  // Write contract hook
+  const {
+    writeContract,
+    data: txHash,
+    isPending: isTxPending,
+  } = useWriteContract();
+  const { isLoading: isTxConfirming, isSuccess: isTxSuccess } =
+    useWaitForTransactionReceipt({
+      hash: txHash,
+    });
+
+  // const { claimable, claim } = useBounty(bounty.blockchainId);
 
   // Modal states
   const [showSubmitModal, setShowSubmitModal] = useState(false);
@@ -45,6 +65,16 @@ const BountyDetail = () => {
   const API_URL = "https://fresh-bounty.onrender.com";
   // process.env.REACT_APP_API_URL ||
   const fileInputRef = useRef(null);
+
+  // Get contract address for current chain
+  const getContractAddress = () => {
+    if (!chain) return null;
+    const chainName = chain.network || chain.name?.toLowerCase();
+    if (chainName?.includes("injective"))
+      return CONTRACT_ADDRESSES.injectiveTestnet.bounty;
+    // Add other chain mappings as needed
+    return null;
+  };
 
   // Get user wallet
   const getUserWallet = () => {
@@ -194,6 +224,7 @@ const BountyDetail = () => {
         const response = await axios.get(`${API_URL}/api/task/${id}`);
         const bountyData = response.data;
         setBounty(bountyData);
+        console.log(`Bounty detail ${bountyData.blockchainId}`);
 
         const wallet = getUserWallet();
         if (wallet) {
@@ -361,6 +392,14 @@ const BountyDetail = () => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  // // Onchain claimable check
+  // const { data: onChainClaimable } = useReadContract({
+  //   address: getContractAddress(),
+  //   abi: BOUNTY_ABI,
+  //   functionName: "claimableRewards",
+  //   args: [bounty.blockchainId, address],
+  // });
+
   // Handle claim reward
   const handleClaimReward = async () => {
     const wallet = getUserWallet();
@@ -375,28 +414,81 @@ const BountyDetail = () => {
       return;
     }
 
-    const loadingToast = toast.loading("Claiming reward...");
+    const contractAddress = getContractAddress();
+    if (!contractAddress) {
+      toast.error("Unsupported network");
+      return;
+    }
+
+    // Onchain claimable check
+    const { data: onChainClaimable } = useReadContract({
+      address: contractAddress,
+      abi: BOUNTY_ABI,
+      functionName: "claimableRewards",
+      args: [bounty.blockchainId, address],
+    });
 
     try {
-      const response = await axios.post(`${API_URL}/api/task/${id}/claim`, {
-        winnerAddress: wallet,
-        txHash: null,
+      toast.loading("Confirm transaction in wallet...");
+
+      writeContract({
+        address: contractAddress,
+        abi: BOUNTY_ABI,
+        functionName: "claimReward",
+        args: [Number(bounty.blockchainId)], // VERY IMPORTANT
       });
 
-      if (response.status === 200) {
-        toast.success(`Claimed ${claimableAmount} ${bounty?.token || "INJ"}!`, {
-          id: loadingToast,
-          duration: 3000,
-        });
-        setHasUserClaimed(true);
-        setClaimableAmount(0);
-        await loadWinnersData(id);
-      }
+      // const response = await axios.post(`${API_URL}/api/task/${id}/claim`, {
+      //   winnerAddress: wallet,
+      //   txHash: null,
+      // });
+
+      // if (response.status === 200) {
+      //   toast.success(`Claimed ${claimableAmount} ${bounty?.token || "INJ"}!`, {
+      //     id: loadingToast,
+      //     duration: 3000,
+      //   });
+      //   setHasUserClaimed(true);
+      //   setClaimableAmount(0);
+      //   await loadWinnersData(id);
+      // }
     } catch (error) {
       console.error("Claim error:", error);
-      toast.error("Failed to claim reward", { id: loadingToast });
+      toast.error("Transaction failed to start");
     }
   };
+
+  // handle tx and update the database
+  useEffect(() => {
+    if (isTxSuccess && txHash) {
+      const finalizeClaim = async () => {
+        const loadingToast = toast.loading("Finalizing claim...");
+
+        try {
+          await axios.post(`${API_URL}/api/task/${id}/claim`, {
+            winnerAddress: address,
+            txHash,
+          });
+
+          toast.success("Reward claimed successfully!", {
+            id: loadingToast,
+          });
+
+          setHasUserClaimed(true);
+          setClaimableAmount(0);
+
+          await loadWinnersData(id);
+        } catch (error) {
+          console.error(error);
+          toast.error("On-chain success, backend sync failed", {
+            id: loadingToast,
+          });
+        }
+      };
+
+      finalizeClaim();
+    }
+  }, [isTxSuccess, txHash]);
 
   // Handle distribute reward
   const handleDistributeReward = async () => {
@@ -417,6 +509,12 @@ const BountyDetail = () => {
     const loadingToast = toast.loading("Distributing rewards...");
 
     try {
+      console.log({
+        winners: winnerAddresses,
+        payoutType:
+          bounty?.winnersAllowed > 1 ? bounty?.payoutType || "equal" : "single",
+        percentages: bounty?.percentages || [],
+      });
       const response = await axios.post(
         `${API_URL}/api/task/${id}/distribute`,
         {
@@ -424,7 +522,7 @@ const BountyDetail = () => {
           payoutType:
             bounty?.winnersAllowed > 1
               ? bounty?.payoutType || "equal"
-              : "single",
+              : "percentage",
           percentages: bounty?.percentages || [],
           txHash: null,
         },
@@ -749,30 +847,49 @@ const BountyDetail = () => {
                 <h4 className="font-semibold text-green-400 mb-2 text-sm sm:text-base">
                   🏆 Rewards Distributed
                 </h4>
+
                 <div className="space-y-2">
                   {winnersData.winners.map((winner, idx) => {
+                    const isCurrentUser =
+                      address &&
+                      winner.address.toLowerCase() === address.toLowerCase();
+
                     const isClaimed = winnersData.claimed?.some(
-                      (c) => c.address === winner.address,
+                      (c) =>
+                        c.address.toLowerCase() ===
+                        winner.address.toLowerCase(),
                     );
+
                     return (
                       <div
                         key={idx}
                         className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm border-b border-gray-700 pb-2 gap-2"
                       >
+                        {/* LEFT: ADDRESS */}
                         <span className="font-mono text-xs sm:text-sm break-all">
                           {shortenAddress(winner.address)}
                         </span>
-                        <div className="flex gap-4">
+
+                        {/* RIGHT: ACTIONS */}
+                        <div className="flex items-center gap-3">
+                          {/* AMOUNT */}
                           <span className="text-green-400 text-xs sm:text-sm">
                             {winner.amount.toFixed(4)} {bounty.token}
                           </span>
-                          <span
-                            className={
-                              isClaimed ? "text-green-400" : "text-yellow-400"
-                            }
-                          >
-                            {isClaimed ? "✅ Claimed" : "⏳ Pending"}
-                          </span>
+
+                          {/* STATUS OR BUTTON */}
+                          {/* {isClaimed ? (
+                            <span className="text-green-400">✅ Claimed</span>
+                          ) : isCurrentUser ? (
+                            <button
+                              onClick={handleClaimReward}
+                              className="px-3 py-1 rounded-lg bg-gradient-to-r from-green-600 to-green-700 text-white text-xs font-semibold hover:shadow-md transition"
+                            >
+                              💰 Claim
+                            </button>
+                          ) : (
+                            <span className="text-yellow-400">⏳ Pending</span>
+                          )} */}
                         </div>
                       </div>
                     );
