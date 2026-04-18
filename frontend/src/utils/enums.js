@@ -72,16 +72,20 @@ export const resolveTokenType = (uiToken) => {
 // Payout types for multiple winners
 export const PayoutType = {
   SINGLE: 0,
-  MULTIPLE: 1,
+  MULTI_EQUAL: 1,
+  MULTI_PERCENTAGE: 2,
 };
 
 // For multiple winners, we have two options: equal split or percentage-based
 export const getPayoutType = ({ winnersAllowed, payoutType }) => {
-  if (winnersAllowed === 1) return PayoutType.SINGLE;
+  if (winnersAllowed === 1 || payoutType === "SINGLE") return PayoutType.SINGLE;
 
-  if (!["equal", "percentage"].includes(payoutType)) {
-    throw new Error("Invalid payout type");
-  }
+  // if (!["MULTI_EQUAL", "MULTI_PERCENTAGE", "SINGLE"].includes(payoutType)) {
+  //   throw new Error("Invalid payout type");
+  // }
 
-  return PayoutType.MULTIPLE;
+  if (payoutType === "MULTI_EQUAL") return PayoutType.MULTI_EQUAL;
+  if (payoutType === "MULTI_PERCENTAGE") return PayoutType.MULTI_PERCENTAGE;
+
+  return PayoutType.SINGLE; // default to single if something's off
 };

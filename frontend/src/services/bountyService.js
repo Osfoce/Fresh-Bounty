@@ -15,7 +15,6 @@ export const getBountyContract = (chainId) => {
  */
 export const prepareCreateBountyTx = ({ bountyData, account, chainId }) => {
   const address = getBountyContract(chainId);
-  const abi = BOUNTY_ABI;
 
   const tokenType = resolveTokenType(bountyData.token);
   const payoutType = getPayoutType(
@@ -24,15 +23,21 @@ export const prepareCreateBountyTx = ({ bountyData, account, chainId }) => {
   );
   console.log(`Payout type: ${payoutType} (0 for single, 1 for multiple)`);
 
+  const feePercent = 5; // or fetch from contract
+  const fee = (bountyData.reward * feePercent) / 100;
+
+  const total = bountyData.reward + fee;
+
   const rewardWei = parseEther(bountyData.reward.toString());
+  const totalWei = parseEther(total.toString());
 
   return {
     address,
-    abi: abi,
+    abi: BOUNTY_ABI,
     functionName: "createBounty",
     args: [tokenType, rewardWei, payoutType],
     account,
-    value: tokenType === 0 ? rewardWei : undefined, // ETH only
+    value: tokenType === 0 ? totalWei : undefined, // ETH only
   };
 };
 

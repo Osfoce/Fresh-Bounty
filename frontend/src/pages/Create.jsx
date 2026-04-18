@@ -41,7 +41,7 @@ function Create() {
 
   // Multi-winner state
   const [multipleWinner, setMultipleWinner] = useState(false);
-  const [selectedPayoutType, setSelectedPayoutType] = useState("equal");
+  const [selectedPayoutType, setSelectedPayoutType] = useState("MULTI_EQUAL"); // default to equal split
   const [winnerCount, setWinnerCount] = useState(2);
   const [percentageArray, setPercentageArray] = useState([]);
 
@@ -140,7 +140,7 @@ function Create() {
       return;
     }
     setWinnerCount(count);
-    setSelectedPayoutType("equal");
+    setSelectedPayoutType("MULTI_EQUAL");
     setPercentageArray([]);
     setShowEqualModal(false);
     toast.success(`${count} winners selected for equal split`);
@@ -156,7 +156,7 @@ function Create() {
       toast.error("Percentages must sum to 100");
       return;
     }
-    setSelectedPayoutType("percentage");
+    setSelectedPayoutType("MULTI_PERCENTAGE");
     setWinnerCount(percentageArray.length);
     setShowPercentModal(false);
     toast.success(
@@ -229,12 +229,12 @@ function Create() {
 
     // 6. Prepare bounty data for contract (transform form data)
     const finalWinnersAllowed = multipleWinner ? winnerCount : 1;
-    const finalPayoutType = multipleWinner ? selectedPayoutType : "single";
+    const finalPayoutType = multipleWinner ? selectedPayoutType : "SINGLE";
     console.log(
       `Final payout type: ${finalPayoutType}, winners allowed: ${finalWinnersAllowed}`,
     );
     const finalPercentages =
-      multipleWinner && selectedPayoutType === "percentage"
+      multipleWinner && selectedPayoutType === "MULTI_PERCENTAGE"
         ? percentageArray
         : [];
 
@@ -251,19 +251,26 @@ function Create() {
     // 7. Call smart contract
     try {
       const { eventData, hash } = await createBounty({
-        reward: bountyData.reward,
+        reward: bountyData.reward, // send total (reward + fee) to contract
         token: bountyData.token,
         winnersAllowed: finalWinnersAllowed,
         payoutType: finalPayoutType,
         percentages: finalPercentages,
       });
 
-      const blockchainId = eventData?.bountyId;
+      const blockchainId = eventData?.bountyId
+        ? Number(eventData.bountyId)
+        : null;
+      console.log(
+        `Token type ${bountyData.token} reward ${bountyData.reward} total amount ${totalAmount} in wei`,
+      );
+      console.log("Full eventData:", eventData);
       if (!blockchainId) throw new Error("No bountyId from contract event");
 
       // 8. Save to backend with blockchain info
       const saveResponse = await axios.post(
-        `${REACT_APP_API_URL || "https://fresh-bounty.onrender.com"}/api/task`,
+        // REACT_APP_API_URL ||
+        `${"https://fresh-bounty.onrender.com"}/api/task`,
         {
           ...backendData,
           blockchainId: Number(blockchainId),
@@ -612,12 +619,13 @@ function Create() {
                         </div>
 
                         {/* Show selected payout info */}
-                        {selectedPayoutType === "equal" && winnerCount > 1 && (
-                          <span className="text-xs text-[#FF1AC6] bg-[#FF1AC6]/10 px-2 py-1 rounded-full">
-                            {winnerCount} winners - Equal split
-                          </span>
-                        )}
-                        {selectedPayoutType === "percentage" &&
+                        {selectedPayoutType === "MULTI_EQUAL" &&
+                          winnerCount > 1 && (
+                            <span className="text-xs text-[#FF1AC6] bg-[#FF1AC6]/10 px-2 py-1 rounded-full">
+                              {winnerCount} winners - Equal split
+                            </span>
+                          )}
+                        {selectedPayoutType === "MULTI_PERCENTAGE" &&
                           percentageArray.length > 0 && (
                             <span className="text-xs text-[#FF1AC6] bg-[#FF1AC6]/10 px-2 py-1 rounded-full">
                               {percentageArray.length} winners -{" "}
@@ -874,7 +882,7 @@ function Create() {
                       </span>
                       <span className="text-white text-sm">
                         {multipleWinner
-                          ? selectedPayoutType === "equal"
+                          ? selectedPayoutType === "MULTI_EQUAL"
                             ? `Yes (${winnerCount} winners, equal split)`
                             : `Yes (${percentageArray.length} winners, ${percentageArray.join("% / ")}%)`
                           : "No (Single winner)"}

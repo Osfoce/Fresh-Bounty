@@ -20,6 +20,7 @@ import {
   getClaimedConfig,
   formatReward,
 } from "../services/bountyService";
+import { BOUNTY_ABI } from "contract";
 
 export const useBounty = () => {
   const { address: account } = useAccount();
@@ -82,6 +83,11 @@ export const useBounty = () => {
 
       // Wait for receipt using public client
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      console.log("Receipt logs:", receipt.logs);
+      console.log("Full receipt:", receipt);
+      if (receipt.status !== "success") {
+        throw new Error("Transaction reverted");
+      }
 
       // Success toast
       toast.success(successMessage, { id: hash });
@@ -90,12 +96,15 @@ export const useBounty = () => {
       let eventData = null;
       if (eventName && receipt.logs.length > 0) {
         const events = parseEventLogs({
-          abi: txConfig.abi,
+          abi: BOUNTY_ABI,
           logs: receipt.logs,
           eventName: eventName,
         });
-        if (events.length > 0) {
-          eventData = events[0].args;
+
+        const matched = events.find((e) => e.eventName === eventName);
+
+        if (matched) {
+          eventData = matched.args;
         }
       }
 
