@@ -1,7 +1,6 @@
 import { parseEther, formatEther } from "viem";
 import { BOUNTY_ABI, CONTRACT_ADDRESSES } from "contract";
-// import { CONTRACT_ADDRESSES } from "";
-import { getTokenType, getPayoutType } from "../utils/enums";
+import { resolveTokenType, getPayoutType } from "../utils/enums";
 
 /**
  * Get contract address dynamically
@@ -12,21 +11,24 @@ export const getBountyContract = (chainId) => {
 
 /**
  * Create bounty (prepared config for wagmi)
+ * make sure to check for chain ID to be sure the contract is deployed on that network
  */
 export const prepareCreateBountyTx = ({ bountyData, account, chainId }) => {
   const address = getBountyContract(chainId);
+  const abi = BOUNTY_ABI;
 
-  const tokenType = getTokenType(bountyData.token);
+  const tokenType = resolveTokenType(bountyData.token);
   const payoutType = getPayoutType(
     bountyData.winnersAllowed,
     bountyData.payoutType,
   );
+  console.log(`Payout type: ${payoutType} (0 for single, 1 for multiple)`);
 
   const rewardWei = parseEther(bountyData.reward.toString());
 
   return {
     address,
-    abi: BOUNTY_ABI,
+    abi: abi,
     functionName: "createBounty",
     args: [tokenType, rewardWei, payoutType],
     account,

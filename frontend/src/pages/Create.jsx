@@ -1,29 +1,17 @@
-import { useState } from "react";
-import NavBar from "../components/Layout/NavBar";
-import { supportedChains } from "../rainbowChains";
-import { useSwitchChain } from "wagmi";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import axios from "axios";
+import NavBar from "../components/Layout/NavBar";
 import Footer from "../components/Layout/Footer";
+import { supportedChains } from "../rainbowChains";
+import { useBounty } from "../hooks/useBounty";
+import { CONTRACT_ADDRESSES } from "contract";
 
 function Create() {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
-
-  // Form state
-  // const [bountyData, setBountyData] = useState({
-  //   title: "",
-  //   description: "",
-  //   network: "",
-  //   category: "",
-  //   tags: "",
-  //   startDate: "",
-  //   deadline: "",
-  //   originLink: "",
-  //   reward: 0,
-  //   token: "INJ",
-  //   rewardType: "self-fund",
-  // });
 
   const [bountyData, setBountyData] = useState({
     title: "",
@@ -38,7 +26,7 @@ function Create() {
     originLink: "",
 
     reward: 0,
-    token: "USDC", // pick your default
+    token: "INJ", // pick your default
 
     // payout logic (needed for contract/backend)
     winnersAllowed: 1,
@@ -63,23 +51,45 @@ function Create() {
   const [showInfoMenu, setShowInfoMenu] = useState(false);
 
   const { switchChain } = useSwitchChain();
+  const navigate = useNavigate();
+  const { address, isConnected } = useAccount();
+  const currentChainId = useChainId();
+  const {
+    createBounty,
+    isPending: isContractPending,
+    isConfirming,
+  } = useBounty();
 
   // Helper to update bounty data
   const updateBountyData = (field, value) => {
     setBountyData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // Set creator when wallet connects
+  useEffect(() => {
+    if (isConnected && address) {
+      updateBountyData("creator", address);
+    }
+  }, [address, isConnected]);
+
+  // Network selection handler (also updates form)
   const handleChainChange = (e) => {
     const chainId = Number(e.target.value);
     updateBountyData("network", chainId);
     switchChain({ chainId });
   };
 
+  // const nextStep = () => {
+  //   if (currentStep < totalSteps) {
+  //     if (validateStep(currentStep)) {
+  //       setCurrentStep((prev) => prev + 1);
+  //     }
+  //   }
+  // };
+
   const nextStep = () => {
-    if (currentStep < totalSteps) {
-      if (validateStep(currentStep)) {
-        setCurrentStep((prev) => prev + 1);
-      }
+    if (currentStep < totalSteps && validateStep(currentStep)) {
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
@@ -172,6 +182,111 @@ function Create() {
       day: "numeric",
     });
   };
+
+  // --- Contract submission logic ---
+  const handleFinalSubmit = async () => {
+    // 1. Validate final step
+    if (!validateStep(3)) return;
+
+    // 2. Check wallet connection
+    if (!isConnected || !address) {
+      toast.error("Please connect your wallet");
+      return;
+    }
+
+    // 3. Network verification
+    const selectedChainId = bountyData.network;
+    console.log("Selected chain ID:", selectedChainId);
+
+    if (!selectedChainId) {
+      toast.error("Please select a network");
+      return;
+    }
+
+    // 4. Check if contract is deployed on the selected network
+    const contractAddress = CONTRACT_ADDRESSES[selectedChainId]?.bounty;
+    if (!contractAddress || contractAddress === "Loading...") {
+      toast.error(
+        `Contract not deployed on ${supportedChains.find((c) => c.id === selectedChainId)?.name}. Only Injective testnet is supported currently.`,
+      );
+      return;
+    }
+
+    // 5. If user is on a different chain, prompt to switch
+    if (currentChainId !== selectedChainId) {
+      toast.loading(
+        `Switching to ${supportedChains.find((c) => c.id === selectedChainId)?.name}...`,
+      );
+      try {
+        //await remove
+        switchChain({ chainId: selectedChainId });
+        toast.success("Network switched!");
+      } catch (err) {
+        toast.error("Failed to switch network. Please switch manually.");
+        return;
+      }
+    }
+
+    // 6. Prepare bounty data for contract (transform form data)
+    const finalWinnersAllowed = multipleWinner ? winnerCount : 1;
+    const finalPayoutType = multipleWinner ? selectedPayoutType : "single";
+    console.log(
+      `Final payout type: ${finalPayoutType}, winners allowed: ${finalWinnersAllowed}`,
+    );
+    const finalPercentages =
+      multipleWinner && selectedPayoutType === "percentage"
+        ? percentageArray
+        : [];
+
+    // Create a copy for backend (convert tags string to array if needed)
+    const backendData = {
+      ...bountyData,
+      tags: bountyData.tags ? [bountyData.tags] : [],
+      winnersAllowed: finalWinnersAllowed,
+      payoutType: finalPayoutType,
+      percentages: finalPercentages,
+      status: "upcoming", // will be calculated by backend
+    };
+
+    // 7. Call smart contract
+    try {
+      const { eventData, hash } = await createBounty({
+        reward: bountyData.reward,
+        token: bountyData.token,
+        winnersAllowed: finalWinnersAllowed,
+        payoutType: finalPayoutType,
+        percentages: finalPercentages,
+      });
+
+      const blockchainId = eventData?.bountyId;
+      if (!blockchainId) throw new Error("No bountyId from contract event");
+
+      // 8. Save to backend with blockchain info
+      const saveResponse = await axios.post(
+        `${REACT_APP_API_URL || "https://fresh-bounty.onrender.com"}/api/task`,
+        {
+          ...backendData,
+          blockchainId: Number(blockchainId),
+          txHash: hash,
+          isOnChain: true,
+          creator: address,
+        },
+      );
+
+      if (saveResponse.status === 201) {
+        toast.success("Bounty created on-chain and saved!");
+        navigate("/dashboard");
+      } else {
+        throw new Error("Backend save failed");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Creation failed");
+    }
+  };
+
+  // Determine button loading state
+  const isProcessing = isContractPending || isConfirming;
 
   return (
     <div className="bg-black text-white min-h-screen flex flex-col">
@@ -815,12 +930,22 @@ function Create() {
                 </button>
               )}
 
-              <button
-                onClick={nextStep}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 text-white text-sm font-semibold hover:shadow-lg hover:shadow-[#FF1AC6]/25 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50"
-              >
-                {currentStep === totalSteps ? "✨ Create Bounty" : "Next →"}
-              </button>
+              {currentStep === totalSteps ? (
+                <button
+                  onClick={handleFinalSubmit}
+                  disabled={isProcessing}
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 text-white text-sm font-semibold hover:shadow-lg transition disabled:opacity-50"
+                >
+                  {isProcessing ? "Processing..." : "✨ Create Bounty"}
+                </button>
+              ) : (
+                <button
+                  onClick={nextStep}
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 text-white text-sm font-semibold hover:shadow-lg transition"
+                >
+                  Next →
+                </button>
+              )}
             </div>
           </div>
         </div>

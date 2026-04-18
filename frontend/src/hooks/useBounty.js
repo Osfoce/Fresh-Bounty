@@ -1,38 +1,204 @@
-import { useAccount, useWriteContract, useReadContract } from "wagmi";
-import { prepareClaimTx, getClaimableConfig } from "../services/bountyService";
+// hooks/useBounty.js
+import {
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useReadContract,
+  useAccount,
+  useChainId,
+  usePublicClient,
+} from "wagmi";
+import { useState, useEffect } from "react";
+import { parseEventLogs } from "viem";
+import toast from "react-hot-toast";
+import {
+  prepareCreateBountyTx,
+  prepareClaimTx,
+  getClaimableConfig,
+  prepareAssignSingleWinnerTx,
+  prepareAssignMultipleWinnersTx,
+  prepareSubmitTx,
+  getClaimedConfig,
+  formatReward,
+} from "../services/bountyService";
 
-export const useBounty = (bountyId) => {
-  const { address, chain } = useAccount();
+export const useBounty = () => {
+  const { address: account } = useAccount();
+  const chainId = useChainId();
+  const publicClient = usePublicClient();
 
+  // Transaction states
+  const [isPending, setIsPending] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [txHash, setTxHash] = useState(null);
+  const [txError, setTxError] = useState(null);
+
+  // Wagmi write hook
   const { writeContractAsync } = useWriteContract();
 
-  // Read claimable reward
-  const { data: claimable } = useReadContract({
-    ...getClaimableConfig({
-      bountyId,
-      user: address,
-      chainId: chain?.id,
-    }),
-    query: {
-      enabled: !!address && !!chain?.id,
-    },
+  // Wait for transaction receipt (for UI feedback)
+  const { isLoading: isWaiting, isSuccess } = useWaitForTransactionReceipt({
+    hash: txHash,
   });
 
-  // Claim function
-  const claim = async () => {
-    if (!address || !chain?.id) throw new Error("Wallet not connected");
+  useEffect(() => {
+    if (isWaiting) {
+      setIsConfirming(true);
+      setIsPending(false);
+    } else if (isSuccess) {
+      setIsConfirming(false);
+      setTxHash(null);
+      // Toast success is already shown inside executeTx, but we keep this for consistency
+    }
+  }, [isWaiting, isSuccess]);
 
-    const tx = prepareClaimTx({
-      bountyId,
-      account: address,
-      chainId: chain.id,
+  // Core transaction executor with event parsing
+  const executeTx = async (prepareFn, params, options = {}) => {
+    const { successMessage = "Transaction successful", eventName } = options;
+
+    if (!account) {
+      toast.error("Please connect your wallet");
+      throw new Error("No account connected");
+    }
+    if (!chainId) {
+      toast.error("No network detected");
+      throw new Error("No chain ID");
+    }
+
+    const txConfig = prepareFn({ ...params, account, chainId });
+    if (!txConfig.address) {
+      toast.error("Contract not deployed on this network");
+      throw new Error("Contract address missing");
+    }
+
+    setIsPending(true);
+    setTxError(null);
+    try {
+      // Send transaction
+      const hash = await writeContractAsync(txConfig);
+      setTxHash(hash);
+      toast.loading("Transaction sent. Waiting for confirmation...", {
+        id: hash,
+      });
+
+      // Wait for receipt using public client
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      // Success toast
+      toast.success(successMessage, { id: hash });
+
+      // Parse event if requested
+      let eventData = null;
+      if (eventName && receipt.logs.length > 0) {
+        const events = parseEventLogs({
+          abi: txConfig.abi,
+          logs: receipt.logs,
+          eventName: eventName,
+        });
+        if (events.length > 0) {
+          eventData = events[0].args;
+        }
+      }
+
+      return { hash, receipt, eventData };
+    } catch (err) {
+      console.error(err);
+      setTxError(err);
+      toast.error(err.message || "Transaction failed");
+      throw err;
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  // ---------- Public read hooks (using useReadContract) ----------
+  const useClaimableReward = (bountyId, user) => {
+    const config = getClaimableConfig({ bountyId, user, chainId });
+    return useReadContract({
+      ...config,
+      query: { enabled: !!bountyId && !!user && !!chainId && !!config.address },
     });
+  };
 
-    return await writeContractAsync(tx);
+  const useClaimedStatus = (bountyId, user) => {
+    const config = getClaimedConfig({ bountyId, user, chainId });
+    return useReadContract({
+      ...config,
+      query: { enabled: !!bountyId && !!user && !!chainId && !!config.address },
+    });
+  };
+
+  // ---------- Write actions with event parsing ----------
+  const createBounty = async (bountyData) => {
+    return executeTx(
+      prepareCreateBountyTx,
+      { bountyData },
+      {
+        successMessage: "Bounty created!",
+        eventName: "BountyCreated",
+      },
+    );
+  };
+
+  const claimReward = async (bountyId) => {
+    return executeTx(
+      prepareClaimTx,
+      { bountyId },
+      {
+        successMessage: "Reward claimed!",
+        eventName: "RewardClaimed",
+      },
+    );
+  };
+
+  const assignSingleWinner = async (bountyId, winner) => {
+    return executeTx(
+      prepareAssignSingleWinnerTx,
+      { bountyId, winner },
+      {
+        successMessage: "Winner assigned!",
+        eventName: "RewardsAssigned",
+      },
+    );
+  };
+
+  const assignMultipleWinners = async (bountyId, winners, percentages) => {
+    return executeTx(
+      prepareAssignMultipleWinnersTx,
+      { bountyId, winners, percentages },
+      {
+        successMessage: "Winners assigned!",
+        eventName: "RewardsAssigned",
+      },
+    );
+  };
+
+  const submitSolution = async (bountyId, link) => {
+    return executeTx(
+      prepareSubmitTx,
+      { bountyId, link },
+      {
+        successMessage: "Solution submitted!",
+        eventName: "SubmissionCreated",
+      },
+    );
   };
 
   return {
-    claimable,
-    claim,
+    // States
+    isPending,
+    isConfirming,
+    txHash,
+    txError,
+    // Read hooks
+    useClaimableReward,
+    useClaimedStatus,
+    // Write actions
+    createBounty,
+    claimReward,
+    assignSingleWinner,
+    assignMultipleWinners,
+    submitSolution,
+    // Helpers
+    formatReward,
   };
 };
