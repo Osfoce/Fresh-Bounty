@@ -1,18 +1,34 @@
 export const TokenType = {
-  ETH: 0,
-  WINJ: 1,
+  NATIVE: 0, // ETH, INJ, BNB (network gas token)
+  USDC: 1,
+  // add other ERC‑20 tokens here (e.g., DAI: 4)
 };
 
+export const TOKENS = {
+  NATIVE: "NATIVE",
+  USDC: "USDC",
+};
+
+export const TOKEN_TYPE_MAP = {
+  [TOKENS.NATIVE]: TokenType.NATIVE,
+  [TOKENS.USDC]: TokenType.USDC,
+};
+
+export const getTokenType = (token) => {
+  const type = TOKEN_TYPE_MAP[token];
+  if (type === undefined) {
+    throw new Error(`Unsupported token: ${token}`);
+  }
+  return type;
+};
+
+// Payout types for multiple winners
 export const PayoutType = {
   SINGLE: 0,
   MULTIPLE: 1,
 };
 
-export const getTokenType = (token) => {
-  if (token === "WINJ") return TokenType.WINJ;
-  return TokenType.ETH;
-};
-
+// For multiple winners, we have two options: equal split or percentage-based
 export const getPayoutType = ({ winnersAllowed, payoutType }) => {
   if (winnersAllowed === 1) return PayoutType.SINGLE;
 
