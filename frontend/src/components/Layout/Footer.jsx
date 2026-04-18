@@ -36,7 +36,8 @@ function Footer() {
          <div className="flex flex-row gap-4 cursor-pointer">
           {/* <FaDiscord />
           <FaGithub /> */}
-          <FaTwitter />
+          <a href="https://x.com/Happy_bounty" target="_blank" rel="noopener noreferrer">  <FaTwitter /></a>
+        
 </div>
           </div>
          
