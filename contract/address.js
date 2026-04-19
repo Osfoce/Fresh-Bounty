@@ -1,4 +1,4 @@
-import { sepolia, baseSepolia, opBNBTestnet } from "wagmi/chains";
+// import { sepolia, baseSepolia, opBNBTestnet } from "wagmi/chains";
 
 const injectiveTestnetRpcUrl =
   "https://k8s.testnet.json-rpc.injective.network/";
@@ -22,14 +22,20 @@ const injectiveTestnet = {
   testnet: true,
 };
 
+const CHAIN_IDS = {
+  SEPOLIA: 11155111,
+  BASE_SEPOLIA: 84532,
+  OPBNB_TESTNET: 5611,
+};
+
 export const CONTRACT_ADDRESSES = {
-  [sepolia.id]: {
+  [CHAIN_IDS.SEPOLIA]: {
     bounty: "Loading...",
   },
-  [baseSepolia.id]: {
+  [CHAIN_IDS.BASE_SEPOLIA]: {
     bounty: "Loading...",
   },
-  [opBNBTestnet.id]: {
+  [CHAIN_IDS.OPBNB_TESTNET]: {
     bounty: "Loading...",
   },
   [injectiveTestnet.id]: {
