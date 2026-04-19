@@ -7,6 +7,13 @@ import Footer from "../components/Layout/Footer";
 import NavBar from "../components/Layout/NavBar";
 import LiveTricker from "../components/Layout/LiveTricker";
 import BountyCard from "../components/Bounty/BountyCard";
+import injecoin from "../assets/images/injecoin.png";
+import bnb1 from "../assets/images/bnb1.png";
+import eth2 from "../assets/images/eth2.png";
+import base from "../assets/images/base.png";
+import usdc1 from "../assets/images/usdc1.png";
+// import CoinSpinner from "../components/Layout/crypto";
+
 
 function LandingPage() {
   const [featuredBounties, setFeaturedBounties] = useState([]);
@@ -298,42 +305,49 @@ function LandingPage() {
           <h2 className="text-3xl font-bold text-center mb-8">
             Supported Networks & Tokens
           </h2>
-          <div className="flex flex-wrap justify-center gap-8 items-center">
+
+          <div className="flex flex-wrap justify-center gap-14 items-center">
             {/* Placeholder images for chains – replace with actual logo URLs */}
             <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-2xl">
-                🟣
+              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
+                <img src={injecoin} alt="" />
               </div>
               <span className="text-sm">Injective</span>
             </div>
+
             <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-2xl">
-                🔵
+              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
+               <img className="w-12" src={eth2} alt="" />
               </div>
               <span className="text-sm">Ethereum</span>
             </div>
+            
             <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-2xl">
-                🟡
+              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
+                <img src={bnb1} alt="" />
               </div>
               <span className="text-sm">BNB Chain</span>
             </div>
+
+
             <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-2xl">
-                ⚪
+              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
+                <img src={base} alt="" />
               </div>
               <span className="text-sm">Base</span>
             </div>
+
             {/* Tokens */}
             <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-2xl">
-                💰
+              <div className="w-16 h-16 rounded-full  flex items-center justify-center text-2xl">
+                <img src={injecoin} alt="" />
               </div>
               <span className="text-sm">INJ / wINJ</span>
             </div>
+
             <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-2xl">
-                💵
+              <div className="w-16 h-16 rounded-full  flex items-center justify-center text-2xl">
+                <img src={usdc1} alt="" />
               </div>
               <span className="text-sm">USDC / USDT</span>
             </div>
