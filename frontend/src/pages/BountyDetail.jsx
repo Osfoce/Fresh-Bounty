@@ -1,23 +1,31 @@
 // BountyDetail.jsx
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Footer from "../components/Layout/Footer";
 import NavBar from "../components/Layout/NavBar";
 import { BOUNTY_ABI, CONTRACT_ADDRESSES } from "contract";
-import {
-  useAccount,
-  useWriteContract,
-  useWaitForTransactionReceipt,
-  useReadContract,
-} from "wagmi";
+import { useAccount, useChainId, useSwitchChain } from "wagmi";
 import { useBounty } from "../hooks/useBounty";
 
 const BountyDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { address, isConnected, chain } = useAccount();
+  const { address, isConnected } = useAccount();
+  const currentChainId = useChainId();
+  const { switchChain } = useSwitchChain();
+
+  // Use our custom hook
+  const {
+    claimReward,
+    assignSingleWinner,
+    assignMultipleWinners,
+    useClaimableReward,
+    useClaimedStatus,
+    isPending: isContractPending,
+    isConfirming: isContractConfirming,
+  } = useBounty();
 
   // State
   const [bounty, setBounty] = useState(null);
@@ -28,23 +36,23 @@ const BountyDetail = () => {
   const [hasUserSubmitted, setHasUserSubmitted] = useState(false);
   const [userSubmission, setUserSubmission] = useState(null);
   const [winnersData, setWinnersData] = useState(null);
-  const [claimableAmount, setClaimableAmount] = useState(0);
-  const [hasUserClaimed, setHasUserClaimed] = useState(false);
+  const [offChainClaimable, setOffChainClaimable] = useState(0);
+  const [hasUserClaimedOffChain, setHasUserClaimedOffChain] = useState(false);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
 
-  // Write contract hook
-  const {
-    writeContract,
-    data: txHash,
-    isPending: isTxPending,
-  } = useWriteContract();
-  const { isLoading: isTxConfirming, isSuccess: isTxSuccess } =
-    useWaitForTransactionReceipt({
-      hash: txHash,
-    });
+  // // Write contract hook
+  // const {
+  //   writeContract,
+  //   data: txHash,
+  //   isPending: isTxPending,
+  // } = useWriteContract();
+  // const { isLoading: isTxConfirming, isSuccess: isTxSuccess } =
+  //   useWaitForTransactionReceipt({
+  //     hash: txHash,
+  //   });
 
-  // const { claimable, claim } = useBounty(bounty.blockchainId);
+  // // const { claimable, claim } = useBounty(bounty.blockchainId);
 
   // Modal states
   const [showSubmitModal, setShowSubmitModal] = useState(false);
@@ -66,15 +74,37 @@ const BountyDetail = () => {
   // process.env.REACT_APP_API_URL ||
   const fileInputRef = useRef(null);
 
-  // Get contract address for current chain
-  const getContractAddress = () => {
-    if (!chain) return null;
-    const chainName = chain.network || chain.name?.toLowerCase();
-    if (chainName?.includes("injective"))
-      return CONTRACT_ADDRESSES.injectiveTestnet.bounty;
-    // Add other chain mappings as needed
-    return null;
-  };
+  // --- On‑chain read hooks (only if blockchainId exists) ---
+  // const blockchainId = bounty?.blockchainId
+  //   ? Number(bounty.blockchainId)
+  //   : null;
+  const blockchainId =
+    bounty?.blockchainId !== null && bounty?.blockchainId !== undefined
+      ? Number(bounty.blockchainId)
+      : null;
+
+  console.log(`Using blockchainId: ${blockchainId} for on-chain data fetching`);
+
+  const { data: onChainClaimable, refetch: refetchClaimable } =
+    useClaimableReward(blockchainId, address);
+
+  const { data: onChainClaimed } = useClaimedStatus(blockchainId, address);
+
+  useEffect(() => {
+    if (blockchainId && address) {
+      refetchClaimable();
+    }
+  }, [blockchainId, address]);
+
+  // // Get contract address for current chain
+  // const getContractAddress = () => {
+  //   if (!chain) return null;
+  //   const chainName = chain.network || chain.name?.toLowerCase();
+  //   if (chainName?.includes("injective"))
+  //     return CONTRACT_ADDRESSES.injectiveTestnet.bounty;
+  //   // Add other chain mappings as needed
+  //   return null;
+  // };
 
   // Get user wallet
   const getUserWallet = () => {
@@ -138,7 +168,7 @@ const BountyDetail = () => {
     });
   };
 
-  // Check user enrollment
+  // --- Backend API calls (enrollment, submission, winners, comments) ---
   const checkUserEnrollment = async (wallet, bountyId) => {
     try {
       const response = await axios.get(
@@ -184,12 +214,12 @@ const BountyDetail = () => {
         const claimableRes = await axios.get(
           `${API_URL}/api/task/${bountyId}/claimable/${address}`,
         );
-        setClaimableAmount(claimableRes.data.claimable || 0);
+        setOffChainClaimable(claimableRes.data.claimable || 0);
 
         const claimedRes = await axios.get(
           `${API_URL}/api/task/${bountyId}/has-claimed/${address}`,
         );
-        setHasUserClaimed(claimedRes.data.hasClaimed);
+        setHasUserClaimedOffChain(claimedRes.data.hasClaimed);
       }
     } catch (error) {
       console.error("Error loading winners:", error);
@@ -218,15 +248,15 @@ const BountyDetail = () => {
   // Fetch bounty details
   useEffect(() => {
     const fetchBounty = async () => {
+      console.log(`Fetching bounty details for id: ${id}`);
       if (!id) return;
 
       try {
         const response = await axios.get(`${API_URL}/api/task/${id}`);
         const bountyData = response.data;
         setBounty(bountyData);
-        console.log(`Bounty detail ${bountyData.blockchainId}`);
 
-        const wallet = getUserWallet();
+        const wallet = address;
         if (wallet) {
           // Check if user is creator
           setIsCreator(bountyData.creator === wallet);
@@ -254,12 +284,15 @@ const BountyDetail = () => {
     };
 
     fetchBounty();
-  }, [id, navigate, address, isConnected]);
+  }, [id, navigate, address]);
 
-  // Handle enrollment
+  // --- Enrollment (off‑chain) ---
   const handleEnroll = async () => {
-    const wallet = getUserWallet();
-    if (!wallet) return;
+    const wallet = address;
+    if (!wallet) {
+      toast.error("Please connect your wallet");
+      return;
+    }
 
     setIsEnrolling(true);
     const loadingToast = toast.loading("Enrolling in bounty...");
@@ -295,7 +328,7 @@ const BountyDetail = () => {
     }
   };
 
-  // Handle image upload
+  // --- Submission (off‑chain with image) ---
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -317,19 +350,14 @@ const BountyDetail = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const wallet = getUserWallet();
-    if (!wallet) return;
+    const wallet = address;
+    if (!wallet) {
+      toast.error("Please connect your wallet");
+      return;
+    }
 
-    if (!submissionImage) {
-      toast.error("Please upload an image");
-      return;
-    }
-    if (!submissionDescription) {
-      toast.error("Please enter a description");
-      return;
-    }
-    if (!submissionLink) {
-      toast.error("Please provide a proof link");
+    if (!submissionImage || !submissionDescription || !submissionLink) {
+      toast.error("Please fill all fields");
       return;
     }
 
@@ -400,97 +428,61 @@ const BountyDetail = () => {
   //   args: [bounty.blockchainId, address],
   // });
 
-  // Handle claim reward
+  // --- Claim reward (on‑chain + backend sync) ---
   const handleClaimReward = async () => {
-    const wallet = getUserWallet();
-    if (!wallet) return;
+    const wallet = address;
+    if (!wallet) {
+      toast.error("Please connect your wallet");
+      return;
+    }
 
-    if (hasUserClaimed) {
+    if (!bounty?.blockchainId) {
+      toast.error("This bounty is not linked to a smart contract");
+      return;
+    }
+
+    // Check network
+    const requiredChainId = bounty.network;
+    if (currentChainId !== requiredChainId) {
+      toast.loading(`Switching to correct network...`);
+      try {
+        // await
+        switchChain({ chainId: requiredChainId });
+        toast.success("Network switched!");
+      } catch (err) {
+        toast.error("Please switch network manually");
+        return;
+      }
+    }
+
+    // Check if claimable on‑chain
+    if (!onChainClaimable || onChainClaimable === 0n) {
+      toast.error("No reward available to claim");
+      return;
+    }
+    if (onChainClaimed) {
       toast.error("Reward already claimed");
       return;
     }
-    if (claimableAmount === 0) {
-      toast.error("No reward assigned to you");
-      return;
-    }
-
-    const contractAddress = getContractAddress();
-    if (!contractAddress) {
-      toast.error("Unsupported network");
-      return;
-    }
-
-    // Onchain claimable check
-    const { data: onChainClaimable } = useReadContract({
-      address: contractAddress,
-      abi: BOUNTY_ABI,
-      functionName: "claimableRewards",
-      args: [bounty.blockchainId, address],
-    });
 
     try {
-      toast.loading("Confirm transaction in wallet...");
-
-      writeContract({
-        address: contractAddress,
-        abi: BOUNTY_ABI,
-        functionName: "claimReward",
-        args: [Number(bounty.blockchainId)], // VERY IMPORTANT
+      const { eventData, hash } = await claimReward(blockchainId);
+      // Sync with backend
+      await axios.post(`${API_URL}/api/task/${id}/claim`, {
+        winnerAddress: address,
+        txHash: hash,
       });
-
-      // const response = await axios.post(`${API_URL}/api/task/${id}/claim`, {
-      //   winnerAddress: wallet,
-      //   txHash: null,
-      // });
-
-      // if (response.status === 200) {
-      //   toast.success(`Claimed ${claimableAmount} ${bounty?.token || "INJ"}!`, {
-      //     id: loadingToast,
-      //     duration: 3000,
-      //   });
-      //   setHasUserClaimed(true);
-      //   setClaimableAmount(0);
-      //   await loadWinnersData(id);
-      // }
-    } catch (error) {
-      console.error("Claim error:", error);
-      toast.error("Transaction failed to start");
+      toast.success("Reward claimed successfully!");
+      // Refresh data
+      await loadWinnersData(id);
+      refetchClaimable();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Claim failed");
     }
   };
 
-  // handle tx and update the database
-  useEffect(() => {
-    if (isTxSuccess && txHash) {
-      const finalizeClaim = async () => {
-        const loadingToast = toast.loading("Finalizing claim...");
-
-        try {
-          await axios.post(`${API_URL}/api/task/${id}/claim`, {
-            winnerAddress: address,
-            txHash,
-          });
-
-          toast.success("Reward claimed successfully!", {
-            id: loadingToast,
-          });
-
-          setHasUserClaimed(true);
-          setClaimableAmount(0);
-
-          await loadWinnersData(id);
-        } catch (error) {
-          console.error(error);
-          toast.error("On-chain success, backend sync failed", {
-            id: loadingToast,
-          });
-        }
-      };
-
-      finalizeClaim();
-    }
-  }, [isTxSuccess, txHash]);
-
-  // Handle distribute reward
+  // --- Distribute reward (on‑chain + backend sync) ---
   const handleDistributeReward = async () => {
     if (!winnerAddresses.length) {
       toast.error("Please enter winner addresses");
@@ -505,39 +497,68 @@ const BountyDetail = () => {
       return;
     }
 
+    if (!bounty?.blockchainId) {
+      toast.error("Bounty not on blockchain");
+      return;
+    }
+    // Network check
+    if (currentChainId !== bounty.network) {
+      toast.loading("Switching network...");
+      try {
+        // await
+        switchChain({ chainId: bounty.network });
+      } catch (err) {
+        toast.error("Please switch to the correct network");
+        return;
+      }
+    }
+
     setDistributing(true);
     const loadingToast = toast.loading("Distributing rewards...");
 
     try {
-      console.log({
+      let result;
+      if (winnerAddresses.length === 1) {
+        result = await assignSingleWinner(blockchainId, winnerAddresses[0]);
+      } else {
+        // For multiple winners, we need percentages. Use bounty.payoutType and bounty.percentages
+        let percentages = [];
+        if (bounty.payoutType === "equal") {
+          const equal = Math.floor(100 / winnerAddresses.length);
+          const remainder = 100 - equal * winnerAddresses.length;
+          percentages = Array(winnerAddresses.length).fill(equal);
+          percentages[percentages.length - 1] += remainder;
+        } else if (
+          bounty.percentages &&
+          bounty.percentages.length === winnerAddresses.length
+        ) {
+          percentages = bounty.percentages;
+        } else {
+          toast.error("Invalid payout configuration");
+          return;
+        }
+        result = await assignMultipleWinners(
+          blockchainId,
+          winnerAddresses,
+          percentages,
+        );
+      }
+      // Sync with backend (!! NEEDS TO CHECK SUCESS STATUS)
+      await axios.post(`${API_URL}/api/task/${id}/distribute`, {
         winners: winnerAddresses,
         payoutType:
-          bounty?.winnersAllowed > 1 ? bounty?.payoutType || "equal" : "single",
-        percentages: bounty?.percentages || [],
+          winnerAddresses.length === 1
+            ? "single"
+            : bounty.payoutType || "equal",
+        percentages: bounty.percentages || [],
+        txHash: result.hash,
       });
-      const response = await axios.post(
-        `${API_URL}/api/task/${id}/distribute`,
-        {
-          winners: winnerAddresses,
-          payoutType:
-            bounty?.winnersAllowed > 1
-              ? bounty?.payoutType || "equal"
-              : "percentage",
-          percentages: bounty?.percentages || [],
-          txHash: null,
-        },
-      );
-
-      if (response.status === 200) {
-        toast.success("Rewards distributed successfully!", {
-          id: loadingToast,
-        });
-        setShowDistributeModal(false);
-        await loadWinnersData(id);
-      }
-    } catch (error) {
-      console.error("Distribution error:", error);
-      toast.error("Failed to distribute rewards", { id: loadingToast });
+      toast.success("Rewards distributed onChain and synced!");
+      setShowDistributeModal(false);
+      await loadWinnersData(id);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Distribution failed");
     } finally {
       setDistributing(false);
     }
@@ -552,8 +573,11 @@ const BountyDetail = () => {
 
   // Handle comment submission
   const handleAddComment = async () => {
-    const wallet = getUserWallet();
-    if (!wallet) return;
+    const wallet = address;
+    if (!wallet) {
+      toast.error("Please connect your wallet");
+      return;
+    }
 
     if (!newComment.trim()) {
       toast.error("Please enter a comment");
@@ -578,7 +602,7 @@ const BountyDetail = () => {
     toast.success("Comment added!");
   };
 
-  // Check if user can submit (implemented and ready to use)
+  // --- Helper for UI states ---
   const canSubmit = () => {
     if (isCreator) return false;
     if (!isEnrolled) return false;
@@ -591,7 +615,11 @@ const BountyDetail = () => {
   const canClaim = () => {
     if (isCreator) return false;
     if (!isEnrolled) return false;
-    if (hasUserClaimed) return false;
+    if (hasUserClaimedOffChain) return false;
+    // Use on‑chain claimable if available, else off‑chain
+    const claimableAmount = blockchainId
+      ? onChainClaimable || 0n
+      : offChainClaimable;
     if (claimableAmount === 0) return false;
     if (bounty?.status !== "completed") return false;
     return true;
@@ -645,6 +673,14 @@ const BountyDetail = () => {
       </div>
     );
   }
+
+  // Helper to display claimable amount
+  const displayClaimable = () => {
+    if (blockchainId) {
+      return onChainClaimable ? Number(onChainClaimable) : 0;
+    }
+    return offChainClaimable;
+  };
 
   // Main content
   return (
@@ -765,9 +801,14 @@ const BountyDetail = () => {
               {canClaim() && (
                 <button
                   onClick={handleClaimReward}
-                  className="px-4 py-2 sm:px-6 sm:py-2 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold text-sm sm:text-base hover:shadow-lg transition"
+                  disabled={isContractPending || isContractConfirming}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold"
                 >
-                  💰 Claim Reward ({claimableAmount} {bounty.token})
+                  {isContractPending
+                    ? "Confirm in wallet..."
+                    : isContractConfirming
+                      ? "Confirming..."
+                      : `💰 Claim Reward (${displayClaimable()} ${bounty.token})`}
                 </button>
               )}
 
@@ -844,52 +885,43 @@ const BountyDetail = () => {
             {/* Winners Info */}
             {winnersData?.isDistributed && winnersData.winners.length > 0 && (
               <div className="mt-4 p-4 rounded-lg border border-green-600 bg-green-900/20">
-                <h4 className="font-semibold text-green-400 mb-2 text-sm sm:text-base">
+                <h4 className="font-semibold text-green-400 mb-2">
                   🏆 Rewards Distributed
                 </h4>
-
                 <div className="space-y-2">
                   {winnersData.winners.map((winner, idx) => {
                     const isCurrentUser =
                       address &&
                       winner.address.toLowerCase() === address.toLowerCase();
-
                     const isClaimed = winnersData.claimed?.some(
                       (c) =>
                         c.address.toLowerCase() ===
                         winner.address.toLowerCase(),
                     );
-
                     return (
                       <div
                         key={idx}
                         className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm border-b border-gray-700 pb-2 gap-2"
                       >
-                        {/* LEFT: ADDRESS */}
-                        <span className="font-mono text-xs sm:text-sm break-all">
+                        <span className="font-mono text-xs break-all">
                           {shortenAddress(winner.address)}
                         </span>
-
-                        {/* RIGHT: ACTIONS */}
                         <div className="flex items-center gap-3">
-                          {/* AMOUNT */}
-                          <span className="text-green-400 text-xs sm:text-sm">
+                          <span className="text-green-400">
                             {winner.amount.toFixed(4)} {bounty.token}
                           </span>
-
-                          {/* STATUS OR BUTTON */}
-                          {/* {isClaimed ? (
+                          {isClaimed ? (
                             <span className="text-green-400">✅ Claimed</span>
                           ) : isCurrentUser ? (
                             <button
                               onClick={handleClaimReward}
-                              className="px-3 py-1 rounded-lg bg-gradient-to-r from-green-600 to-green-700 text-white text-xs font-semibold hover:shadow-md transition"
+                              className="px-3 py-1 rounded-lg bg-green-600 text-white text-xs"
                             >
-                              💰 Claim
+                              Claim
                             </button>
                           ) : (
                             <span className="text-yellow-400">⏳ Pending</span>
-                          )} */}
+                          )}
                         </div>
                       </div>
                     );
@@ -906,8 +938,8 @@ const BountyDetail = () => {
             </h3>
             <div className="space-y-3 max-h-96 overflow-y-auto mb-4">
               {comments.length === 0 ? (
-                <p className="text-gray-400 text-center py-4 text-sm">
-                  No comments yet. Be the first to comment!
+                <p className="text-gray-400 text-center py-4">
+                  No comments yet.
                 </p>
               ) : (
                 comments.map((comment) => (
@@ -915,17 +947,15 @@ const BountyDetail = () => {
                     key={comment.id}
                     className="p-3 bg-white/5 border border-white/10 rounded-lg"
                   >
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
-                      <span className="font-semibold text-[#FF1AC6] text-sm">
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="font-semibold text-[#FF1AC6]">
                         {shortenAddress(comment.user)}
                       </span>
                       <span className="text-xs text-white/50">
                         {formatDate(comment.timestamp)}
                       </span>
                     </div>
-                    <p className="text-gray-300 text-sm break-words">
-                      {comment.text}
-                    </p>
+                    <p className="text-gray-300 text-sm">{comment.text}</p>
                   </div>
                 ))
               )}
@@ -940,7 +970,7 @@ const BountyDetail = () => {
               />
               <button
                 onClick={handleAddComment}
-                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition text-sm sm:text-base"
+                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition"
               >
                 Add Comment
               </button>
@@ -1057,29 +1087,22 @@ const BountyDetail = () => {
                 ✖
               </button>
             </div>
-            <p className="text-gray-300 text-sm mb-2 break-words">
-              Bounty: {bounty.title}
-            </p>
+            <p className="text-gray-300 text-sm mb-2">Bounty: {bounty.title}</p>
             <p className="text-gray-300 text-sm mb-4">
               Reward: {bounty.reward} {bounty.token}
             </p>
             <div className="space-y-3 mb-6">
               {winnerAddresses.map((addr, idx) => {
                 let amount = 0;
-                if (
-                  bounty.winnersAllowed > 1 &&
-                  bounty.payoutType === "equal"
-                ) {
+                if (bounty.winnersAllowed > 1 && bounty.payoutType === "equal")
                   amount = bounty.reward / bounty.winnersAllowed;
-                } else if (
+                else if (
                   bounty.winnersAllowed > 1 &&
                   bounty.percentages &&
                   bounty.percentages[idx]
-                ) {
+                )
                   amount = (bounty.reward * bounty.percentages[idx]) / 100;
-                } else if (bounty.winnersAllowed === 1) {
-                  amount = bounty.reward;
-                }
+                else if (bounty.winnersAllowed === 1) amount = bounty.reward;
                 return (
                   <div key={idx}>
                     <label className="text-white text-sm block mb-1">
@@ -1108,14 +1131,16 @@ const BountyDetail = () => {
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => setShowDistributeModal(false)}
-                className="flex-1 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 transition text-sm"
+                className="flex-1 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDistributeReward}
-                disabled={distributing}
-                className="flex-1 px-4 py-2 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold hover:shadow-lg transition disabled:opacity-50 text-sm"
+                disabled={
+                  distributing || isContractPending || isContractConfirming
+                }
+                className="flex-1 px-4 py-2 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold hover:shadow-lg disabled:opacity-50"
               >
                 {distributing ? "Distributing..." : "Confirm Distribution"}
               </button>

@@ -18,6 +18,16 @@ import {
   prepareAssignMultipleWinnersTx,
   prepareSubmitTx,
   getClaimedConfig,
+  getBountyInfoConfig,
+  getAvailableBountiesConfig,
+  getBountiesByCreatorConfig,
+  getUserSubmissionsConfig,
+  getTotalEthFeesConfig,
+  getTotalUsdcFeesConfig,
+  getFeePercentConfig,
+  getMaxWinnersConfig,
+  getOwnerConfig,
+  prepareWithdrawTx,
   formatReward,
 } from "../services/bountyService";
 import { BOUNTY_ABI } from "contract";
@@ -121,20 +131,105 @@ export const useBounty = () => {
 
   // ---------- Public read hooks (using useReadContract) ----------
   const useClaimableReward = (bountyId, user) => {
-    const config = getClaimableConfig({ bountyId, user, chainId });
     return useReadContract({
-      ...config,
-      query: { enabled: !!bountyId && !!user && !!chainId && !!config.address },
+      ...(bountyId && user && chainId
+        ? getClaimableConfig({ bountyId, user, chainId })
+        : {}),
+      query: {
+        enabled: !!bountyId && !!user && !!chainId,
+      },
     });
   };
 
   const useClaimedStatus = (bountyId, user) => {
-    const config = getClaimedConfig({ bountyId, user, chainId });
     return useReadContract({
-      ...config,
-      query: { enabled: !!bountyId && !!user && !!chainId && !!config.address },
+      ...(bountyId && user && chainId
+        ? getClaimedConfig({ bountyId, user, chainId })
+        : {}),
+      query: {
+        enabled: !!bountyId && !!user && !!chainId,
+      },
     });
   };
+
+  const useBountyInfo = (bountyId) => {
+    const config =
+      bountyId && chainId ? getBountyInfoConfig({ bountyId, chainId }) : null;
+    return useReadContract({
+      ...config,
+      query: { enabled: !!bountyId && !!chainId && !!config?.address },
+    });
+  };
+
+  const useAvailableBounties = () => {
+    const config = chainId ? getAvailableBountiesConfig({ chainId }) : null;
+    return useReadContract({
+      ...config,
+      query: { enabled: !!chainId && !!config?.address },
+    });
+  };
+
+  const useBountiesByCreator = (creator) => {
+    const config =
+      creator && chainId
+        ? getBountiesByCreatorConfig({ creator, chainId })
+        : null;
+    return useReadContract({
+      ...config,
+      query: { enabled: !!creator && !!chainId && !!config?.address },
+    });
+  };
+
+  const useUserSubmissions = (user) => {
+    const config =
+      user && chainId ? getUserSubmissionsConfig({ user, chainId }) : null;
+    return useReadContract({
+      ...config,
+      query: { enabled: !!user && !!chainId && !!config?.address },
+    });
+  };
+
+  const useTotalEthFees = () => {
+    const config = chainId ? getTotalEthFeesConfig({ chainId }) : null;
+    return useReadContract({
+      ...config,
+      query: { enabled: !!chainId && !!config?.address },
+    });
+  };
+
+  const useTotalUsdcFees = () => {
+    const config = chainId ? getTotalUsdcFeesConfig({ chainId }) : null;
+    return useReadContract({
+      ...config,
+      query: { enabled: !!chainId && !!config?.address },
+    });
+  };
+
+  const useFeePercent = () => {
+    const config = chainId ? getFeePercentConfig({ chainId }) : null;
+    return useReadContract({
+      ...config,
+      query: { enabled: !!chainId && !!config?.address },
+    });
+  };
+
+  const useMaxWinners = () => {
+    const config = chainId ? getMaxWinnersConfig({ chainId }) : null;
+    return useReadContract({
+      ...config,
+      query: { enabled: !!chainId && !!config?.address },
+    });
+  };
+
+  const useOwner = () => {
+    const config = chainId ? getOwnerConfig({ chainId }) : null;
+    return useReadContract({
+      ...config,
+      query: { enabled: !!chainId && !!config?.address },
+    });
+  };
+
+  // Then add all these to the return object.
 
   // ---------- Write actions with event parsing ----------
   const createBounty = async (bountyData) => {
@@ -192,6 +287,15 @@ export const useBounty = () => {
     );
   };
 
+  //   only admin can call this function, so we don't need to expose it in the UI for now
+  const withdrawFees = async (tokenType, recipient) => {
+    return executeTx(
+      prepareWithdrawTx,
+      { tokenType, recipient },
+      { successMessage: "Fees withdrawn!" },
+    );
+  };
+
   return {
     // States
     isPending,
@@ -201,12 +305,22 @@ export const useBounty = () => {
     // Read hooks
     useClaimableReward,
     useClaimedStatus,
+    useBountyInfo,
+    useAvailableBounties,
+    useBountiesByCreator,
+    useUserSubmissions,
+    useTotalEthFees,
+    useTotalUsdcFees,
+    useFeePercent,
+    useMaxWinners,
+    useOwner,
     // Write actions
     createBounty,
     claimReward,
     assignSingleWinner,
     assignMultipleWinners,
     submitSolution,
+    withdrawFees,
     // Helpers
     formatReward,
   };

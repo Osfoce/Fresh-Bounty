@@ -58,6 +58,9 @@ export const prepareClaimTx = ({ bountyId, account, chainId }) => {
  * Read claimable reward (for viem OR wagmi)
  */
 export const getClaimableConfig = ({ bountyId, user, chainId }) => {
+  console.log(
+    `Getting claimable rewards for bountyId: ${bountyId}, user: ${user}, chainId: ${chainId}`,
+  );
   return {
     address: getBountyContract(chainId),
     abi: BOUNTY_ABI,
@@ -125,5 +128,112 @@ export const getClaimedConfig = ({ bountyId, user, chainId }) => {
     abi: BOUNTY_ABI,
     functionName: "claimed",
     args: [BigInt(bountyId), user],
+  };
+};
+
+// Get full bounty info (read)
+export const getBountyInfoConfig = ({ bountyId, chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "getBountyInfo",
+  args: [BigInt(bountyId)],
+});
+
+// Get all available bounty IDs
+export const getAvailableBountiesConfig = ({ chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "availableBounties",
+  args: [],
+});
+
+// Get bounties by creator
+export const getBountiesByCreatorConfig = ({ creator, chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "bountiesByCreator",
+  args: [creator],
+});
+
+// Get user submissions
+export const getUserSubmissionsConfig = ({ user, chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "userSubmissions",
+  args: [user],
+});
+
+// Get all bounty IDs (historical)
+export const getAllBountyIdsConfig = ({ chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "allBountyIds",
+  args: [],
+});
+
+// Get total fees
+export const getTotalEthFeesConfig = ({ chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "totalEthFees",
+  args: [],
+});
+
+export const getTotalUsdcFeesConfig = ({ chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "totalUsdcFees",
+  args: [],
+});
+
+// Get constants
+export const getFeePercentConfig = ({ chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "FEE_PERCENT",
+  args: [],
+});
+
+export const getBasisPointsConfig = ({ chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "BASIS_POINTS",
+  args: [],
+});
+
+export const getMaxWinnersConfig = ({ chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "MAX_WINNERS",
+  args: [],
+});
+
+export const getOwnerConfig = ({ chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "owner",
+  args: [],
+});
+
+export const getUsdcTokenConfig = ({ chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "usdcToken",
+  args: [],
+});
+
+// fees withdrawal
+export const prepareWithdrawTx = ({
+  tokenType,
+  recipient,
+  account,
+  chainId,
+}) => {
+  return {
+    address: getBountyContract(chainId),
+    abi: BOUNTY_ABI,
+    functionName: "withdraw",
+    args: [tokenType, recipient],
+    account,
   };
 };
