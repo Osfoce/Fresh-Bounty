@@ -310,21 +310,21 @@ function LandingPage() {
             {/* Placeholder images for chains – replace with actual logo URLs */}
             <div className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
-                <img src={injecoin} alt="" />
+                <img src={injecoin} alt="" className="w-12 spin-slow" />
               </div>
               <span className="text-sm">Injective</span>
             </div>
 
             <div className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
-               <img className="w-12" src={eth2} alt="" />
+               <img className="w-12" src={eth2} alt=""  className="w-12 spin-slow" />
               </div>
               <span className="text-sm">Ethereum</span>
             </div>
             
             <div className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
-                <img src={bnb1} alt="" />
+                <img src={bnb1} alt=""  className="w-12 spin-slow" />
               </div>
               <span className="text-sm">BNB Chain</span>
             </div>
@@ -332,7 +332,7 @@ function LandingPage() {
 
             <div className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
-                <img src={base} alt="" />
+                <img src={base} alt="" className="w-12 spin-slow" />
               </div>
               <span className="text-sm">Base</span>
             </div>
@@ -340,17 +340,33 @@ function LandingPage() {
             {/* Tokens */}
             <div className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 rounded-full  flex items-center justify-center text-2xl">
-                <img src={injecoin} alt="" />
+                <img src={injecoin} alt="" className="w-12 spin-slow" />
               </div>
               <span className="text-sm">INJ / wINJ</span>
             </div>
 
             <div className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 rounded-full  flex items-center justify-center text-2xl">
-                <img src={usdc1} alt="" />
+                <img src={usdc1} alt="" className="w-12 spin-slow" />
               </div>
               <span className="text-sm">USDC / USDT</span>
             </div>
+
+<style>
+  {`
+    @keyframes spinSlow {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .spin-slow {
+      animation: spinSlow 3s linear infinite;
+    }
+  `}
+</style>
+
+
           </div>
         </div>
       </section>
