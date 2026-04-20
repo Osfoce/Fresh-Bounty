@@ -69,33 +69,6 @@ export const getClaimableConfig = ({ bountyId, user, chainId }) => {
   };
 };
 
-// /**
-//  * Get bountyId from a transaction hash by parsing the BountyCreated event
-//  * @param {string} txHash - Transaction hash
-//  * @param {object} publicClient - Viem public client
-//  * @returns {Promise<number|null>} - Bounty ID or null if not found
-//  */
-// export const getBountyIdFromTxHash = async (txHash, publicClient) => {
-//   try {
-//     const receipt = await publicClient.getTransactionReceipt({ hash: txHash });
-//     if (receipt.status !== "success") return null;
-
-//     const events = parseEventLogs({
-//       abi: BOUNTY_ABI,
-//       logs: receipt.logs,
-//       eventName: "BountyCreated",
-//     });
-
-//     if (events.length > 0) {
-//       return Number(events[0].args.bountyId);
-//     }
-//     return null;
-//   } catch (error) {
-//     console.error("Error fetching bountyId from txHash:", error);
-//     return null;
-//   }
-// };
-
 /**
  * Format reward safely
  */

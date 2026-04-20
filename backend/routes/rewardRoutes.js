@@ -3,118 +3,123 @@
 const express = require("express");
 const { ObjectId } = require("mongodb");
 const { getDb } = require("../config/db");
+import { formatEther, parseEventLogs } from "viem";
+import { getPublicClient } from "../config/chains";
+import { BOUNTY_ABI } from "../config/abi";
 
 const router = express.Router();
 
-// POST /task/:id/distribute
 router.post("/task/:id/distribute", async (req, res) => {
   const id = req.params.id;
-  const { winners, payoutType, percentages, txHash } = req.body;
-  console.log({
-    winners: winnerAddresses,
-    payoutType,
-    percentages,
-  });
-  if (!ObjectId.isValid(id))
+  const { txHash, blockchainId, chainId, bountyContract } = req.body;
+
+  if (!ObjectId.isValid(id)) {
     return res.status(400).json({ error: "Invalid bounty ID" });
-  if (!winners || !Array.isArray(winners) || winners.length === 0) {
-    return res.status(400).json({ error: "Winners array is required" });
   }
+
+  if (!txHash || !blockchainId || !chainId || !bountyContract) {
+    return res.status(400).json({ error: "All fields required" });
+  }
+
   try {
     const db = getDb();
+
     const bounty = await db
       .collection("bounty")
       .findOne({ _id: new ObjectId(id) });
-    if (!bounty) return res.status(404).json({ error: "Bounty not found" });
-    if (bounty.winners?.assigned && bounty.winners.assigned.length > 0) {
-      return res.status(400).json({ error: "Rewards already distributed" });
+
+    if (!bounty) {
+      return res.status(404).json({ error: "Bounty not found" });
     }
 
-    const rewardAmount = Number(bounty.reward);
-    if (isNaN(rewardAmount)) {
-      throw new Error("Invalid reward amount");
-    }
-    console.log(`reward amount ${rewardAmount}`);
-    let winnerDetails = [];
+    // 🔥 STEP 1: Get receipt
+    const publicClient = getPublicClient(chainId);
 
-    if (winners.length === 1) {
-      winnerDetails.push({
-        address: winners[0],
-        amount: rewardAmount,
-        percentage: 100,
-      });
-    } else if (payoutType === "equal") {
-      const share = rewardAmount / winners.length;
-      winners.forEach((winner) => {
-        winnerDetails.push({
+    const receipt = await publicClient.getTransactionReceipt({
+      hash: txHash,
+    });
+
+    if (receipt.status !== "success") {
+      throw new Error("Transaction failed on-chain");
+    }
+
+    // 🔥 STEP 2: Parse event
+    const events = parseEventLogs({
+      abi: BOUNTY_ABI,
+      logs: receipt.logs,
+      eventName: "RewardsAssigned",
+    });
+
+    if (!events.length) {
+      throw new Error("RewardsAssigned event not found");
+    }
+
+    const event = events[0];
+    const winners = event.args.winners;
+
+    // 🔥 STEP 3: Fetch real amounts from contract
+    const winnerDetails = await Promise.all(
+      winners.map(async (winner) => {
+        const amount = await publicClient.readContract({
+          address: bountyContract,
+          abi: BOUNTY_ABI,
+          functionName: "claimableRewards",
+          args: [BigInt(blockchainId), winner],
+        });
+
+        return {
           address: winner,
-          amount: share,
-          percentage: 100 / winners.length,
-        });
-      });
-    } else if (payoutType === "percentage" && percentages) {
-      if (percentages.length !== winners.length) {
-        return res
-          .status(400)
-          .json({ error: "Percentages length must match winners length" });
-      }
-      let total = 0;
-      for (let i = 0; i < winners.length; i++) {
-        total += percentages[i];
-        winnerDetails.push({
-          address: winners[i],
-          amount: (rewardAmount * percentages[i]) / 100,
-          percentage: percentages[i],
-        });
-      }
-      if (total !== 100)
-        return res.status(400).json({ error: "Percentages must sum to 100" });
-    } else {
-      return res.status(400).json({ error: "Invalid payout configuration" });
-    }
+          amount: formatEther(amount), // convert later properly if needed
+        };
+      }),
+    );
 
+    // 🔥 STEP 4: Store
     const updateData = {
       winners: {
         assigned: winnerDetails,
         claimed: [],
         assignedAt: new Date().toISOString(),
-        distributionTxHash: txHash || null,
-        payoutType: payoutType,
+        distributionTxHash: txHash,
       },
-      rewardsAssignedOnChain: !!txHash, // Becomes true only when txhash is not null
+      rewardsAssignedOnChain: true,
       updatedAt: new Date().toISOString(),
     };
+
     await db
       .collection("bounty")
       .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
 
-    // Update user stats for each winner
-    for (const winner of winnerDetails) {
-      await db.collection("users").updateOne(
-        { walletAddress: winner.address },
-        {
-          $inc: { totalEarnings: winner.amount },
-          $set: { lastUpdated: new Date().toISOString() },
-          $push: {
-            earnedFrom: {
-              bountyId: id,
-              bountyTitle: bounty.title,
-              amount: winner.amount,
-              percentage: winner.percentage,
-              earnedAt: new Date().toISOString(),
+    // 🔥 STEP 5: Update users
+    await Promise.all(
+      winnerDetails.map((winner) =>
+        db.collection("users").updateOne(
+          { walletAddress: winner.address },
+          {
+            $inc: { totalEarnings: winner.amount },
+            $set: { lastUpdated: new Date().toISOString() },
+            $push: {
+              earnedFrom: {
+                bountyId: id,
+                bountyTitle: bounty.title,
+                amount: winner.amount,
+                earnedAt: new Date().toISOString(),
+              },
             },
           },
-        },
-        { upsert: true },
-      );
-    }
+          { upsert: true },
+        ),
+      ),
+    );
+
     res.status(200).json({
-      message: "Rewards distributed successfully",
+      message: "Distribution synced from blockchain",
       winners: winnerDetails,
-      distributionTxHash: txHash,
+      chainId,
+      txHash,
     });
   } catch (err) {
-    console.error("🔥 DISTRIBUTION ERROR:", err.message, err.stack);
+    console.error("🔥 DISTRIBUTION ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 });

@@ -250,6 +250,7 @@ const BountyDetail = () => {
   useEffect(() => {
     const fetchBounty = async () => {
       console.log(`Fetching bounty details for id: ${id}`);
+      console.log(`bounty db id: ${id}`);
       if (!id) return;
 
       try {
@@ -484,11 +485,6 @@ const BountyDetail = () => {
     }
 
     if (!bounty?.blockchainId) {
-      // try {
-      //   await fetchBountyIdFromTx(bounty.txHash);
-      // } catch (err) {
-      //   toast.error("Failed to retrieve bountyId from transaction");
-      // }
       toast.error("This bounty is not linked to a smart contract");
       return;
     }
@@ -558,7 +554,7 @@ const BountyDetail = () => {
       toast.loading("Switching network...");
       try {
         // await
-        switchChain({ chainId: bounty.network });
+        await switchChain({ chainId: bounty.network });
       } catch (err) {
         toast.error("Please switch to the correct network");
         return;
@@ -569,48 +565,35 @@ const BountyDetail = () => {
     const loadingToast = toast.loading("Distributing rewards...");
 
     try {
-      let result;
-      if (winnerAddresses.length === 1) {
-        result = await assignSingleWinner(blockchainId, winnerAddresses[0]);
+      let tx;
+
+      if (validAddresses.length === 1) {
+        tx = await assignSingleWinner(blockchainId, validAddresses[0]);
       } else {
-        // For multiple winners, we need percentages. Use bounty.payoutType and bounty.percentages
-        let percentages = [];
-        if (bounty.payoutType === "equal") {
-          const equal = Math.floor(100 / winnerAddresses.length);
-          const remainder = 100 - equal * winnerAddresses.length;
-          percentages = Array(winnerAddresses.length).fill(equal);
-          percentages[percentages.length - 1] += remainder;
-        } else if (
-          bounty.percentages &&
-          bounty.percentages.length === winnerAddresses.length
-        ) {
-          percentages = bounty.percentages;
-        } else {
-          toast.error("Invalid payout configuration");
-          return;
-        }
-        result = await assignMultipleWinners(
+        tx = await assignMultipleWinners(
           blockchainId,
-          winnerAddresses,
-          percentages,
+          validAddresses,
+          bounty.percentages || [], // only pass if needed
         );
       }
-      // Sync with backend (!! NEEDS TO CHECK SUCESS STATUS)
+
+      // 🔥 IMPORTANT: DO NOT SEND CALCULATED DATA
       await axios.post(`${API_URL}/api/task/${id}/distribute`, {
-        winners: winnerAddresses,
-        payoutType:
-          winnerAddresses.length === 1
-            ? "single"
-            : bounty.payoutType || "equal",
-        percentages: bounty.percentages || [],
-        txHash: result.hash,
+        txHash: tx.hash,
+        blockchainId: bounty.blockchainId,
+        chainId: bounty.network,
+        bountyContract: CONTRACT_ADDRESSES[bounty.network]?.bounty || null,
       });
-      toast.success("Rewards distributed onChain and synced!");
+
+      toast.success("Distribution successful!", { id: loadingToast });
+
       setShowDistributeModal(false);
       await loadWinnersData(id);
     } catch (err) {
       console.error(err);
-      toast.error(err.message || "Distribution failed");
+      toast.error(err.message || "Distribution failed", {
+        id: loadingToast,
+      });
     } finally {
       setDistributing(false);
     }
@@ -731,7 +714,8 @@ const BountyDetail = () => {
     if (blockchainId) {
       return onChainClaimable ? Number(onChainClaimable) : 0;
     }
-    return offChainClaimable;
+    return offChainClaimable /* 1e18 */
+      .toFixed(2);
   };
 
   // Main content

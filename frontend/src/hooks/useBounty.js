@@ -317,7 +317,6 @@ export const useBounty = () => {
       { bountyId, link },
       {
         successMessage: "Solution submitted!",
-        eventName: "SubmissionCreated",
       },
     );
   };
@@ -327,7 +326,7 @@ export const useBounty = () => {
     return executeTx(
       prepareWithdrawTx,
       { tokenType, recipient },
-      { successMessage: "Fees withdrawn!" },
+      { successMessage: "Fees withdrawn!", eventName: "FeeWithdrawn" },
     );
   };
 
