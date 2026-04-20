@@ -254,7 +254,7 @@ const BountyDetail = () => {
 
       try {
         const response = await axios.get(`${API_URL}/api/task/${id}`);
-        const bountyData = response.data;
+        let bountyData = response.data;
 
         // If missing blockchainId but has txHash, try to fetch it
         if (!bountyData.blockchainId && bountyData.txHash) {
