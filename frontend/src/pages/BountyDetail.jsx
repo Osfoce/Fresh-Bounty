@@ -23,6 +23,7 @@ const BountyDetail = () => {
     assignMultipleWinners,
     useClaimableReward,
     useClaimedStatus,
+    fetchBountyIdFromTx,
     isPending: isContractPending,
     isConfirming: isContractConfirming,
   } = useBounty();
@@ -254,6 +255,42 @@ const BountyDetail = () => {
       try {
         const response = await axios.get(`${API_URL}/api/task/${id}`);
         const bountyData = response.data;
+
+        // If missing blockchainId but has txHash, try to fetch it
+        if (!bountyData.blockchainId && bountyData.txHash) {
+          console.log(
+            "Bounty has txHash but no blockchainId, attempting to sync...",
+          );
+
+          const requiredChainId = bountyData.network;
+          console.log(`Required chain ID: ${requiredChainId}`);
+          console.log(`Current chain ID: ${currentChainId}`);
+          if (currentChainId !== requiredChainId) {
+            toast.loading(`Switching to correct network...`);
+            try {
+              // await
+              switchChain({ chainId: requiredChainId });
+              toast.success("Network switched!");
+            } catch (err) {
+              toast.error("Please switch network manually");
+              return;
+            }
+          }
+          const fetchedId = await fetchBountyIdFromTx(bountyData.txHash);
+          if (fetchedId) {
+            // Update backend and local data
+            await axios.patch(`${API_URL}/api/task/${id}`, {
+              blockchainId: fetchedId,
+            });
+            bountyData = { ...bountyData, blockchainId: fetchedId };
+            console.log("Sync successful, new blockchainId:", fetchedId);
+          } else {
+            console.warn("Could not retrieve blockchainId from txHash");
+          }
+        }
+        console.log("Fetched bounty data:", bountyData);
+        console.log("No issues");
+
         setBounty(bountyData);
 
         const wallet = address;
@@ -285,6 +322,24 @@ const BountyDetail = () => {
 
     fetchBounty();
   }, [id, navigate, address]);
+
+  // Second useEffect: sync when bounty is loaded and missing blockchainId
+  // useEffect(() => {
+  //   const syncMissingBlockchainId = async () => {
+  //     if (bounty && !bounty.blockchainId && bounty.txHash) {
+  //       const fetchedId = await fetchBountyIdFromTx(bounty.txHash);
+  //       if (fetchedId) {
+  //         await axios.patch(`${API_URL}/api/task/${id}`, {
+  //           blockchainId: fetchedId,
+  //         });
+  //         setBounty((prev) => ({ ...prev, blockchainId: fetchedId }));
+  //       } else {
+  //         toast.error("This bounty is not linked to a smart contract");
+  //       }
+  //     }
+  //   };
+  //   syncMissingBlockchainId();
+  // }, [bounty]); // runs whenever bounty is set or changes
 
   // --- Enrollment (off‑chain) ---
   const handleEnroll = async () => {
@@ -420,14 +475,6 @@ const BountyDetail = () => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // // Onchain claimable check
-  // const { data: onChainClaimable } = useReadContract({
-  //   address: getContractAddress(),
-  //   abi: BOUNTY_ABI,
-  //   functionName: "claimableRewards",
-  //   args: [bounty.blockchainId, address],
-  // });
-
   // --- Claim reward (on‑chain + backend sync) ---
   const handleClaimReward = async () => {
     const wallet = address;
@@ -437,6 +484,11 @@ const BountyDetail = () => {
     }
 
     if (!bounty?.blockchainId) {
+      // try {
+      //   await fetchBountyIdFromTx(bounty.txHash);
+      // } catch (err) {
+      //   toast.error("Failed to retrieve bountyId from transaction");
+      // }
       toast.error("This bounty is not linked to a smart contract");
       return;
     }
@@ -782,22 +834,19 @@ const BountyDetail = () => {
                 <button
                   onClick={handleEnroll}
                   disabled={isEnrolling}
-                  className="px-4 py-2 sm:px-6 sm:py-2 rounded-xl bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 text-white font-semibold text-sm sm:text-base hover:shadow-lg transition disabled:opacity-50"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 text-white font-semibold hover:shadow-lg disabled:opacity-50"
                 >
                   {isEnrolling ? "Enrolling..." : "🚀 Start Task"}
                 </button>
               )}
-
-              {/* Submit button using canSubmit() */}
               {canSubmit() && (
                 <button
                   onClick={() => setShowSubmitModal(true)}
-                  className="px-4 py-2 sm:px-6 sm:py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm sm:text-base hover:bg-white/10 transition"
+                  className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10"
                 >
                   📝 Submit Task
                 </button>
               )}
-
               {canClaim() && (
                 <button
                   onClick={handleClaimReward}
@@ -811,19 +860,17 @@ const BountyDetail = () => {
                       : `💰 Claim Reward (${displayClaimable()} ${bounty.token})`}
                 </button>
               )}
-
               {canDistribute() && (
                 <button
                   onClick={openDistributeModal}
-                  className="px-4 py-2 sm:px-6 sm:py-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 text-white font-semibold text-sm sm:text-base hover:shadow-lg transition"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 text-white font-semibold"
                 >
                   🏆 Distribute Reward
                 </button>
               )}
-
               {hasUserSubmitted && userSubmission && (
                 <div className="px-3 py-2 rounded-xl bg-white/5 border border-white/10">
-                  <span className="text-xs sm:text-sm">
+                  <span className="text-xs">
                     {userSubmission.status === "pending" &&
                       "⏳ Submission Pending"}
                     {userSubmission.status === "accepted" &&
@@ -833,16 +880,6 @@ const BountyDetail = () => {
                   </span>
                 </div>
               )}
-
-              {isEnrolled &&
-                !isCreator &&
-                bounty.status === "completed" &&
-                claimableAmount === 0 &&
-                !hasUserClaimed && (
-                  <div className="px-3 py-2 rounded-xl bg-yellow-500/20 text-yellow-400 text-xs sm:text-sm">
-                    ⏳ Waiting for reward distribution
-                  </div>
-                )}
             </div>
 
             {/* Submission Status Display */}
@@ -913,12 +950,9 @@ const BountyDetail = () => {
                           {isClaimed ? (
                             <span className="text-green-400">✅ Claimed</span>
                           ) : isCurrentUser ? (
-                            <button
-                              onClick={handleClaimReward}
-                              className="px-3 py-1 rounded-lg bg-green-600 text-white text-xs"
-                            >
-                              Claim
-                            </button>
+                            <span className="text-yellow-400">
+                              ⏳ Your reward is ready
+                            </span>
                           ) : (
                             <span className="text-yellow-400">⏳ Pending</span>
                           )}

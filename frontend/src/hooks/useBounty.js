@@ -130,6 +130,41 @@ export const useBounty = () => {
   };
 
   // ---------- Public read hooks (using useReadContract) ----------
+  const fetchBountyIdFromTx = async (txHash) => {
+    console.log(`Fetching bountyId from txHash: ${txHash}`);
+    console.log(typeof txHash);
+    if (!txHash) {
+      toast.error("Transaction hash is required");
+      return null;
+    }
+
+    try {
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
+
+      if (receipt.status !== "success") {
+        throw new Error("Transaction reverted");
+      }
+      console.log("Receipt logs for bountyId fetch:", receipt.logs);
+      console.log("Full receipt for bountyId fetch:", receipt);
+      const events = parseEventLogs({
+        abi: BOUNTY_ABI,
+        logs: receipt.logs,
+        eventName: "BountyCreated",
+      });
+      console.log(`retrived id ${events?.[0]?.args?.bountyId}`);
+
+      return events?.[0]?.args?.bountyId
+        ? Number(events[0].args.bountyId)
+        : null;
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to retrieve bountyId from transaction");
+      return null;
+    }
+  };
+
   const useClaimableReward = (bountyId, user) => {
     return useReadContract({
       ...(bountyId && user && chainId
@@ -303,6 +338,7 @@ export const useBounty = () => {
     txHash,
     txError,
     // Read hooks
+    fetchBountyIdFromTx,
     useClaimableReward,
     useClaimedStatus,
     useBountyInfo,
