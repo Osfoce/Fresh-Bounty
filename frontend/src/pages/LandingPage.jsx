@@ -12,6 +12,7 @@ import bnb1 from "../assets/images/bnb1.png";
 import eth2 from "../assets/images/eth2.png";
 import base from "../assets/images/base.png";
 import usdc1 from "../assets/images/usdc1.png";
+import canton from "../assets/images/canton.png";
 // import CoinSpinner from "../components/Layout/crypto";
 
 
@@ -240,12 +241,13 @@ function LandingPage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredBounties.map((bounty) => (
-              <BountyCard key={bounty._id} bounty={bounty} />
-            ))}
-          </div>
+  {featuredBounties.map((bounty) => (
+    <BountyCard key={bounty._id} bounty={bounty} />
+  ))}
+</div>
         )}
       </section>
+
 
       {/* TESTIMONIALS SECTION */}
       <section
@@ -351,7 +353,14 @@ function LandingPage() {
               </div>
               <span className="text-sm">USDC / USDT</span>
             </div>
+            
 
+              <div className="flex flex-col items-center gap-2">
+              <div className="w-16 h-16 rounded-full  flex items-center justify-center text-2xl">
+                <img src={canton} alt="" className="w-12 spin-slow" />
+              </div>
+              <span className="text-sm">Canton</span>
+            </div>
 <style>
   {`
     @keyframes spinSlow {
