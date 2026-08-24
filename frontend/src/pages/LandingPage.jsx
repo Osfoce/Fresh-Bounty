@@ -118,7 +118,7 @@ function LandingPage() {
 
   return (
     <div className="bg-black text-white min-h-screen flex flex-col overflow-x-hidden">
-      <div className="py-2 mt-2 w-full">
+      <div className="py-6 mt-8 w-full">
         <NavBar />
         <LiveTricker />
       </div>
@@ -1402,127 +1402,454 @@ function LandingPage() {
 
 
       {/* SUPPORTED NETWORKS & TOKENS */}
-      <section className="px-6 md:px-10 lg:px-16 my-16">
-        <div className="bg-gradient-to-br from-[#2D2D2D] to-[#252525] rounded-2xl border border-white/10 p-8">
-          <h2 className="text-3xl font-bold text-center mb-8">
-            Supported Networks & Tokens
-          </h2>
+<section className="px-6 md:px-10 lg:px-16 my-24">
+  <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#151515] via-[#101010] to-[#090909] p-8 md:p-12">
 
-          <div className="flex flex-wrap justify-center gap-14 items-center">
-            {/* Injective */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
-                <img src={injecoin} alt="" className="w-12 spin-slow" />
-              </div>
-              <span className="text-sm">Injective</span>
-            </div>
+    {/* Background Glows */}
+    <div className="absolute -top-32 left-1/4 h-64 w-64 rounded-full bg-[#FF1AC6]/10 blur-[120px] pointer-events-none" />
+    <div className="absolute -bottom-32 right-1/4 h-64 w-64 rounded-full bg-purple-600/10 blur-[120px] pointer-events-none" />
 
-            {/* Ethereum */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
-                <img className="w-12 spin-slow" src={eth2} alt="" />
-              </div>
-              <span className="text-sm">Ethereum</span>
-            </div>
+    {/* Decorative Grid */}
+    <div
+      className="absolute inset-0 opacity-[0.025] pointer-events-none"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+        backgroundSize: "40px 40px",
+      }}
+    />
 
-            {/* BNB */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
-                <img src={bnb1} alt="" className="w-12 spin-slow" />
-              </div>
-              <span className="text-sm">BNB Chain</span>
-            </div>
+    <div className="relative z-10">
 
-            {/* Base */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
-                <img src={base} alt="" className="w-12 spin-slow" />
-              </div>
-              <span className="text-sm">Base</span>
-            </div>
+      {/* HEADER */}
+      <div className="text-center max-w-2xl mx-auto mb-12">
 
-            {/* INJ */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
-                <img src={injecoin} alt="" className="w-12 spin-slow" />
-              </div>
-              <span className="text-sm">INJ / wINJ</span>
-            </div>
+        <div className="inline-flex items-center gap-2 rounded-full border border-[#FF1AC6]/20 bg-[#FF1AC6]/5 px-4 py-2 mb-5">
 
-            {/* USDC */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
-                <img src={usdc1} alt="" className="w-12 spin-slow" />
-              </div>
-              <span className="text-sm">USDT</span>
-            </div>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FF1AC6] animate-pulse shadow-[0_0_8px_rgba(255,26,198,0.8)]" />
 
-            {/* USDT */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
-                <img src={usdt} alt="" className="w-12 spin-slow" />
-              </div>
-              <span className="text-sm">USDT</span>
-            </div>
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#FF1AC6]">
+            Multi-Chain Ecosystem
+          </span>
 
-            {/* Canton */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl">
-                <img src={canton} alt="" className="w-12 spin-slow" />
-              </div>
-              <span className="text-sm">Canton</span>
-            </div>
-
-            <style>
-              {`
-                @keyframes spinSlow {
-                  to {
-                    transform: rotate(360deg);
-                  }
-                }
-
-                .spin-slow {
-                  animation: spinSlow 3s linear infinite;
-                }
-              `}
-            </style>
-          </div>
         </div>
-      </section>
 
-      {/* FINAL CALL TO ACTION */}
-      <section className="mx-6 md:mx-10 lg:mx-16 my-16">
-        <div className="relative bg-gradient-to-r from-[#FF1AC6]/20 to-[#FF1AC6]/5 rounded-2xl border border-[#FF1AC6]/30 p-12 text-center overflow-hidden">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml,...')] opacity-5"></div>
+        <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
+          Supported{" "}
+          <span className="bg-gradient-to-r from-[#FF1AC6] via-pink-400 to-purple-500 bg-clip-text text-transparent">
+            Networks & Tokens
+          </span>
+        </h2>
 
-          <div className="relative z-10">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Ready to start earning?
-            </h2>
+        <p className="mt-4 text-sm md:text-base leading-relaxed text-gray-400 max-w-xl mx-auto">
+          Connect, complete bounties, and receive rewards across
+          multiple blockchain networks and digital assets.
+        </p>
 
-            <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-              Join hundreds of users already earning crypto by completing
-              bounties or posting tasks.
+      </div>
+
+
+      {/* NETWORKS LABEL */}
+      <div className="flex items-center gap-4 mb-6">
+
+        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">
+          Networks
+        </span>
+
+        <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
+
+      </div>
+
+
+      {/* NETWORK CARDS */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
+
+        {/* Injective */}
+        <div className="group relative rounded-2xl border border-white/[0.07] bg-white/[0.025] p-5 text-center transition-all duration-300 hover:-translate-y-1 hover:border-[#FF1AC6]/40 hover:bg-white/[0.05]">
+
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/[0.08] bg-black/40 transition-transform duration-500 group-hover:scale-110 group-hover:border-[#FF1AC6]/30">
+
+            <img
+              src={injecoin}
+              alt="Injective"
+              className="w-11 h-11"
+            />
+
+          </div>
+
+          <p className="mt-4 text-sm font-semibold text-white">
+            Injective
+          </p>
+
+          <span className="mt-1 block text-[10px] uppercase tracking-wider text-gray-600">
+            Network
+          </span>
+
+        </div>
+
+
+        {/* Ethereum */}
+        <div className="group relative rounded-2xl border border-white/[0.07] bg-white/[0.025] p-5 text-center transition-all duration-300 hover:-translate-y-1 hover:border-purple-400/40 hover:bg-white/[0.05]">
+
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/[0.08] bg-black/40 transition-transform duration-500 group-hover:scale-110 group-hover:border-purple-400/30">
+
+            <img
+              src={eth2}
+              alt="Ethereum"
+              className="w-11 h-11"
+            />
+
+          </div>
+
+          <p className="mt-4 text-sm font-semibold text-white">
+            Ethereum
+          </p>
+
+          <span className="mt-1 block text-[10px] uppercase tracking-wider text-gray-600">
+            Network
+          </span>
+
+        </div>
+
+
+        {/* BNB */}
+        <div className="group relative rounded-2xl border border-white/[0.07] bg-white/[0.025] p-5 text-center transition-all duration-300 hover:-translate-y-1 hover:border-yellow-400/30 hover:bg-white/[0.05]">
+
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/[0.08] bg-black/40 transition-transform duration-500 group-hover:scale-110">
+
+            <img
+              src={bnb1}
+              alt="BNB Chain"
+              className="w-11 h-11"
+            />
+
+          </div>
+
+          <p className="mt-4 text-sm font-semibold text-white">
+            BNB Chain
+          </p>
+
+          <span className="mt-1 block text-[10px] uppercase tracking-wider text-gray-600">
+            Network
+          </span>
+
+        </div>
+
+
+        {/* Base */}
+        <div className="group relative rounded-2xl border border-white/[0.07] bg-white/[0.025] p-5 text-center transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/40 hover:bg-white/[0.05]">
+
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/[0.08] bg-black/40 transition-transform duration-500 group-hover:scale-110">
+
+            <img
+              src={base}
+              alt="Base"
+              className="w-11 h-11"
+            />
+
+          </div>
+
+          <p className="mt-4 text-sm font-semibold text-white">
+            Base
+          </p>
+
+          <span className="mt-1 block text-[10px] uppercase tracking-wider text-gray-600">
+            Network
+          </span>
+
+        </div>
+
+      </div>
+
+
+      {/* TOKENS LABEL */}
+      <div className="flex items-center gap-4 mb-6">
+
+        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">
+          Supported Assets
+        </span>
+
+        <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
+
+      </div>
+
+
+      {/* TOKEN CARDS */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+
+        {/* INJ */}
+        <div className="group flex items-center gap-4 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 transition-all duration-300 hover:border-[#FF1AC6]/30 hover:bg-white/[0.05]">
+
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-black/50 border border-white/[0.08]">
+
+            <img
+              src={injecoin}
+              alt="INJ"
+              className="w-8 h-8 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110"
+            />
+
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-white">
+              INJ
             </p>
 
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Link
-                to="/dashboard"
-                className="bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 px-8 py-3 rounded-xl font-semibold hover:shadow-lg hover:shadow-[#FF1AC6]/25 transition"
-              >
-                Explore Bounties
-              </Link>
-
-              <Link
-                to="/create"
-                className="border border-white/30 px-8 py-3 rounded-xl hover:bg-white/10 transition"
-              >
-                Create a Bounty
-              </Link>
-            </div>
+            <p className="text-[10px] text-gray-600">
+              INJ / wINJ
+            </p>
           </div>
+
         </div>
-      </section>
+
+
+        {/* USDC */}
+        <div className="group flex items-center gap-4 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 transition-all duration-300 hover:border-blue-400/30 hover:bg-white/[0.05]">
+
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-black/50 border border-white/[0.08]">
+
+            <img
+              src={usdc1}
+              alt="USDC"
+              className="w-8 h-8 transition-transform duration-500 group-hover:scale-110"
+            />
+
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-white">
+              USDC
+            </p>
+
+            <p className="text-[10px] text-gray-600">
+              Stablecoin
+            </p>
+          </div>
+
+        </div>
+
+
+        {/* USDT */}
+        <div className="group flex items-center gap-4 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 transition-all duration-300 hover:border-green-400/30 hover:bg-white/[0.05]">
+
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-black/50 border border-white/[0.08]">
+
+            <img
+              src={usdt}
+              alt="USDT"
+              className="w-8 h-8 transition-transform duration-500 group-hover:scale-110"
+            />
+
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-white">
+              USDT
+            </p>
+
+            <p className="text-[10px] text-gray-600">
+              Stablecoin
+            </p>
+          </div>
+
+        </div>
+
+
+        {/* Canton */}
+        <div className="group flex items-center gap-4 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 transition-all duration-300 hover:border-purple-400/30 hover:bg-white/[0.05]">
+
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-black/50 border border-white/[0.08]">
+
+            <img
+              src={canton}
+              alt="Canton"
+              className="w-8 h-8 transition-transform duration-500 group-hover:scale-110"
+            />
+
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-white">
+              Canton
+            </p>
+
+            <p className="text-[10px] text-gray-600">
+              Network Asset
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      {/* FOOTER */}
+      <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/[0.06] pt-6">
+
+        <div className="flex items-center gap-2">
+
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/10">
+            <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]" />
+          </span>
+
+          <span className="text-xs text-gray-500">
+            Multi-chain infrastructure active
+          </span>
+
+        </div>
+
+        <span className="text-xs text-gray-600">
+          More networks coming soon
+        </span>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+      {/* FINAL CALL TO ACTION */}
+<section className="mx-6 md:mx-10 lg:mx-16 my-24">
+  <div className="relative overflow-hidden rounded-3xl border border-[#FF1AC6]/20 bg-[#0d0d0d]">
+
+    {/* Background Glows */}
+    <div className="absolute -top-32 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-[#FF1AC6]/15 blur-[120px]" />
+
+    <div className="absolute -bottom-40 -left-20 h-72 w-72 rounded-full bg-purple-600/10 blur-[120px]" />
+
+    <div className="absolute -bottom-40 -right-20 h-72 w-72 rounded-full bg-[#FF1AC6]/10 blur-[120px]" />
+
+    {/* Subtle Grid */}
+    <div
+      className="absolute inset-0 opacity-[0.035]"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+        backgroundSize: "45px 45px",
+      }}
+    />
+
+    {/* Decorative Glow Rings */}
+    <div className="absolute -left-24 top-1/2 h-48 w-48 -translate-y-1/2 rounded-full border border-[#FF1AC6]/10" />
+    <div className="absolute -left-16 top-1/2 h-32 w-32 -translate-y-1/2 rounded-full border border-[#FF1AC6]/10" />
+
+    <div className="absolute -right-24 top-1/2 h-48 w-48 -translate-y-1/2 rounded-full border border-purple-500/10" />
+    <div className="absolute -right-16 top-1/2 h-32 w-32 -translate-y-1/2 rounded-full border border-purple-500/10" />
+
+
+    {/* CONTENT */}
+    <div className="relative z-10 px-6 py-16 md:px-12 md:py-20 lg:px-20">
+
+      {/* Badge */}
+      <div className="mb-6 flex justify-center">
+
+        <div className="inline-flex items-center gap-2 rounded-full border border-[#FF1AC6]/20 bg-[#FF1AC6]/5 px-4 py-2">
+
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF1AC6] opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF1AC6]" />
+          </span>
+
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#FF1AC6]">
+            Start Building. Start Earning.
+          </span>
+
+        </div>
+
+      </div>
+
+
+      {/* Heading */}
+      <h2 className="mx-auto max-w-4xl text-center text-4xl font-extrabold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
+
+        Turn Your{" "}
+        <span className="bg-gradient-to-r from-[#FF1AC6] via-pink-400 to-purple-500 bg-clip-text text-transparent">
+          Skills
+        </span>{" "}
+        Into Rewards.
+
+      </h2>
+
+
+      {/* Description */}
+      <p className="mx-auto mt-6 max-w-2xl text-center text-base leading-relaxed text-gray-400 md:text-lg">
+        Discover Web3 opportunities, complete meaningful tasks, and
+        get rewarded in crypto. Or create a bounty and find skilled
+        contributors ready to get the job done.
+      </p>
+
+
+      {/* BUTTONS */}
+      <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+
+        <Link
+          to="/dashboard"
+          className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-[#FF1AC6] px-8 py-3.5 text-sm font-bold text-white shadow-[0_0_30px_rgba(255,26,198,0.2)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ff32ce] hover:shadow-[0_0_40px_rgba(255,26,198,0.35)] sm:w-auto"
+        >
+
+          <span className="relative z-10">
+            Explore Bounties
+          </span>
+
+          <span className="relative z-10 text-lg transition-transform duration-300 group-hover:translate-x-1">
+            →
+          </span>
+
+          {/* Button Shine */}
+          <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+
+        </Link>
+
+
+        <Link
+          to="/create"
+          className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#FF1AC6]/40 hover:bg-[#FF1AC6]/5 sm:w-auto"
+        >
+
+          <span>
+            Create a Bounty
+          </span>
+
+          <span className="text-gray-500 transition-colors duration-300 group-hover:text-[#FF1AC6]">
+            +
+          </span>
+
+        </Link>
+
+      </div>
+
+
+      {/* TRUST POINTS */}
+      <div className="mx-auto mt-12 flex max-w-2xl flex-wrap items-center justify-center gap-x-8 gap-y-4 border-t border-white/[0.06] pt-8">
+
+        <div className="flex items-center gap-2 text-xs text-gray-500">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500/10 text-green-400">
+            ✓
+          </span>
+          Secure Web3 Payments
+        </div>
+
+        <div className="flex items-center gap-2 text-xs text-gray-500">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF1AC6]/10 text-[#FF1AC6]">
+            ⚡
+          </span>
+          Fast Rewards
+        </div>
+
+        <div className="flex items-center gap-2 text-xs text-gray-500">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-500/10 text-purple-400">
+            ◇
+          </span>
+          Multi-Chain
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
 
       <Footer />
     </div>

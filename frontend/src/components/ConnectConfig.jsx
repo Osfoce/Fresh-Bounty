@@ -1,5 +1,6 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
+
 function ConnectConfig() {
   return (
     <ConnectButton.Custom>
@@ -12,14 +13,16 @@ function ConnectConfig() {
         authenticationStatus,
         mounted,
       }) => {
-        // Note: If your app doesn't use authentication, you
-        // can remove all 'authenticationStatus' checks
-        const ready = mounted && authenticationStatus !== "loading";
+        const ready =
+          mounted && authenticationStatus !== "loading";
+
         const connected =
           ready &&
           account &&
           chain &&
-          (!authenticationStatus || authenticationStatus === "authenticated");
+          (!authenticationStatus ||
+            authenticationStatus === "authenticated");
+
         return (
           <div
             {...(!ready && {
@@ -31,58 +34,53 @@ function ConnectConfig() {
               },
             })}
           >
-            {(() => {
-              if (!connected) {
-                return (
-                  <button
-                    onClick={openConnectModal}
-                    className="bg-white text-black py-2 rounded-lg font-semibold w-full hover:bg-gray-300"
-                  >
-                    Connect Wallet
-                  </button>
-                );
-              }
-              if (chain.unsupported) {
-                return <button onClick={openChainModal}>Wrong network</button>;
-              }
-              return (
-                <div style={{ display: "flex", gap: 12 }}>
-                  <button
-                    onClick={openChainModal}
-                    style={{ display: "flex", alignItems: "center" }}
-                    type="button"
-                  >
-                    {chain.hasIcon && (
-                      <div
-                        style={{
-                          background: chain.iconBackground,
-                          width: 12,
-                          height: 12,
-                          borderRadius: 999,
-                          overflow: "hidden",
-                          marginRight: 4,
-                        }}
-                      >
-                        {chain.iconUrl && (
-                          <img
-                            alt={chain.name ?? "Chain icon"}
-                            src={chain.iconUrl}
-                            style={{ width: 12, height: 12 }}
-                          />
-                        )}
-                      </div>
-                    )}
-                    {chain.name}
-                  </button>
-                  <button onClick={openAccountModal} type="button">
-                    {account.displayName}
-                    {account.displayBalance
-                      ? ` (${account.displayBalance})`
-                      : ""}
-                  </button>
-                </div>
-              );
-            })()}
+            {!connected ? (
+              <button
+                type="button"
+                onClick={openConnectModal}
+                className="w-full bg-white text-black py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
+              >
+                Connect Wallet
+              </button>
+            ) : chain.unsupported ? (
+              <button
+                type="button"
+                onClick={openChainModal}
+                className="w-full bg-red-500 text-white py-3 rounded-lg font-semibold"
+              >
+                Wrong network
+              </button>
+            ) : (
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={openChainModal}
+                  className="flex-1 bg-white/10 px-3 py-2 rounded-lg"
+                >
+                  {chain.hasIcon && (
+                    <img
+                      alt={chain.name ?? "Chain icon"}
+                      src={chain.iconUrl}
+                      className="inline-block w-4 h-4 mr-2 rounded-full"
+                    />
+                  )}
+
+                  {chain.name}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={openAccountModal}
+                  className="flex-1 bg-white/10 px-3 py-2 rounded-lg"
+                >
+                  {account.displayName}
+
+                  {account.displayBalance
+                    ? ` (${account.displayBalance})`
+                    : ""}
+                </button>
+              </div>
+            )}
           </div>
         );
       }}
