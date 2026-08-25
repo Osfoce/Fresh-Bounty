@@ -5,11 +5,21 @@ function AuthModal({ isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 mt-[50vh] bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 mt-[50vh] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md bg-[#171717] text-white rounded-2xl border border-white/10 shadow-[0_25px_80px_rgba(0,0,0,0.6)] p-6 sm:p-8 animate-[modalIn_0.25s_ease-out]"
+        className="
+          relative w-full max-w-sm
+          rounded-2xl
+          border border-white/[0.08]
+          bg-[#151515]
+          px-5 py-5
+          text-white
+          shadow-[0_25px_80px_rgba(0,0,0,0.65)]
+          sm:px-6 sm:py-6
+          animate-[modalIn_0.25s_ease-out]
+        "
         onClick={(e) => e.stopPropagation()}
       >
         {/* CLOSE BUTTON */}
@@ -17,46 +27,62 @@ function AuthModal({ isOpen, onClose }) {
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all duration-200"
+          className="
+            absolute right-3.5 top-3.5
+            flex h-8 w-8 items-center justify-center
+            rounded-full
+            text-sm text-white/40
+            transition-all duration-200
+            hover:bg-white/[0.07]
+            hover:text-white
+          "
         >
           ✕
         </button>
 
         {/* HEADER */}
-        <div className="text-center mb-7">
-          <div className="mx-auto mb-4 w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF1AC6] to-[#8B5CF6] flex items-center justify-center shadow-lg shadow-[#FF1AC6]/20">
-            <span className="text-xl font-bold">HB</span>
+        <div className="mb-5 text-center">
+          <div
+            className="
+              mx-auto mb-3
+              flex h-10 w-10 items-center justify-center
+              rounded-xl
+              bg-gradient-to-br from-[#FF1AC6] to-[#8B5CF6]
+              shadow-[0_0_25px_rgba(255,26,198,0.18)]
+            "
+          >
+            <span className="text-sm font-bold">HB</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          <h2 className="text-xl font-bold tracking-tight sm:text-2xl">
             Welcome to Happy Bounty
           </h2>
 
-          <p className="text-sm text-white/50 mt-2">
+          <p className="mt-1.5 text-xs text-white/40 sm:text-sm">
             Connect your wallet to continue
           </p>
         </div>
 
         {/* WALLET CONNECT */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <ConnectConfig />
         </div>
 
         {/* DIVIDER */}
-        <div className="flex items-center gap-4 my-6">
-          <div className="h-px bg-white/10 flex-1" />
+        <div className="my-4 flex items-center gap-3">
+          <div className="h-px flex-1 bg-white/[0.08]" />
 
-          <span className="text-xs font-medium text-white/40 uppercase tracking-wider">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-white/30">
             Or
           </span>
 
-          <div className="h-px bg-white/10 flex-1" />
+          <div className="h-px flex-1 bg-white/[0.08]" />
         </div>
 
         {/* EMAIL LOGIN */}
-        <form className="space-y-3">
+        <form className="space-y-2.5">
           <div>
-            <label className="block text-xs font-medium text-white/50 mb-2">
+            <label className="mb-1.5 block text-[11px] font-medium text-white/45">
               Email
             </label>
 
@@ -64,21 +90,40 @@ function AuthModal({ isOpen, onClose }) {
               type="email"
               placeholder="Email login coming soon"
               disabled
-              className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/40 placeholder:text-white/25 outline-none cursor-not-allowed"
+              className="
+                w-full
+                rounded-xl
+                border border-white/[0.08]
+                bg-white/[0.025]
+                px-3.5 py-2.5
+                text-sm text-white/40
+                placeholder:text-white/20
+                outline-none
+                cursor-not-allowed
+              "
             />
           </div>
 
           <button
             type="button"
             disabled
-            className="w-full py-3 rounded-xl bg-white/10 text-white/40 font-semibold text-sm cursor-not-allowed border border-white/5"
+            className="
+              w-full
+              rounded-xl
+              border border-white/[0.06]
+              bg-white/[0.06]
+              py-2.5
+              text-sm font-semibold
+              text-white/30
+              cursor-not-allowed
+            "
           >
             Coming Soon
           </button>
         </form>
 
         {/* FOOTER */}
-        <p className="text-center text-xs text-white/30 mt-6">
+        <p className="mt-4 text-center text-[10px] leading-relaxed text-white/25 sm:text-xs">
           By connecting, you agree to Happy Bounty's terms and conditions.
         </p>
       </div>

@@ -1,4 +1,9 @@
 import { useState } from "react";
+import {
+  FiDollarSign,
+  FiCheckCircle,
+  FiActivity,
+} from "react-icons/fi";
 import toast from "react-hot-toast";
 import axios from "axios";
 import NavBar from "../components/Layout/NavBar";
@@ -84,91 +89,323 @@ function Dashboard() {
 
       <main className="flex-grow pt-20 pb-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Welcome Section */}
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-[#FF1AC6] bg-clip-text text-transparent">
-              Dashboard
-            </h1>
-            <p className="text-white/50 mt-1 text-sm">
-              Manage your bounties and track your progress
-            </p>
-          </div>
 
-          {/* Stats Grid - Beautiful Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-            {/* Earnings Card */}
-            <div className="group relative bg-gradient-to-br from-[#2D2D2D] to-[#252525] rounded-2xl border border-white/10 hover:border-[#FF1AC6]/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#FF1AC6]/10 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#FF1AC6]/0 via-[#FF1AC6]/0 to-[#FF1AC6]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 rounded-xl bg-gradient-to-br from-[#FF1AC6]/20 to-[#FF1AC6]/5">
-                    <span className="text-2xl">💰</span>
-                  </div>
-                  <span className="text-xs font-medium px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    Lifetime
-                  </span>
-                </div>
-                <h3 className="text-white/60 text-sm uppercase tracking-wide mb-1">
-                  Total Earnings
-                </h3>
-                <p className="text-white text-3xl font-bold">
-                  ${dollars}.
-                  <span className="text-xl text-gray-400">{cents}</span>
-                </p>
-                <div className="mt-3 h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full w-3/4 bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/50 rounded-full" />
-                </div>
-              </div>
-            </div>
+        {/* Welcome Section */}
+<div className="mb-8 relative">
+  {/* Small accent line */}
+  <div className="flex items-center gap-2 mb-3">
+    <span className="h-1.5 w-1.5 rounded-full bg-[#FF1AC6] shadow-[0_0_8px_rgba(255,26,198,0.7)]" />
+    <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#FF1AC6]/80">
+      Overview
+    </span>
+  </div>
 
-            {/* Completed Tasks Card */}
-            <div className="group relative bg-gradient-to-br from-[#2D2D2D] to-[#252525] rounded-2xl border border-white/10 hover:border-emerald-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 rounded-xl bg-gradient-to-br from-[#FF1AC6]/20 to-[#FF1AC6]/5">
-                    <span className="text-2xl">✅</span>
-                  </div>
-                  <span className="text-xs font-medium px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    Achieved
-                  </span>
-                </div>
-                <h3 className="text-white/60 text-sm uppercase tracking-wide mb-1">
-                  Completed Tasks
-                </h3>
-                <p className="text-white text-3xl font-bold">
-                  {stats.completed}
-                </p>
-                <div className="mt-3 h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full w-2/3 bg-gradient-to-r from-emerald-500 to-emerald-500/50 rounded-full" />
-                </div>
-              </div>
-            </div>
+  <h1
+    className="
+      text-3xl md:text-4xl
+      font-bold
+      tracking-tight
+      text-white
+    "
+  >
+    Dashboard
+    <span className="text-[#FF1AC6]">.</span>
+  </h1>
 
-            {/* In Progress Card */}
-            <div className="group relative bg-gradient-to-br from-[#2D2D2D] to-[#252525] rounded-2xl border border-white/10 hover:border-amber-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/10 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 via-amber-500/0 to-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 rounded-xl bg-gradient-to-br from-[#FF1AC6]/20 to-[#FF1AC6]/5">
-                    <span className="text-2xl">⚡</span>
-                  </div>
-                  <span className="text-xs font-medium px-2 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                    Active
-                  </span>
-                </div>
-                <h3 className="text-white/60 text-sm uppercase tracking-wide mb-1">
-                  In Progress
-                </h3>
-                <p className="text-white text-3xl font-bold">
-                  {stats.inProgress}
-                </p>
-                <div className="mt-3 h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full w-1/2 bg-gradient-to-r from-amber-500 to-amber-500/50 rounded-full" />
-                </div>
-              </div>
-            </div>
-          </div>
+  <p className="mt-2 max-w-xl text-sm md:text-[15px] leading-6 text-white/45">
+    Manage your bounties, monitor activity, and keep track of your progress.
+  </p>
+
+  {/* Subtle bottom accent */}
+  <div className="mt-5 h-px w-full bg-gradient-to-r from-[#FF1AC6]/30 via-white/[0.06] to-transparent" />
+</div>
+
+
+         {/* Stats Grid - Professional Cards */}
+<div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-10">
+
+  {/* Earnings Card */}
+  <div
+    className="
+      group relative overflow-hidden
+      rounded-2xl
+      border border-white/[0.08]
+      bg-gradient-to-br from-[#2D2D2D] to-[#242424]
+      transition-all duration-300
+      hover:-translate-y-1
+      hover:border-[#FF1AC6]/40
+      hover:shadow-[0_15px_40px_rgba(255,26,198,0.08)]
+    "
+  >
+    {/* Hover Glow */}
+    <div
+      className="
+        pointer-events-none absolute
+        -right-20 -top-20
+        h-40 w-40
+        rounded-full
+        bg-[#FF1AC6]/10
+        blur-3xl
+        opacity-0
+        transition-opacity duration-500
+        group-hover:opacity-100
+      "
+    />
+
+    <div className="relative p-6">
+
+      {/* Header */}
+      <div className="mb-5 flex items-center justify-between">
+
+        <div
+          className="
+            flex h-11 w-11 items-center justify-center
+            rounded-xl
+            border border-[#FF1AC6]/20
+            bg-[#FF1AC6]/10
+            text-[#FF1AC6]
+            transition-all duration-300
+            group-hover:bg-[#FF1AC6]/15
+            group-hover:shadow-[0_0_20px_rgba(255,26,198,0.12)]
+          "
+        >
+          <FiDollarSign className="text-xl" />
+        </div>
+
+        <span
+          className="
+            rounded-full
+            border border-emerald-500/20
+            bg-emerald-500/10
+            px-2.5 py-1
+            text-[10px]
+            font-semibold
+            uppercase
+            tracking-wider
+            text-emerald-400
+          "
+        >
+          Lifetime
+        </span>
+      </div>
+
+      {/* Label */}
+      <p className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-white/35">
+        Total Earnings
+      </p>
+
+      {/* Amount */}
+      <p className="text-3xl font-bold tracking-tight text-white">
+        ${dollars}
+        <span className="text-xl font-semibold text-white/40">
+          .{cents}
+        </span>
+      </p>
+
+      {/* Progress */}
+      <div className="mt-5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
+        <div
+          className="
+            h-full w-3/4 rounded-full
+            bg-gradient-to-r
+            from-[#FF1AC6]
+            to-[#FF1AC6]/40
+            transition-all duration-500
+            group-hover:w-[82%]
+          "
+        />
+      </div>
+
+    </div>
+  </div>
+
+
+  {/* Completed Tasks Card */}
+  <div
+    className="
+      group relative overflow-hidden
+      rounded-2xl
+      border border-white/[0.08]
+      bg-gradient-to-br from-[#2D2D2D] to-[#242424]
+      transition-all duration-300
+      hover:-translate-y-1
+      hover:border-emerald-500/40
+      hover:shadow-[0_15px_40px_rgba(16,185,129,0.08)]
+    "
+  >
+    {/* Hover Glow */}
+    <div
+      className="
+        pointer-events-none absolute
+        -right-20 -top-20
+        h-40 w-40
+        rounded-full
+        bg-emerald-500/10
+        blur-3xl
+        opacity-0
+        transition-opacity duration-500
+        group-hover:opacity-100
+      "
+    />
+
+    <div className="relative p-6">
+
+      {/* Header */}
+      <div className="mb-5 flex items-center justify-between">
+
+        <div
+          className="
+            flex h-11 w-11 items-center justify-center
+            rounded-xl
+            border border-emerald-500/20
+            bg-emerald-500/10
+            text-emerald-400
+            transition-all duration-300
+            group-hover:bg-emerald-500/15
+            group-hover:shadow-[0_0_20px_rgba(16,185,129,0.12)]
+          "
+        >
+          <FiCheckCircle className="text-xl" />
+        </div>
+
+        <span
+          className="
+            rounded-full
+            border border-emerald-500/20
+            bg-emerald-500/10
+            px-2.5 py-1
+            text-[10px]
+            font-semibold
+            uppercase
+            tracking-wider
+            text-emerald-400
+          "
+        >
+          Achieved
+        </span>
+      </div>
+
+      {/* Label */}
+      <p className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-white/35">
+        Completed Tasks
+      </p>
+
+      {/* Number */}
+      <p className="text-3xl font-bold tracking-tight text-white">
+        {stats.completed}
+      </p>
+
+      {/* Progress */}
+      <div className="mt-5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
+        <div
+          className="
+            h-full w-2/3 rounded-full
+            bg-gradient-to-r
+            from-emerald-500
+            to-emerald-500/40
+            transition-all duration-500
+            group-hover:w-3/4
+          "
+        />
+      </div>
+
+    </div>
+  </div>
+
+
+  {/* In Progress Card */}
+  <div
+    className="
+      group relative overflow-hidden
+      rounded-2xl
+      border border-white/[0.08]
+      bg-gradient-to-br from-[#2D2D2D] to-[#242424]
+      transition-all duration-300
+      hover:-translate-y-1
+      hover:border-amber-500/40
+      hover:shadow-[0_15px_40px_rgba(245,158,11,0.08)]
+    "
+  >
+    {/* Hover Glow */}
+    <div
+      className="
+        pointer-events-none absolute
+        -right-20 -top-20
+        h-40 w-40
+        rounded-full
+        bg-amber-500/10
+        blur-3xl
+        opacity-0
+        transition-opacity duration-500
+        group-hover:opacity-100
+      "
+    />
+
+    <div className="relative p-6">
+
+      {/* Header */}
+      <div className="mb-5 flex items-center justify-between">
+
+        <div
+          className="
+            flex h-11 w-11 items-center justify-center
+            rounded-xl
+            border border-amber-500/20
+            bg-amber-500/10
+            text-amber-400
+            transition-all duration-300
+            group-hover:bg-amber-500/15
+            group-hover:shadow-[0_0_20px_rgba(245,158,11,0.12)]
+          "
+        >
+          <FiActivity className="text-xl" />
+        </div>
+
+        <span
+          className="
+            rounded-full
+            border border-amber-500/20
+            bg-amber-500/10
+            px-2.5 py-1
+            text-[10px]
+            font-semibold
+            uppercase
+            tracking-wider
+            text-amber-400
+          "
+        >
+          Active
+        </span>
+      </div>
+
+      {/* Label */}
+      <p className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-white/35">
+        In Progress
+      </p>
+
+      {/* Number */}
+      <p className="text-3xl font-bold tracking-tight text-white">
+        {stats.inProgress}
+      </p>
+
+      {/* Progress */}
+      <div className="mt-5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
+        <div
+          className="
+            h-full w-1/2 rounded-full
+            bg-gradient-to-r
+            from-amber-500
+            to-amber-500/40
+            transition-all duration-500
+            group-hover:w-3/5
+          "
+        />
+      </div>
+
+    </div>
+  </div>
+
+</div>
 
           {/* Filters and Actions Bar */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
