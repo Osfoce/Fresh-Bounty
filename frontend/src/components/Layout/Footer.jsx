@@ -19,10 +19,24 @@ function Footer() {
         }}
       />
 
-      <div className="relative z-10 mx-auto max-w-screen-2xl px-6 py-16 md:px-10 lg:px-16">
+      {/* ✦ SHINING STARS */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+
+        <span className="footer-star footer-star-1">✦</span>
+        <span className="footer-star footer-star-2">✧</span>
+        <span className="footer-star footer-star-3">✦</span>
+        <span className="footer-star footer-star-4">✧</span>
+        <span className="footer-star footer-star-5">✦</span>
+        <span className="footer-star footer-star-6">✧</span>
+        <span className="footer-star footer-star-7">✦</span>
+        <span className="footer-star footer-star-8">✧</span>
+
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-screen-2xl px-6 py-12 md:px-10 lg:px-16">
 
         {/* TOP SECTION */}
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
 
           {/* BRAND */}
           <div className="lg:col-span-1">
@@ -199,7 +213,6 @@ function Footer() {
                 <FaTwitter className="text-lg transition-transform duration-300 group-hover:scale-110" />
               </a>
 
-
               {/* Discord */}
               <a
                 href="#"
@@ -208,7 +221,6 @@ function Footer() {
               >
                 <FaDiscord className="text-lg transition-transform duration-300 group-hover:scale-110" />
               </a>
-
 
               {/* GitHub */}
               <a
@@ -227,7 +239,7 @@ function Footer() {
 
 
         {/* DIVIDER */}
-        <div className="my-12 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
+        <div className="my-10 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
 
 
         {/* BOTTOM */}
@@ -236,7 +248,6 @@ function Footer() {
           <p className="text-xs text-gray-600">
             © 2026 Happy Bounty. All rights reserved.
           </p>
-
 
           <div className="flex flex-wrap justify-center gap-6 text-xs text-gray-600">
 
@@ -263,7 +274,6 @@ function Footer() {
 
           </div>
 
-
           <div className="flex items-center gap-2 text-xs text-gray-600">
 
             <span>
@@ -274,7 +284,7 @@ function Footer() {
               Web3
             </span>
 
-            <span>
+            <span className="text-[#FF1AC6]">
               ⚡
             </span>
 
@@ -283,6 +293,87 @@ function Footer() {
         </div>
 
       </div>
+
+
+      {/* STAR ANIMATION */}
+      <style>{`
+
+        .footer-star {
+          position: absolute;
+          color: rgba(255, 255, 255, 0.65);
+          font-size: 12px;
+          animation: footerStarShine 4s ease-in-out infinite;
+        }
+
+        .footer-star-1 {
+          top: 15%;
+          left: 8%;
+          animation-delay: 0s;
+        }
+
+        .footer-star-2 {
+          top: 30%;
+          left: 28%;
+          animation-delay: 1.2s;
+        }
+
+        .footer-star-3 {
+          top: 12%;
+          right: 18%;
+          animation-delay: 0.6s;
+        }
+
+        .footer-star-4 {
+          top: 45%;
+          right: 7%;
+          animation-delay: 1.8s;
+        }
+
+        .footer-star-5 {
+          bottom: 20%;
+          right: 28%;
+          animation-delay: 0.9s;
+        }
+
+        .footer-star-6 {
+          bottom: 15%;
+          left: 42%;
+          animation-delay: 2s;
+        }
+
+        .footer-star-7 {
+          top: 65%;
+          left: 15%;
+          animation-delay: 1.5s;
+        }
+
+        .footer-star-8 {
+          bottom: 30%;
+          left: 32%;
+          animation-delay: 0.4s;
+        }
+
+        @keyframes footerStarShine {
+
+          0%,
+          100% {
+            opacity: 0.1;
+            transform: scale(0.7) rotate(0deg);
+            text-shadow: 0 0 0 rgba(255, 26, 198, 0);
+          }
+
+          50% {
+            opacity: 1;
+            transform: scale(1.35) rotate(45deg);
+            text-shadow:
+              0 0 7px rgba(255, 255, 255, 0.9),
+              0 0 16px rgba(255, 26, 198, 0.75);
+          }
+
+        }
+
+      `}</style>
+
     </footer>
   );
 }

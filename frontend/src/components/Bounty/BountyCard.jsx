@@ -3,6 +3,13 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
+import {
+  FiCalendar,
+  FiArrowRight,
+  FiCheckCircle,
+  FiClock,
+  FiZap,
+} from "react-icons/fi";
 
 const BountyCard = ({ bounty }) => {
   const { address, isConnected } = useAccount();
@@ -19,50 +26,55 @@ const BountyCard = ({ bounty }) => {
     active: {
       color: "text-emerald-400",
       bg: "bg-emerald-400/10",
+      border: "border-emerald-400/20",
       dot: "bg-emerald-400",
     },
     upcoming: {
       color: "text-amber-400",
       bg: "bg-amber-400/10",
+      border: "border-amber-400/20",
       dot: "bg-amber-400",
     },
     completed: {
       color: "text-gray-400",
       bg: "bg-gray-400/10",
+      border: "border-gray-400/20",
       dot: "bg-gray-400",
     },
   }[bounty.status] || {
-    color: "text-white",
-    bg: "bg-white/10",
-    dot: "bg-white",
+    color: "text-white/60",
+    bg: "bg-white/5",
+    border: "border-white/10",
+    dot: "bg-white/50",
   };
 
   const tags = bounty.tags || [];
   const rewardDisplay = `${bounty.reward} ${bounty.token || "INJ"}`;
+
   const description =
     bounty.description?.length > 100
       ? bounty.description.substring(0, 100) + "..."
       : bounty.description || "No description provided";
 
-  // Get user wallet address (assuming you have a way to get connected wallet)
-  // Get user wallet
   const getUserWallet = () => {
     if (!isConnected || !address) {
       toast.error("Please connect your wallet first");
       return null;
     }
+
     return address;
   };
 
   const API_URL = "https://fresh-bounty.onrender.com";
 
   const handleEnroll = async (e) => {
-    e.preventDefault(); // Prevent navigation if Link is clicked
+    e.preventDefault();
 
     const userWallet = getUserWallet();
     if (!userWallet) return;
 
     setIsEnrolling(true);
+
     const loadingToast = toast.loading("Enrolling in bounty...");
 
     try {
@@ -76,11 +88,10 @@ const BountyCard = ({ bounty }) => {
           id: loadingToast,
           duration: 3000,
         });
-        // Optional: Navigate to bounty detail page after enrollment
-        // navigate(`/bounty/${bounty._id}`);
       }
     } catch (error) {
       console.error("Enrollment error:", error);
+
       if (error.response?.status === 400) {
         toast.error("You are already enrolled in this bounty", {
           id: loadingToast,
@@ -97,128 +108,401 @@ const BountyCard = ({ bounty }) => {
     }
   };
 
-  const handleViewDetails = (e) => {
-    // This is just a regular link navigation
-    // No need to prevent default
-  };
-
   return (
     <div
-      className="group relative w-full h-full bg-gradient-to-br from-[#2D2D2D] to-[#252525] rounded-2xl border border-white/10 hover:border-white/30 transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-2xl hover:-translate-y-1"
+      className="
+        group relative flex h-full w-full flex-col overflow-hidden
+        rounded-2xl
+        border border-white/[0.08]
+        bg-[#171717]
+        shadow-[0_8px_30px_rgba(0,0,0,0.22)]
+        transition-all duration-300 ease-out
+        hover:-translate-y-1
+        hover:border-[#FF1AC6]/30
+        hover:shadow-[0_18px_45px_rgba(0,0,0,0.35)]
+      "
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Animated gradient overlay on hover */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FF1AC6]/0 via-[#FF1AC6]/0 to-[#FF1AC6]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      {/* SMALL GLOWING PINK CIRCLE */}
+      <div
+        className="
+          pointer-events-none
+          absolute
+          right-4
+          top-4
+          z-20
+          h-2
+          w-2
+          rounded-full
+          bg-[#FF1AC6]
+          shadow-[0_0_6px_2px_rgba(255,26,198,0.45)]
+          animate-pulse
+        "
+      />
 
-      {/* Card Content */}
-      <div className="relative z-10 p-5">
-        {/* Header Section */}
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex-1">
-            <div className="inline-flex items-center px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">
-              <span className="text-[11px] font-semibold tracking-wide text-white/70 uppercase">
-                {bounty.category || "Uncategorized"}
-              </span>
+      {/* TOP ACCENT */}
+      <div
+        className="
+          absolute left-0 right-0 top-0 h-[2px]
+          bg-gradient-to-r from-transparent via-[#FF1AC6] to-transparent
+          opacity-0
+          transition-opacity duration-300
+          group-hover:opacity-100
+        "
+      />
+
+      {/* Background Glow */}
+      <div
+        className="
+          pointer-events-none absolute -right-24 -top-24
+          h-48 w-48 rounded-full
+          bg-[#FF1AC6]/10
+          blur-3xl
+          opacity-0
+          transition-opacity duration-500
+          group-hover:opacity-100
+        "
+      />
+
+      <div
+        className="
+          pointer-events-none absolute -bottom-24 -left-24
+          h-40 w-40 rounded-full
+          bg-purple-500/10
+          blur-3xl
+          opacity-0
+          transition-opacity duration-500
+          group-hover:opacity-100
+        "
+      />
+
+      <div className="relative z-10 flex h-full flex-col p-5">
+
+        {/* HEADER */}
+        <div className="mb-5 flex items-start justify-between gap-3">
+
+          {/* CATEGORY */}
+          <div className="flex min-w-0 items-center gap-2">
+
+            <div
+              className="
+                flex h-8 w-8 shrink-0 items-center justify-center
+                rounded-lg
+                border border-[#FF1AC6]/15
+                bg-[#FF1AC6]/10
+                text-[#FF1AC6]
+              "
+            >
+              <FiZap className="text-sm" />
             </div>
+
+            <span
+              className="
+                truncate rounded-lg
+                border border-white/[0.07]
+                bg-white/[0.035]
+                px-2.5 py-1.5
+                text-[10px]
+                font-semibold
+                uppercase
+                tracking-[0.12em]
+                text-white/50
+                transition-colors
+                group-hover:text-white/70
+              "
+            >
+              {bounty.category || "Uncategorized"}
+            </span>
           </div>
 
-          {/* Rewards Pill */}
-          <div className="relative">
-            <div className="flex flex-col items-end">
-              <div className="bg-gradient-to-r from-[#FF1AC6]/20 to-[#FF1AC6]/5 backdrop-blur-sm rounded-xl px-3 py-1.5 border border-[#FF1AC6]/30">
-                <span className="text-[10px] font-medium tracking-wider text-[#FF1AC6] uppercase">
-                  Reward
-                </span>
-                <p className="text-white font-bold text-lg leading-tight">
-                  {rewardDisplay}
-                </p>
-              </div>
-            </div>
+          {/* REWARD */}
+          <div
+            className="
+              shrink-0 rounded-xl
+              border border-[#FF1AC6]/20
+              bg-[#FF1AC6]/[0.06]
+              px-3 py-2
+              text-right
+              transition-all duration-300
+              group-hover:border-[#FF1AC6]/35
+              group-hover:bg-[#FF1AC6]/10
+            "
+          >
+            <p className="text-[8px] font-semibold uppercase tracking-[0.16em] text-[#FF1AC6]/60">
+              Reward
+            </p>
+
+            <p className="mt-0.5 whitespace-nowrap text-sm font-bold text-white">
+              {rewardDisplay}
+            </p>
           </div>
         </div>
 
-        {/* Title */}
-        <h3 className="text-white text-xl font-semibold leading-tight mb-3 group-hover:text-[#FF1AC6] transition-colors duration-200">
-          {bounty.title}
-        </h3>
+        {/* TITLE */}
+        <div className="mb-2.5">
+          <h3
+            className="
+              line-clamp-2
+              text-lg font-bold
+              leading-snug
+              tracking-tight
+              text-white
+              transition-colors duration-200
+              group-hover:text-[#FF1AC6]
+            "
+          >
+            {bounty.title}
+          </h3>
+        </div>
 
-        {/* Description */}
-        <p className="text-gray-300 text-sm leading-relaxed mb-4 line-clamp-3">
+        {/* DESCRIPTION */}
+        <p
+          className="
+            min-h-[66px]
+            line-clamp-3
+            text-sm
+            leading-[1.55rem]
+            text-white/45
+          "
+        >
           {description}
         </p>
 
-        {/* Tags */}
-        {tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {tags.slice(0, 3).map((tag, idx) => (
-              <span
-                key={idx}
-                className="text-xs px-2 py-1 rounded-full bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 transition-colors"
-              >
-                #{tag}
-              </span>
-            ))}
-            {tags.length > 3 && (
-              <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/50">
-                +{tags.length - 3}
-              </span>
-            )}
-          </div>
-        )}
+        {/* TAGS */}
+        <div className="mt-4 min-h-[28px]">
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {tags.slice(0, 3).map((tag, idx) => (
+                <span
+                  key={idx}
+                  className="
+                    rounded-md
+                    border border-white/[0.06]
+                    bg-white/[0.025]
+                    px-2 py-1
+                    text-[10px]
+                    text-white/40
+                    transition-all duration-200
+                    group-hover:border-white/[0.1]
+                    group-hover:text-white/60
+                  "
+                >
+                  #{tag}
+                </span>
+              ))}
 
-        {/* Divider */}
-        <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              {tags.length > 3 && (
+                <span
+                  className="
+                    rounded-md
+                    bg-white/[0.02]
+                    px-2 py-1
+                    text-[10px]
+                    text-white/25
+                  "
+                >
+                  +{tags.length - 3}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
 
-        {/* Meta Information */}
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-white/60">🗓️</span>
-            <span className="text-white/80 text-sm">{deadline}</span>
+        {/* DIVIDER */}
+        <div className="my-4 h-px bg-gradient-to-r from-white/[0.08] via-white/[0.05] to-transparent" />
+
+        {/* META */}
+        <div className="mb-5 flex items-center justify-between">
+
+          {/* DEADLINE */}
+          <div className="flex items-center gap-2.5">
+
+            <div
+              className="
+                flex h-9 w-9 items-center justify-center
+                rounded-lg
+                border border-white/[0.07]
+                bg-white/[0.035]
+                text-white/40
+                transition-colors
+                group-hover:border-[#FF1AC6]/20
+                group-hover:text-[#FF1AC6]
+              "
+            >
+              <FiCalendar className="text-sm" />
+            </div>
+
+            <div>
+              <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-white/25">
+                Deadline
+              </p>
+
+              <p className="mt-0.5 text-xs font-semibold text-white/70">
+                {deadline}
+              </p>
+            </div>
           </div>
+
+          {/* STATUS */}
           <div
-            className={`flex items-center gap-2 px-2.5 py-1 rounded-full ${statusConfig.bg}`}
+            className={`
+              flex items-center gap-1.5
+              rounded-full
+              border
+              px-2.5 py-1.5
+              ${statusConfig.bg}
+              ${statusConfig.border}
+            `}
           >
             <span
-              className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot} ${
-                bounty.status === "active" ? "animate-pulse" : ""
-              }`}
+              className={`
+                h-1.5 w-1.5 rounded-full
+                ${statusConfig.dot}
+                ${
+                  bounty.status === "active"
+                    ? "animate-pulse shadow-[0_0_8px_currentColor]"
+                    : ""
+                }
+              `}
             />
-            <span className={`text-xs font-medium ${statusConfig.color}`}>
-              {bounty.status?.toUpperCase()}
+
+            <span
+              className={`
+                text-[9px]
+                font-bold
+                uppercase
+                tracking-[0.12em]
+                ${statusConfig.color}
+              `}
+            >
+              {bounty.status}
             </span>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3">
+        {/* ACTIONS */}
+        <div className="mt-auto grid grid-cols-2 gap-2.5">
+
+          {/* VIEW DETAILS */}
           <Link
             to={`/task/${bounty._id}`}
-            className="flex-1 text-center px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/80 text-sm font-medium hover:bg-white/10 hover:border-white/20 hover:text-white transition-all duration-200"
+            className="
+              group/details
+              flex items-center justify-center gap-1.5
+              rounded-xl
+              border border-white/[0.08]
+              bg-white/[0.035]
+              px-3 py-2.5
+              text-xs font-semibold
+              text-white/60
+              transition-all duration-200
+              hover:border-white/[0.15]
+              hover:bg-white/[0.07]
+              hover:text-white
+            "
           >
-            View Details →
+            <span>View Details</span>
+
+            <FiArrowRight
+              className="
+                transition-transform duration-200
+                group-hover/details:translate-x-0.5
+              "
+            />
           </Link>
 
-          {/* Start Task Button - Now with enrollment logic */}
+          {/* START TASK */}
           {bounty.status === "active" ? (
             <button
               onClick={handleEnroll}
               disabled={isEnrolling}
-              className="flex-1 text-center px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#FF1AC6] to-[#FF1AC6]/80 text-white text-sm font-semibold hover:from-[#FF1AC6]/90 hover:to-[#FF1AC6] hover:shadow-lg hover:shadow-[#FF1AC6]/25 transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="
+                group/start
+                relative flex items-center justify-center
+                gap-1.5
+                overflow-hidden
+                rounded-xl
+                bg-gradient-to-r
+                from-[#FF1AC6]
+                to-[#e815b0]
+                px-3 py-2.5
+                text-xs font-bold
+                text-white
+                shadow-[0_8px_20px_rgba(255,26,198,0.12)]
+                transition-all duration-200
+                hover:-translate-y-0.5
+                hover:shadow-[0_10px_25px_rgba(255,26,198,0.25)]
+                hover:brightness-110
+                active:scale-[0.98]
+                disabled:cursor-not-allowed
+                disabled:opacity-50
+              "
             >
-              {isEnrolling ? "Enrolling..." : "Start Task"}
+              {isEnrolling ? (
+                <span className="flex items-center gap-2">
+                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  Enrolling
+                </span>
+              ) : (
+                <>
+                  <span>Start Task</span>
+
+                  <FiArrowRight
+                    className="
+                      transition-transform duration-200
+                      group-hover/start:translate-x-0.5
+                    "
+                  />
+                </>
+              )}
+
+              {/* Shine */}
+              {!isEnrolling && (
+                <span
+                  className="
+                    pointer-events-none absolute inset-0
+                    -translate-x-full
+                    bg-gradient-to-r
+                    from-transparent
+                    via-white/15
+                    to-transparent
+                    transition-transform duration-700
+                    group-hover/start:translate-x-full
+                  "
+                />
+              )}
             </button>
           ) : (
             <button
               disabled
-              className="flex-1 text-center px-4 py-2.5 rounded-xl bg-gray-500/20 border border-gray-500/30 text-gray-400 text-sm font-semibold cursor-not-allowed"
               title={
                 bounty.status === "completed"
                   ? "Bounty completed"
                   : "Bounty not started yet"
               }
+              className="
+                flex items-center justify-center gap-1.5
+                rounded-xl
+                border border-white/[0.06]
+                bg-white/[0.025]
+                px-3 py-2.5
+                text-xs font-semibold
+                text-white/25
+                cursor-not-allowed
+              "
             >
-              {bounty.status === "completed" ? "Ended" : "Coming Soon"}
+              {bounty.status === "completed" ? (
+                <>
+                  <FiCheckCircle />
+                  Ended
+                </>
+              ) : (
+                <>
+                  <FiClock />
+                  Coming Soon
+                </>
+              )}
             </button>
           )}
         </div>

@@ -9,7 +9,6 @@ function LiveTricker() {
 
   return (
     <div className="relative w-full overflow-hidden mt-8 border-y border-white/[0.06] bg-[#090909]/95 backdrop-blur-xl">
-
       {/* Left fade */}
       <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#090909] via-[#090909]/80 to-transparent z-20 pointer-events-none" />
 
@@ -20,45 +19,33 @@ function LiveTricker() {
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-8 bg-[#FF1AC6]/10 blur-3xl pointer-events-none" />
 
       <div className="ticker-track">
-
         {[1, 2, 3].map((_, index) => (
           <div key={index} className="ticker-content">
-
             {items.map((item, i) => (
               <div key={i} className="ticker-item">
-
                 {/* Status indicator */}
                 <span
                   className={`status-dot ${
                     item.type === "LIVE"
                       ? "live"
                       : item.type === "NEW"
-                      ? "pink"
-                      : "purple"
+                        ? "pink"
+                        : "purple"
                   }`}
                 />
 
                 {/* Label */}
-                <span className="ticker-label">
-                  {item.label}
-                </span>
+                <span className="ticker-label">{item.label}</span>
 
                 {/* Category */}
-                <span className="ticker-category">
-                  {item.type}
-                </span>
+                <span className="ticker-category">{item.type}</span>
 
                 {/* Separator */}
-                <span className="ticker-separator">
-                  /
-                </span>
-
+                <span className="ticker-separator">/</span>
               </div>
             ))}
-
           </div>
         ))}
-
       </div>
 
       <style>{`
