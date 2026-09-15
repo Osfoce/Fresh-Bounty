@@ -10,6 +10,7 @@ const createBounty = async (req, res) => {
       description,
       category,
       tags,
+      creator,
       startDate,
       deadline,
       originLink,
@@ -30,10 +31,8 @@ const createBounty = async (req, res) => {
     deadline = new Date(deadline);
     reward = Number(reward);
 
-    if (isNaN(startDate) || isNaN(deadline)) {
-      return res.status(400).json({
-        message: "Invalid dates",
-      });
+    if (isNaN(startDate.getTime()) || isNaN(deadline.getTime())) {
+      return res.status(400).json({ message: "Invalid dates" });
     }
 
     const bounty = await Bounty.create({
@@ -62,7 +61,28 @@ const createBounty = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Internal server errr", error });
+    console.error("Failed to create Bounty:", error, "path:", error.name);
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: Object.values(error.errors).map((e) => ({
+          field: e.path,
+          message: e.message,
+        })),
+      });
+    }
+
+    // Mongoose cast error (e.g. bad ObjectId) → 400
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        message: `Invalid value for ${error.path}`,
+        value: error.value,
+      });
+    }
+
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 

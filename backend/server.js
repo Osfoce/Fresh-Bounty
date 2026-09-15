@@ -15,6 +15,7 @@ const bountyRoute = require("./routes/bounty.route");
 
 const app = express();
 const port = process.env.PORT || 5000;
+console.log(port)
 
 // Middleware
 app.use(cors()); // For production, restrict origins as needed
@@ -27,25 +28,31 @@ app.use("/api", userRoutes);
 app.use("/api", submissionRoutes);
 app.use("/api", enrollmentRoutes);
 app.use("/api", rewardRoutes);
-app.use("/api/v1/bounty", bountyRoute);
+app.use("/api", bountyRoute);
 
 // Test route
 app.get("/", (req, res) => {
+  //http://localhost:5000/api/bounties
   res.json({ message: "API working" });
 });
 
 // Connect to DB and start server
-connectDB(async (err) => {
-  if (err) {
-    console.error("Database connection failed:", err);
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    console.log("Connected to database");
+
+    // Start the cron job only after DB is ready
+    startStatusUpdateJob();
+
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("Database connection failed:", error);
     process.exit(1);
   }
-  console.log("Connected to database");
+};
 
-  // Start the cron job (only after DB is ready)
-  startStatusUpdateJob();
-
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
-});
+startServer();

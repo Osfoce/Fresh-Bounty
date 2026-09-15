@@ -1,4 +1,4 @@
-const mongoose =  require("mongoose")
+const mongoose = require("mongoose");
 // Schema for submissions subdocument
 const submissionSchema = new mongoose.Schema(
   {
@@ -282,26 +282,29 @@ bountySchema.index({ createdAt: -1 }); // For sorting by newest
 bountySchema.index({ status: 1, category: 1, deadline: 1 });
 
 // Middleware: Validate percentages when payoutType is 'percentage'
-bountySchema.pre("validate", function (next) {
-  if (this.payoutType === "percentage") {
-    if (!this.percentages || this.percentages.length === 0) {
-      this.invalidate(
-        "percentages",
-        "Percentages are required when payoutType is percentage",
-      );
-    }
-    if (this.percentages.length !== this.winnersAllowed) {
-      this.invalidate(
-        "percentages",
-        "Number of percentages must equal winnersAllowed",
-      );
-    }
-    const sum = this.percentages.reduce((acc, val) => acc + val, 0);
-    if (Math.abs(sum - 100) > 0.01) {
-      this.invalidate("percentages", "Percentages must sum to 100");
-    }
+bountySchema.pre("validate", function () {
+  if (this.payoutType !== "percentage") return;
+
+  const p = this.percentages || [];
+
+  if (p.length === 0) {
+    return this.invalidate(
+      "percentages",
+      "Percentages are required when payoutType is percentage",
+    );
   }
-  next();
+
+  if (p.length !== this.winnersAllowed) {
+    return this.invalidate(
+      "percentages",
+      "Number of percentages must equal winnersAllowed",
+    );
+  }
+
+  const sum = p.reduce((acc, val) => acc + val, 0);
+  if (Math.abs(sum - 100) > 0.01) {
+    return this.invalidate("percentages", "Percentages must sum to 100");
+  }
 });
 
 // Instance method: Add a submission
@@ -375,7 +378,7 @@ bountySchema.methods.cancel = function () {
 bountySchema.statics.getActive = function () {
   const now = new Date();
   return this.find({
-    lifecycleStatus: "null",
+    lifecycleStatus: null,
     startDate: { $lte: now },
     deadline: { $gte: now },
   }).sort({ createdAt: -1 });

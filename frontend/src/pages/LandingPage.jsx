@@ -54,7 +54,8 @@ function LandingPage() {
   const statsRef = useRef(null);
   const testimonialsRef = useRef(null);
 
-  const API_URL = "https://fresh-bounty.onrender.com/api";
+    const API_URL = process.env.REACT_APP_API_URL;
+  // const API_URL = `${API_URL1}/api`;
 
   // HERO TEXT ROTATION
   useEffect(() => {
@@ -69,7 +70,7 @@ function LandingPage() {
   useEffect(() => {
     const fetchFeaturedBounties = async () => {
       try {
-        const response = await axios.get(`${API_URL}/task`, {
+        const response = await axios.get(`${API_URL}/api/task`, {
           params: { status: "active", limit: 3, page: 0 },
         });
         setFeaturedBounties(response.data.bounties || []);
@@ -84,7 +85,7 @@ function LandingPage() {
     const fetchStats = async () => {
       try {
         // Example: get total bounties count
-        const allBounties = await axios.get(`${API_URL}/task`, {
+        const allBounties = await axios.get(`${API_URL}/api/task`, {
           params: { limit: 1 },
         });
         const totalBounties = allBounties.data.pagination?.total || 0;
