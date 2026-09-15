@@ -89,7 +89,7 @@ const createBounty = async (req, res) => {
 // get single bounty
 const getBounty = async (req, res) => {
   try {
-    const bounty = await Bounty.findOne(req.params.id);
+    const bounty = await Bounty.findOne({ _id: req.params.id });
     if (!bounty) return res.status(400).json({ message: "Invalid Id" });
 
     bounty.status = bounty.currentStatus;
@@ -99,7 +99,10 @@ const getBounty = async (req, res) => {
       bounty: { title: bounty.title, creator: bounty.creator },
     });
   } catch (error) {
-    res.status(500).json({ message: "Internal server errr", error });
+    console.error("Failed to fetch bounty:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
