@@ -6,7 +6,7 @@ const { connectDB } = require("./config/db");
 const startStatusUpdateJob = require("./jobs/updateStatusJob");
 
 // Import routes
-const bountyRoutes = require("./routes/bountyRoutes");
+// const bountyRoutes = require("./routes/bountyRoutes");
 const userRoutes = require("./routes/userRoutes");
 const submissionRoutes = require("./routes/submissionRoutes");
 const enrollmentRoutes = require("./routes/enrollmentRoutes");
@@ -23,7 +23,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // Routes
-app.use("/api", bountyRoutes);
+// app.use("/api", bountyRoutes);
 app.use("/api", userRoutes);
 app.use("/api", submissionRoutes);
 app.use("/api", enrollmentRoutes);
@@ -32,7 +32,12 @@ app.use("/api", bountyRoute);
 
 // Test route
 app.get("/", (req, res) => {
-  //http://localhost:5000/api/bounties
+   //http://localhost:5000/api/bounties
+  // http://localhost:5000/api/bounty/id
+  // http://localhost:5000/api/create
+  // http://localhost:5000/api/delete/id
+  // http://localhost:5000/api/update/id
+
   res.json({ message: "API working" });
 });
 
