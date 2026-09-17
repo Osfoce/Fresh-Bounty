@@ -8,15 +8,15 @@ const startStatusUpdateJob = require("./jobs/updateStatusJob");
 // Import routes
 // const bountyRoutes = require("./routes/bountyRoutes");
 // const userRoutes = require("./routes/userRoutes");
-const userRoutes = require("./routes/user.route")
+const userRoutes = require("./routes/user.route");
 const submissionRoutes = require("./routes/submission.route");
 const enrollmentRoutes = require("./routes/enrollment.route");
-const rewardRoutes = require("./routes/rewardRoutes");
+const rewardRoutes = require("./routes/reward.route");
 const bountyRoute = require("./routes/bounty.route");
 
 const app = express();
 const port = process.env.PORT || 5000;
-console.log(port)
+console.log(port);
 
 // Middleware
 app.use(cors()); // For production, restrict origins as needed
@@ -33,7 +33,7 @@ app.use("/api", bountyRoute);
 
 // Test route
 app.get("/", (req, res) => {
-   //http://localhost:5000/api/bounty/bounties
+  //http://localhost:5000/api/bounty/bounties
   // http://localhost:5000/api/bounty/id
   // http://localhost:5000/api/bounty/create
   // http://localhost:5000/api/bounty/delete/id
