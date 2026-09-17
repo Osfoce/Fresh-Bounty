@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
@@ -10,9 +12,17 @@ import WhitepaperPage from "./pages/WhitePaper";
 import ContactUs from "./pages/ContactUs";
 import Setting from "./pages/Setting";
 
+import LoadingScreen from "./components/LoadingScreen";
+
 function App() {
+  const [loading, setLoading] = useState(true);
+
   return (
     <>
+      {loading && (
+        <LoadingScreen onComplete={() => setLoading(false)} />
+      )}
+
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
