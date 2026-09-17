@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 // Schema for submissions subdocument
 const submissionSchema = new mongoose.Schema(
   {
@@ -118,13 +119,7 @@ const bountySchema = new mongoose.Schema(
       type: String,
       trim: true,
       validate: {
-        validator: function (v) {
-          if (!v) return true; // Optional field
-          // Basic URL validation
-          return /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/.test(
-            v,
-          );
-        },
+        validator: (v) => !v || validator.isURL(v),
         message: "Invalid URL format",
       },
     },
@@ -150,12 +145,12 @@ const bountySchema = new mongoose.Schema(
       type: Number,
       required: [true, "Reward is required"],
       min: [0, "Reward cannot be negative"],
-      validate: {
-        validator: function (v) {
-          return Number.isFinite(v) && v >= 0;
-        },
-        message: "Reward must be a valid number",
-      },
+      // validate: {
+      //   validator: function (v) {
+      //     return Number.isFinite(v) && v >= 0;
+      //   },
+      //   message: "Reward must be a valid number",
+      // },
     },
     token: {
       type: String,

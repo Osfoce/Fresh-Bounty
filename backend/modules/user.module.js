@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const claimedRewardSchema = require("./claimReward");
+const claimedRewardSchema = require("./claimReward.module");
 
 const userSchema = new mongoose.Schema(
   {
@@ -93,15 +93,15 @@ userSchema.virtual("submissionSuccessRate").get(function () {
 });
 
 // Indexes for better query performance
-userSchema.index({ walletAddress: 1 }, { unique: true });
+// userSchema.index({ walletAddress: 1 }, { unique: true });
 userSchema.index({ reputationScore: -1 }); // For leaderboards
 userSchema.index({ "claimedRewards.bountyId": 1 }); // For finding users who claimed specific bounties
 userSchema.index({ lastLogin: -1 }); // For filtering active/inactive users
 
 // Middleware: Update lastLogin on findOneAndUpdate operations
-userSchema.pre("findOneAndUpdate", function (next) {
+userSchema.pre("findOneAndUpdate", function () {
   this.set({ lastLogin: Date.now() });
-  next();
+  // next();
 });
 
 // Instance method: Add a claimed reward "user.add..."

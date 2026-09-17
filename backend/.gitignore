@@ -12,7 +12,8 @@ lerna-debug.log*
 .pnpm-debug.log*
 
 #Files to skip
-bountyRoutes.js
+bountyRoutes
+userRoutes
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json

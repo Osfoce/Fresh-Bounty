@@ -7,8 +7,9 @@ const startStatusUpdateJob = require("./jobs/updateStatusJob");
 
 // Import routes
 // const bountyRoutes = require("./routes/bountyRoutes");
-const userRoutes = require("./routes/userRoutes");
-const submissionRoutes = require("./routes/submissionRoutes");
+// const userRoutes = require("./routes/userRoutes");
+const userRoutes = require("./routes/user.route")
+const submissionRoutes = require("./routes/submission.route");
 const enrollmentRoutes = require("./routes/enrollmentRoutes");
 const rewardRoutes = require("./routes/rewardRoutes");
 const bountyRoute = require("./routes/bounty.route");
@@ -32,11 +33,11 @@ app.use("/api", bountyRoute);
 
 // Test route
 app.get("/", (req, res) => {
-   //http://localhost:5000/api/bounties
+   //http://localhost:5000/api/bounty/bounties
   // http://localhost:5000/api/bounty/id
-  // http://localhost:5000/api/create
-  // http://localhost:5000/api/delete/id
-  // http://localhost:5000/api/update/id
+  // http://localhost:5000/api/bounty/create
+  // http://localhost:5000/api/bounty/delete/id
+  // http://localhost:5000/api/bounty/update/id
 
   res.json({ message: "API working" });
 });

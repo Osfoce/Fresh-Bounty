@@ -431,6 +431,8 @@ const BountyDetail = () => {
         });
       }
 
+
+
       const submissionData = {
         bountyId: id,
         user: wallet,
