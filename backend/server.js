@@ -10,7 +10,7 @@ const startStatusUpdateJob = require("./jobs/updateStatusJob");
 // const userRoutes = require("./routes/userRoutes");
 const userRoutes = require("./routes/user.route")
 const submissionRoutes = require("./routes/submission.route");
-const enrollmentRoutes = require("./routes/enrollmentRoutes");
+const enrollmentRoutes = require("./routes/enrollment.route");
 const rewardRoutes = require("./routes/rewardRoutes");
 const bountyRoute = require("./routes/bounty.route");
 
