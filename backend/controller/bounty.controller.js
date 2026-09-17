@@ -1,4 +1,5 @@
 const Bounty = require("../modules/bounty.module");
+const Submission = require("../modules/submission.module");
 const buildBountyFilter = require("../utils/buildBountyFilter");
 const paginate = require("../utils/paginate");
 const buildSortQuery = require("../utils/buildSortQuery");
@@ -10,6 +11,7 @@ const createBounty = async (req, res) => {
       description,
       category,
       tags,
+      creator,
       startDate,
       deadline,
       originLink,
@@ -30,10 +32,8 @@ const createBounty = async (req, res) => {
     deadline = new Date(deadline);
     reward = Number(reward);
 
-    if (isNaN(startDate) || isNaN(deadline)) {
-      return res.status(400).json({
-        message: "Invalid dates",
-      });
+    if (isNaN(startDate.getTime()) || isNaN(deadline.getTime())) {
+      return res.status(400).json({ message: "Invalid dates" });
     }
 
     const bounty = await Bounty.create({
@@ -62,24 +62,63 @@ const createBounty = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Internal server errr", error });
+    console.error("Failed to create Bounty:", error, "path:", error.name);
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: Object.values(error.errors).map((e) => ({
+          field: e.path,
+          message: e.message,
+        })),
+      });
+    }
+
+    // Mongoose cast error (e.g. bad ObjectId) → 400
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        message: `Invalid value for ${error.path}`,
+        value: error.value,
+      });
+    }
+
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
 // get single bounty
 const getBounty = async (req, res) => {
   try {
-    const bounty = await Bounty.findOne(req.params.id);
-    if (!bounty) return res.status(400).json({ message: "Invalid Id" });
+    const bounty = await Bounty.findById(req.params.id);
+    if (!bounty) return res.status(400).json({ message: "Bounty not found" });
 
-    bounty.status = bounty.currentStatus;
+    const submissions = await Submission.find({ bountyId: bounty._id })
+      .sort({ submittedAt: -1 })
+      .lean();
+
+    // bounty.status = bounty.currentStatus;
 
     res.status(200).json({
-      message: "Sucess",
-      bounty: { title: bounty.title, creator: bounty.creator },
+      message: "Success",
+      bounty: {
+        ...bounty.toObject({ virtuals: true }),
+        status: bounty.currentStatus, // your virtual
+        submissions: {
+          count: bounty.submissions?.count ?? submissions.length,
+          maxSubmissions: bounty.submissions?.maxSubmissions ?? 100,
+          items: submissions,
+        },
+      },
     });
   } catch (error) {
-    res.status(500).json({ message: "Internal server errr", error });
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid bounty id" });
+    }
+    console.error("Failed to fetch bounty:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -179,10 +218,33 @@ const deleteBounty = async (req, res) => {
   res.status(200).json({ message: "Deleted sucessfully" });
 };
 
+const bountyTags = async (req, res) => {
+  try {
+    const tags = (await Bounty.distinct("tags")).sort();
+
+    res.status(200).json(tags);
+  } catch (err) {
+    console.error("Failed to fetch tags", err);
+    res.status(500).json({ error: "Failed to fetch tags" });
+  }
+};
+
+const bountyCategory = async (req, res) => {
+  try {
+    const categories = (await Bounty.distinct("category")).sort();
+    res.status(200).json(categories);
+  } catch (err) {
+    console.error("Failed to fetch categories", err);
+    res.status(500).json({ error: "Failed to fetch categories" });
+  }
+};
+
 module.exports = {
   createBounty,
   getBounty,
   getBounties,
   updateBounty,
   deleteBounty,
+  bountyTags,
+  bountyCategory,
 };

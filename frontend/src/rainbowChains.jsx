@@ -1,9 +1,4 @@
-import { sepolia } from "wagmi/chains";
-
-// const injectiveTestnetRpcUrl =
-//   "https://k8s.testnet.json-rpc.injective.network/";
-// const injectiveTestnetExplorerUrl =
-//   "https://testnet.explorer.injective.network/";
+// import { sepolia } from "wagmi/chains";
 
 // Injective Testnet Configuration
 const injectiveTestnet = {
@@ -22,6 +17,7 @@ const injectiveTestnet = {
   testnet: true,
 };
 
+// creditcoin Testnet config
 export const creditcoinTestnet = {
   id: 102031,
   name: "Creditcoin Testnet",
@@ -45,7 +41,7 @@ export const creditcoinTestnet = {
 };
 
 export const supportedChains = [
-  sepolia,
+  // sepolia,
   injectiveTestnet,
   creditcoinTestnet,
 ];

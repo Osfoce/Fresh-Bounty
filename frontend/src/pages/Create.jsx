@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAccount, useChainId, useSwitchChain } from "wagmi";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -7,9 +7,11 @@ import NavBar from "../components/Layout/NavBar";
 import Footer from "../components/Layout/Footer";
 import { supportedChains } from "../rainbowChains";
 import { useBounty } from "../hooks/useBounty";
-import { CONTRACT_ADDRESSES } from "contract";
+import { listTokensForChain } from "../utils/enums";
+import { CONTRACT_ADDRESSES } from "../utils/chains.address";
 
 function Create() {
+  const API_URL = process.env.REACT_APP_API_URL;
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
 
@@ -60,6 +62,11 @@ function Create() {
     isConfirming,
   } = useBounty();
 
+  const availableTokens = useMemo(() => {
+    if (!currentChainId) return [];
+    return listTokensForChain(currentChainId);
+  }, [currentChainId]);
+
   // Helper to update bounty data
   const updateBountyData = (field, value) => {
     setBountyData((prev) => ({ ...prev, [field]: value }));
@@ -71,6 +78,20 @@ function Create() {
       updateBountyData("creator", address);
     }
   }, [address, isConnected]);
+
+  useEffect(() => {
+    if (availableTokens.length === 0) return;
+
+    const stillValid = availableTokens.some(
+      (t) =>
+        t.key.toUpperCase() === (bountyData.token || "").toUpperCase() ||
+        t.label.toUpperCase() === (bountyData.token || "").toUpperCase(),
+    );
+
+    if (!stillValid) {
+      updateBountyData("token", availableTokens[0].key);
+    }
+  }, [availableTokens, bountyData.token]);
 
   // Network selection handler (also updates form)
   const handleChainChange = (e) => {
@@ -207,7 +228,7 @@ function Create() {
     const contractAddress = CONTRACT_ADDRESSES[selectedChainId]?.bounty;
     if (!contractAddress || contractAddress === "Loading...") {
       toast.error(
-        `Contract not deployed on ${supportedChains.find((c) => c.id === selectedChainId)?.name}. Only Injective testnet is supported currently.`,
+        `Contract not deployed on ${supportedChains.find((c) => c.id === selectedChainId)?.name}.`,
       );
       return;
     }
@@ -226,6 +247,8 @@ function Create() {
         return;
       }
     }
+
+    console.log("chain is correct");
 
     // 6. Prepare bounty data for contract (transform form data)
     const finalWinnersAllowed = multipleWinner ? winnerCount : 1;
@@ -268,9 +291,10 @@ function Create() {
       if (!blockchainId) throw new Error("No bountyId from contract event");
 
       // 8. Save to backend with blockchain info
+      console.log("posting to db");
       const saveResponse = await axios.post(
         // REACT_APP_API_URL ||
-        `${"https://fresh-bounty.onrender.com"}/api/task`,
+        `${API_URL}/api/task`,
         {
           ...backendData,
           blockchainId: Number(blockchainId),
@@ -279,7 +303,7 @@ function Create() {
           creator: address,
         },
       );
-
+      console.log("posting sucess");
       if (saveResponse.status === 201) {
         toast.success("Bounty created on-chain and saved!");
         navigate("/dashboard");
@@ -400,7 +424,9 @@ function Create() {
                         <option value="Development">Development</option>
                         <option value="Design">Design</option>
                         <option value="Marketing">Marketing</option>
-                        <option value="AI & Machine Learning">AI & Machine Learning</option>
+                        <option value="AI & Machine Learning">
+                          AI & Machine Learning
+                        </option>
                         <option value="Others">Others</option>
                       </select>
                     </div>
@@ -760,10 +786,18 @@ function Create() {
                         }
                         className="w-full sm:w-64 bg-[#2D2D2D] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#FF1AC6]/50 transition"
                       >
-                        <option value="INJ">INJ (Injective)</option>
-                        <option value="USDC">USDC</option>
-                        <option value="USDT">USDT</option>
-                        <option value="ETH">ETH</option>
+                        {availableTokens.length === 0 ? (
+                          <option value="" disabled>
+                            No tokens available for this network
+                          </option>
+                        ) : (
+                          availableTokens.map((t) => (
+                            <option key={t.key} value={t.key}>
+                              {t.label}
+                              {t.kind === "native" ? " (Native)" : ""}
+                            </option>
+                          ))
+                        )}
                       </select>
                     </div>
                   </div>

@@ -25,8 +25,10 @@ function Dashboard() {
 
   console.log(`Welcome to your dashboard with user ${address}`);
 
-  const bountyApi = "https://fresh-bounty.onrender.com/api/task";
-  const userInfoApi = `https://fresh-bounty.onrender.com/api/dashboard/${address}`;
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  const bountyApi = `${API_URL}/api/task`;
+  const userInfoApi = `${API_URL}/api/dashboard/${address}`;
 
   const loadBounties = async () => {
     setLoading(true);

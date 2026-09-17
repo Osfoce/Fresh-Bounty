@@ -30,7 +30,7 @@ import {
   prepareWithdrawTx,
   formatReward,
 } from "../services/bountyService";
-import { BOUNTY_ABI } from "contract";
+import { BOUNTY_ABI } from "../utils/abi";
 
 export const useBounty = () => {
   const { address: account } = useAccount();
@@ -268,6 +268,7 @@ export const useBounty = () => {
 
   // ---------- Write actions with event parsing ----------
   const createBounty = async (bountyData) => {
+    console.log("creating bounty via contract");
     return executeTx(
       prepareCreateBountyTx,
       { bountyData },

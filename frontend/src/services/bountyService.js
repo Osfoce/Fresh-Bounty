@@ -1,5 +1,6 @@
 import { parseEther, formatEther, parseEventLogs } from "viem";
-import { BOUNTY_ABI, CONTRACT_ADDRESSES } from "contract";
+import { BOUNTY_ABI } from "../utils/abi";
+import {CONTRACT_ADDRESSES} from "../utils/chains.address"
 import { resolveTokenType, getPayoutType } from "../utils/enums";
 
 /**
@@ -16,7 +17,7 @@ export const getBountyContract = (chainId) => {
 export const prepareCreateBountyTx = ({ bountyData, account, chainId }) => {
   const address = getBountyContract(chainId);
 
-  const tokenType = resolveTokenType(bountyData.token);
+  const tokenType = resolveTokenType(bountyData.token, chainId);
   const payoutType = getPayoutType(
     bountyData.winnersAllowed,
     bountyData.payoutType,

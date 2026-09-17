@@ -71,7 +71,7 @@ const BountyDetail = () => {
   // Winners distribution
   const [winnerAddresses, setWinnerAddresses] = useState([]);
 
-  const API_URL = "https://fresh-bounty.onrender.com";
+  const API_URL = process.env.REACT_APP_API_URL;
   // process.env.REACT_APP_API_URL ||
   const fileInputRef = useRef(null);
 
@@ -430,6 +430,8 @@ const BountyDetail = () => {
           reader.readAsDataURL(compressed);
         });
       }
+
+
 
       const submissionData = {
         bountyId: id,
