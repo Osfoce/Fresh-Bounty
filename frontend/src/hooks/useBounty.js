@@ -8,7 +8,7 @@ import {
   usePublicClient,
 } from "wagmi";
 import { useState, useEffect } from "react";
-import { parseEventLogs } from "viem";
+import { parseEventLogs, decodeEventLog, getAbiItem } from "viem";
 import toast from "react-hot-toast";
 import {
   prepareCreateBountyTx,
@@ -131,39 +131,159 @@ export const useBounty = () => {
 
   // ---------- Public read hooks (using useReadContract) ----------
   const fetchBountyIdFromTx = async (txHash) => {
-    console.log(`Fetching bountyId from txHash: ${txHash}`);
-    console.log(typeof txHash);
     if (!txHash) {
       toast.error("Transaction hash is required");
       return null;
     }
 
+    let receipt;
     try {
-      const receipt = await publicClient.waitForTransactionReceipt({
+      receipt = await publicClient.waitForTransactionReceipt({
         hash: txHash,
+        // Some chains need more confirmations before logs are available
+        confirmations: 1,
+        timeout: 60_000,
       });
-
-      if (receipt.status !== "success") {
-        throw new Error("Transaction reverted");
-      }
-      console.log("Receipt logs for bountyId fetch:", receipt.logs);
-      console.log("Full receipt for bountyId fetch:", receipt);
-      const events = parseEventLogs({
-        abi: BOUNTY_ABI,
-        logs: receipt.logs,
-        eventName: "BountyCreated",
-      });
-      console.log(`retrived id ${events?.[0]?.args?.bountyId}`);
-
-      return events?.[0]?.args?.bountyId
-        ? Number(events[0].args.bountyId)
-        : null;
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to retrieve bountyId from transaction");
+    } catch (err) {
+      console.error("waitForTransactionReceipt failed:", err);
+      toast.error("Could not confirm transaction. Please check the explorer.");
       return null;
     }
+
+    if (!receipt || receipt.status !== "success") {
+      toast.error("Transaction reverted or not found");
+      return null;
+    }
+
+    // ── Strategy 1: parseEventLogs with the full ABI (best case) ──
+    const bountyIdFromParse = tryParseWithAbi(receipt.logs);
+    if (bountyIdFromParse != null) return bountyIdFromParse;
+
+    // ── Strategy 2: raw decode against logs that match the event topic ──
+    const bountyIdFromTopic = tryDecodeFromTopics(receipt.logs);
+    if (bountyIdFromTopic != null) return bountyIdFromTopic;
+
+    // ── Strategy 3: refetch the receipt (some RPCs lag on logs) ──
+    const bountyIdFromRetry = await retryWithBackoff(txHash, 3);
+    if (bountyIdFromRetry != null) return bountyIdFromRetry;
+
+    // ── Strategy 4: final fallback — ask user / let caller handle ──
+    console.warn(
+      "Could not extract bountyId from receipt logs. Chain may not expose event logs via RPC.",
+    );
+    return null;
   };
+
+  // ─────────────────────────────────────────────
+  // Helpers
+  // ─────────────────────────────────────────────
+
+  function tryParseWithAbi(logs) {
+    try {
+      if (!logs?.length) return null;
+
+      const events = parseEventLogs({
+        abi: BOUNTY_ABI,
+        logs,
+        eventName: "BountyCreated",
+      });
+
+      const id = events?.[0]?.args?.bountyId;
+      return id != null ? Number(id) : null;
+    } catch (err) {
+      console.warn("parseEventLogs failed:", err);
+      return null;
+    }
+  }
+
+  function tryDecodeFromTopics(logs) {
+    try {
+      if (!logs?.length) return null;
+
+      // Get the topic hash for BountyCreated from the ABI
+      const eventAbi = getAbiItem({ abi: BOUNTY_ABI, name: "BountyCreated" });
+      if (!eventAbi) return null;
+
+      // We need the topic0 hash. viem computes it internally, so instead
+      // of manually hashing, we just attempt decode on every log and skip failures.
+      for (const log of logs) {
+        try {
+          const decoded = decodeEventLog({
+            abi: BOUNTY_ABI,
+            data: log.data,
+            topics: log.topics,
+          });
+
+          if (decoded?.eventName === "BountyCreated") {
+            const id = decoded.args?.bountyId;
+            if (id != null) return Number(id);
+          }
+        } catch {
+          // Not our event — skip
+          continue;
+        }
+      }
+      return null;
+    } catch (err) {
+      console.warn("decodeEventLog failed:", err);
+      return null;
+    }
+  }
+
+  async function retryWithBackoff(txHash, attempts = 3) {
+    for (let i = 0; i < attempts; i++) {
+      await new Promise((r) => setTimeout(r, 1500 * (i + 1)));
+
+      try {
+        const freshReceipt = await publicClient.getTransactionReceipt({
+          hash: txHash,
+        });
+
+        const id = tryParseWithAbi(freshReceipt?.logs);
+        if (id != null) return id;
+
+        const idFromTopics = tryDecodeFromTopics(freshReceipt?.logs);
+        if (idFromTopics != null) return idFromTopics;
+      } catch (err) {
+        console.warn(`Retry ${i + 1} failed:`, err);
+      }
+    }
+    return null;
+  }
+  // const fetchBountyIdFromTx = async (txHash) => {
+  //   console.log(`Fetching bountyId from txHash: ${txHash}`);
+  //   console.log(typeof txHash);
+  //   if (!txHash) {
+  //     toast.error("Transaction hash is required");
+  //     return null;
+  //   }
+
+  //   try {
+  //     const receipt = await publicClient.waitForTransactionReceipt({
+  //       hash: txHash,
+  //     });
+
+  //     if (receipt.status !== "success") {
+  //       throw new Error("Transaction reverted");
+  //     }
+  //     console.log("Receipt logs for bountyId fetch:", receipt.logs);
+  //     console.log("Full receipt for bountyId fetch:", receipt);
+  //     const events = parseEventLogs({
+  //       abi: BOUNTY_ABI,
+  //       logs: receipt.logs,
+  //       eventName: "BountyCreated",
+  //     });
+  //     console.log(`retrived id ${events?.[0]?.args?.bountyId}`);
+
+  //     return events?.[0]?.args?.bountyId
+  //       ? Number(events[0].args.bountyId)
+  //       : null;
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("Failed to retrieve bountyId from transaction");
+  //     return null;
+  //   }
+  // };
 
   const useClaimableReward = (bountyId, user) => {
     return useReadContract({
