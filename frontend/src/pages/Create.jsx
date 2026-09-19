@@ -1,5 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import {
+  BOUNTY_CATEGORIES,
+  TAGS_BY_CATEGORY,
+  DEFAULT_TAGS,
+} from "../constants/categories";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -13,6 +18,7 @@ import { CONTRACT_ADDRESSES } from "../utils/chains.address";
 function Create() {
   const API_URL = import.meta.env.VITE_API_URL;
   const [currentStep, setCurrentStep] = useState(1);
+  const [customTag, setCustomTag] = useState("");
   const totalSteps = 4;
 
   const [bountyData, setBountyData] = useState({
@@ -20,7 +26,7 @@ function Create() {
     description: "",
     category: "",
     network: "",
-    tags: "", // string for input (will convert later)
+    tags: [], // string for input (will convert later)
 
     startDate: "",
     deadline: "",
@@ -61,6 +67,23 @@ function Create() {
     isPending: isContractPending,
     isConfirming,
   } = useBounty();
+  // Inside Create(), near your other state
+
+  // Accepts only http(s) URLs with a valid-looking domain
+  const isValidUrl = (value) => {
+    if (!value) return true; // optional field — empty is OK
+    try {
+      const url = new URL(value);
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch {
+      return false;
+    }
+  };
+
+  const originLinkError =
+    bountyData.originLink && !isValidUrl(bountyData.originLink)
+      ? "Please enter a valid URL starting with http:// or https://"
+      : "";
 
   const availableTokens = useMemo(() => {
     if (!currentChainId) return [];
@@ -100,14 +123,6 @@ function Create() {
     switchChain({ chainId });
   };
 
-  // const nextStep = () => {
-  //   if (currentStep < totalSteps) {
-  //     if (validateStep(currentStep)) {
-  //       setCurrentStep((prev) => prev + 1);
-  //     }
-  //   }
-  // };
-
   const nextStep = () => {
     if (currentStep < totalSteps && validateStep(currentStep)) {
       setCurrentStep((prev) => prev + 1);
@@ -139,8 +154,16 @@ function Create() {
           toast.error("Description must be at least 20 characters");
           return false;
         }
+        if (!bountyData.tags || bountyData.tags.length === 0) {
+          toast.error("Please select at least one tag");
+          return false;
+        }
         if (!bountyData.startDate || !bountyData.deadline) {
           toast.error("Please select start and end dates");
+          return false;
+        }
+        if (bountyData.originLink && !isValidUrl(bountyData.originLink)) {
+          toast.error("Origin link must be a valid URL");
           return false;
         }
         break;
@@ -204,10 +227,53 @@ function Create() {
     });
   };
 
+  // toogle tags
+  const toggleTag = (tag) => {
+    setBountyData((prev) => {
+      const alreadySelected = prev.tags.includes(tag);
+      if (alreadySelected) {
+        return { ...prev, tags: prev.tags.filter((t) => t !== tag) };
+      }
+      if (prev.tags.length >= 5) {
+        toast.error("Max 5 tags");
+        return prev;
+      }
+      return { ...prev, tags: [...prev.tags, tag] };
+    });
+  };
+
+  const addCustomTag = () => {
+    const trimmed = customTag.trim();
+    if (!trimmed) return;
+    if (bountyData.tags.includes(trimmed)) {
+      toast.error("Tag already added");
+      return;
+    }
+    if (bountyData.tags.length >= 5) {
+      toast.error("Max 5 tags");
+      return;
+    }
+    setBountyData((prev) => ({ ...prev, tags: [...prev.tags, trimmed] }));
+    setCustomTag("");
+  };
+
+  const removeTag = (tag) => {
+    setBountyData((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((t) => t !== tag),
+    }));
+  };
+
   // --- Contract submission logic ---
   const handleFinalSubmit = async () => {
     // 1. Validate final step
     if (!validateStep(3)) return;
+
+    if (bountyData.originLink && !isValidUrl(bountyData.originLink)) {
+      toast.error("Origin link is invalid. Please go back and fix it.");
+      setCurrentStep(2); // send them to the right step
+      return;
+    }
 
     // 2. Check wallet connection
     if (!isConnected || !address) {
@@ -264,7 +330,7 @@ function Create() {
     // Create a copy for backend (convert tags string to array if needed)
     const backendData = {
       ...bountyData,
-      tags: bountyData.tags ? [bountyData.tags] : [],
+      tags: bountyData.tags, // ? [bountyData.tags] : [],
       winnersAllowed: finalWinnersAllowed,
       payoutType: finalPayoutType,
       percentages: finalPercentages,
@@ -411,19 +477,23 @@ function Create() {
                       </label>
                       <select
                         value={bountyData.category}
-                        onChange={(e) =>
-                          updateBountyData("category", e.target.value)
-                        }
+                        onChange={(e) => {
+                          updateBountyData("category", e.target.value);
+                          updateBountyData("tags", []); // reset tags — they were category-specific
+                          setCustomTag("");
+                        }}
                         className="w-full bg-[#2D2D2D] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#FF1AC6]/50 focus:ring-1 focus:ring-[#FF1AC6]/50 transition"
                       >
                         <option value="">Select Category</option>
-                        <option value="Development">Development</option>
-                        <option value="Design">Design</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="AI & Machine Learning">
-                          AI & Machine Learning
-                        </option>
-                        <option value="Others">Others</option>
+                        {BOUNTY_CATEGORIES.map(({ group, values }) => (
+                          <optgroup key={group} label={group}>
+                            {values.map((v) => (
+                              <option key={v} value={v}>
+                                {v}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -473,26 +543,118 @@ function Create() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-white/60 mb-2">
-                        Tags <span className="text-red-400">*</span>
-                      </label>
-                      <select
-                        value={bountyData.tags}
-                        onChange={(e) =>
-                          updateBountyData("tags", e.target.value)
-                        }
-                        className="w-full bg-[#2D2D2D] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#FF1AC6]/50 transition"
-                      >
-                        <option value="">Select a tag</option>
-                        <option value="smart-contract">Smart Contract</option>
-                        <option value="frontend">Frontend</option>
-                        <option value="backend">Backend</option>
-                        <option value="AI/ML">AI/ML</option>
-                        <option value="ui-ux">Backend</option>
-                        <option value="ui-ux">UI/UX</option>
-                        <option value="marketing">Marketing</option>
-                        <option value="content">Content Creation</option>
-                      </select>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-sm font-medium text-white/60">
+                          Tags <span className="text-red-400">*</span>
+                        </label>
+                        <span className="text-xs text-white/40">
+                          {bountyData.tags.length} / 5 selected
+                        </span>
+                      </div>
+
+                      {!bountyData.category ? (
+                        <p className="text-xs text-white/40 italic">
+                          Select a category first to see related tags.
+                        </p>
+                      ) : (
+                        <>
+                          {/* Suggested tags for the chosen category */}
+                          <div className="flex flex-wrap gap-2">
+                            {(
+                              TAGS_BY_CATEGORY[bountyData.category] ||
+                              DEFAULT_TAGS
+                            ).map((tag) => {
+                              const selected = bountyData.tags.includes(tag);
+                              return (
+                                <button
+                                  key={tag}
+                                  type="button"
+                                  onClick={() => toggleTag(tag)}
+                                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                                    selected
+                                      ? "bg-[#FF1AC6]/20 border-[#FF1AC6]/60 text-[#FF1AC6]"
+                                      : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:border-white/20"
+                                  }`}
+                                >
+                                  {tag}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          {/* Custom tag input — only for "Other" category */}
+                          {bountyData.category === "Other" && (
+                            <div className="mt-4">
+                              <label className="block text-xs text-white/50 mb-1.5">
+                                Add your own tags
+                              </label>
+                              <div className="flex gap-2">
+                                <input
+                                  type="text"
+                                  value={customTag}
+                                  onChange={(e) => setCustomTag(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      e.preventDefault();
+                                      addCustomTag();
+                                    }
+                                  }}
+                                  maxLength={24}
+                                  placeholder="e.g., memes, dao-tools, onboarding"
+                                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#FF1AC6]/50 transition"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={addCustomTag}
+                                  disabled={
+                                    !customTag.trim() ||
+                                    bountyData.tags.length >= 5
+                                  }
+                                  className="px-4 py-2 rounded-xl bg-[#FF1AC6]/20 border border-[#FF1AC6]/40 text-[#FF1AC6] text-sm font-medium hover:bg-[#FF1AC6]/30 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                                >
+                                  Add
+                                </button>
+                              </div>
+                              <p className="mt-1 text-[10px] text-white/30">
+                                Press Enter or click Add. Max 5 tags total.
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Selected tags — shown as removable pills, including custom ones */}
+                          {bountyData.tags.length > 0 && (
+                            <div className="mt-4">
+                              <p className="text-xs text-white/50 mb-2">
+                                Selected:
+                              </p>
+                              <div className="flex flex-wrap gap-2">
+                                {bountyData.tags.map((tag) => (
+                                  <span
+                                    key={tag}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#FF1AC6]/20 border border-[#FF1AC6]/60 text-[#FF1AC6]"
+                                  >
+                                    {tag}
+                                    <button
+                                      type="button"
+                                      onClick={() => removeTag(tag)}
+                                      aria-label={`Remove ${tag}`}
+                                      className="hover:text-white transition"
+                                    >
+                                      ×
+                                    </button>
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {bountyData.tags.length === 0 && (
+                            <p className="mt-2 text-xs text-white/40">
+                              Pick at least one tag.
+                            </p>
+                          )}
+                        </>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -533,9 +695,18 @@ function Create() {
                         onChange={(e) =>
                           updateBountyData("originLink", e.target.value)
                         }
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF1AC6]/50 transition"
+                        className={`w-full bg-white/5 border rounded-xl px-4 py-2.5 text-white placeholder:text-white/30 focus:outline-none transition ${
+                          originLinkError
+                            ? "border-red-500/60 focus:border-red-500 focus:ring-1 focus:ring-red-500/50"
+                            : "border-white/10 focus:border-[#FF1AC6]/50 focus:ring-1 focus:ring-[#FF1AC6]/50"
+                        }`}
                         placeholder="https://github.com/... or https://figma.com/..."
                       />
+                      {originLinkError && (
+                        <p className="mt-1.5 text-xs text-red-400">
+                          {originLinkError}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -843,11 +1014,24 @@ function Create() {
                     </div>
 
                     {/* Tags */}
-                    <div className="flex justify-between items-center py-3 border-b border-white/10">
+                    <div className="flex justify-between items-start py-3 border-b border-white/10">
                       <span className="text-white/60 text-sm">Tags</span>
-                      <span className="text-white text-sm font-medium">
-                        {bountyData.tags || "Not selected"}
-                      </span>
+                      <div className="flex flex-wrap gap-1.5 justify-end max-w-[60%]">
+                        {bountyData.tags.length > 0 ? (
+                          bountyData.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="text-xs bg-[#FF1AC6]/10 text-[#FF1AC6] px-2 py-0.5 rounded-full"
+                            >
+                              {tag}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-white/40 text-sm">
+                            Not selected
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     {/* Origin Link */}

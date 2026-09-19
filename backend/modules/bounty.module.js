@@ -55,22 +55,28 @@ const bountySchema = new mongoose.Schema(
       type: String,
       required: [true, "Category is required"],
       trim: true,
-      enum: {
-        values: ["Design", "Development", "Writing", "Marketing", "Other"],
-        message: "{VALUE} is not a valid category",
-      },
     },
     tags: {
       type: [String],
       default: [],
-      trim: true,
-      lowercase: true,
-      validate: {
-        validator: function (v) {
-          return v.length <= 10; // Max 10 tags
+      validate: [
+        {
+          validator: (v) => v.length <= 5,
+          message: "Cannot have more than 5 tags",
         },
-        message: "Cannot have more than 10 tags",
-      },
+        {
+          validator: (v) =>
+            v.every((tag) => typeof tag === "string" && tag.trim().length > 0),
+          message: "Tags cannot be empty",
+        },
+        {
+          validator: (v) => {
+            const normalized = v.map((t) => t.trim().toLowerCase());
+            return new Set(normalized).size === normalized.length;
+          },
+          message: "Duplicate tags are not allowed",
+        },
+      ],
     },
     // The backend extracts the creators address
     creator: {
