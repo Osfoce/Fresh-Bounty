@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useNav } from "../hooks/useNav";
 import axios from "axios";
 import {
   FiZap,
@@ -29,6 +30,7 @@ import Footer from "../components/Layout/Footer";
 function LandingPage() {
   const [featuredBounties, setFeaturedBounties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { handleNavigate } = useNav();
 
   const [stats, setStats] = useState({
     totalBounties: 0,
@@ -218,6 +220,10 @@ function LandingPage() {
 
           <Link
             to="/dashboard"
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigate("/dashboard");
+            }}
             className="group flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] text-sm font-medium text-gray-300 transition-all duration-300 hover:border-[#FF1AC6]/30 hover:bg-[#FF1AC6]/5 hover:text-[#FF1AC6]"
           >
             <span>View all bounties</span>
@@ -272,6 +278,10 @@ function LandingPage() {
 
               <Link
                 to="/dashboard"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigate("/dashboard");
+                }}
                 className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#FF1AC6] px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#e916b1] hover:shadow-lg hover:shadow-[#FF1AC6]/20"
               >
                 Browse bounties

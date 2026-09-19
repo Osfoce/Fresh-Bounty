@@ -271,7 +271,7 @@ export const useBounty = () => {
     console.log("creating bounty via contract");
     return executeTx(
       prepareCreateBountyTx,
-      { bountyData },
+      { bountyData, account, chainId },
       {
         successMessage: "Bounty created!",
         eventName: "BountyCreated",

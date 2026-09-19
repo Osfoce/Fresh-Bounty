@@ -1,6 +1,6 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useNav } from "../hooks/useNav";
 import {
   FiArrowUpRight,
   FiCheck,
@@ -21,6 +21,7 @@ export default function Hero() {
   const [heroText, setHeroText] = useState(0);
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const { handleNavigate } = useNav();
 
   /* =====================================================
      TYPING / SPELLING ANIMATION
@@ -31,10 +32,7 @@ export default function Hero() {
 
     const timer = setTimeout(() => {
       if (!isDeleting) {
-        const nextText = currentMessage.slice(
-          0,
-          displayText.length + 1
-        );
+        const nextText = currentMessage.slice(0, displayText.length + 1);
 
         setDisplayText(nextText);
 
@@ -44,18 +42,13 @@ export default function Hero() {
           }, 1400);
         }
       } else {
-        const nextText = currentMessage.slice(
-          0,
-          displayText.length - 1
-        );
+        const nextText = currentMessage.slice(0, displayText.length - 1);
 
         setDisplayText(nextText);
 
         if (nextText.length === 0) {
           setIsDeleting(false);
-          setHeroText(
-            (prev) => (prev + 1) % heroMessages.length
-          );
+          setHeroText((prev) => (prev + 1) % heroMessages.length);
         }
       }
     }, typingSpeed);
@@ -124,12 +117,10 @@ export default function Hero() {
       ===================================================== */}
       <div className="relative z-10 mx-auto flex min-h-[620px] max-w-7xl items-center px-5 py-12 sm:min-h-[650px] sm:px-8 sm:py-16 lg:px-10">
         <div className="grid w-full items-center gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:gap-8">
-
           {/* =================================================
               LEFT SIDE — UNCHANGED
           ================================================= */}
           <div className="max-w-2xl text-center sm:text-left">
-
             {/* BADGE */}
             <div className="hero-badge mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 backdrop-blur-xl">
               <span className="relative flex h-2 w-2">
@@ -167,20 +158,22 @@ export default function Hero() {
 
             {/* DESCRIPTION */}
             <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-gray-400 sm:mx-0 sm:text-base md:mt-4">
-              Complete quests and earn cryptocurrency, tokens, and
-              digital rewards. Post bounties and get quality work
-              done — fully on-chain.
+              Complete quests and earn cryptocurrency, tokens, and digital
+              rewards. Post bounties and get quality work done — fully on-chain.
             </p>
 
             {/* BUTTONS */}
             <div className="mt-6 flex flex-wrap justify-center gap-3 sm:justify-start">
               <Link
                 to="/dashboard"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigate("/dashboard");
+                }}
                 className="group relative overflow-hidden rounded-lg bg-[#FF1AC6] px-6 py-3 text-sm font-semibold text-white shadow-[0_0_30px_rgba(255,26,198,0.12)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#e915ad] hover:shadow-[0_0_35px_rgba(255,26,198,0.25)]"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   Explore Bounties
-
                   <FiArrowUpRight className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </span>
 
@@ -189,10 +182,13 @@ export default function Hero() {
 
               <Link
                 to="/create"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigate("/create");
+                }}
                 className="group flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-6 py-3 text-sm font-semibold text-gray-200 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/[0.08]"
               >
                 Create a Bounty
-
                 <FiArrowUpRight className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
             </div>
@@ -222,7 +218,6 @@ export default function Hero() {
               RIGHT SIDE — UPGRADED 3D ORBIT SYSTEM
           ================================================= */}
           <div className="relative flex min-h-[360px] items-center justify-center sm:min-h-[430px] lg:min-h-[500px]">
-
             {/* =================================================
                 ATMOSPHERIC ENERGY
             ================================================= */}
@@ -237,7 +232,6 @@ export default function Hero() {
                 3D ORBIT CONTAINER
             ================================================= */}
             <div className="orbit-system absolute h-[330px] w-[330px] sm:h-[420px] sm:w-[420px] lg:h-[460px] lg:w-[460px]">
-
               {/* =================================================
                   OUTER ORBIT
               ================================================= */}
@@ -299,7 +293,6 @@ export default function Hero() {
                 CENTRAL 3D CORE
             ================================================= */}
             <div className="hero-core relative z-20 h-[165px] w-[165px] sm:h-[205px] sm:w-[205px] lg:h-[225px] lg:w-[225px]">
-
               {/* Deep glow */}
               <div className="absolute -inset-12 rounded-full bg-[#FF1AC6]/10 blur-[55px]" />
 
@@ -322,7 +315,6 @@ export default function Hero() {
                   3D SPHERE
               ================================================= */}
               <div className="hero-sphere absolute inset-[34px] overflow-hidden rounded-full bg-gradient-to-br from-[#ff4bd1]/35 via-[#161116] to-purple-900/45 shadow-[inset_-18px_-20px_35px_rgba(0,0,0,0.85),inset_12px_10px_25px_rgba(255,255,255,0.08),0_0_50px_rgba(255,26,198,0.2)]">
-
                 {/* Sphere atmospheric layer */}
                 <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.16),transparent_25%),radial-gradient(circle_at_70%_75%,rgba(168,85,247,0.18),transparent_45%)]" />
 
@@ -371,7 +363,6 @@ export default function Hero() {
                 NETWORK CARD
             ================================================= */}
             <div className="orbit-data-card absolute right-[0%] top-[5%] z-30 w-[130px] rounded-2xl border border-white/10 bg-[#101011]/80 p-3 shadow-[0_20px_45px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:right-[3%] sm:w-[145px]">
-
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-[8px] uppercase tracking-[0.16em] text-gray-500">
                   Network
@@ -380,9 +371,7 @@ export default function Hero() {
                 <span className="network-status h-1.5 w-1.5 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.8)]" />
               </div>
 
-              <div className="text-sm font-semibold text-white">
-                On-chain
-              </div>
+              <div className="text-sm font-semibold text-white">On-chain</div>
 
               <div className="mt-2 flex items-center gap-1.5 text-[9px] text-gray-500">
                 <FiCheck className="text-green-400" />
@@ -394,13 +383,9 @@ export default function Hero() {
                 REWARD CARD
             ================================================= */}
             <div className="orbit-reward-card absolute bottom-[5%] left-[0%] z-30 w-[140px] rounded-2xl border border-white/10 bg-[#101011]/85 p-3 shadow-[0_20px_45px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:left-[3%] sm:w-[155px]">
-
               <div className="flex items-center gap-2">
                 <div className="reward-icon flex h-8 w-8 items-center justify-center rounded-xl bg-[#FF1AC6]/10">
-                  <FiDollarSign
-                    size={14}
-                    className="text-[#FF1AC6]"
-                  />
+                  <FiDollarSign size={14} className="text-[#FF1AC6]" />
                 </div>
 
                 <div>
@@ -408,9 +393,7 @@ export default function Hero() {
                     Reward
                   </p>
 
-                  <p className="text-xs font-semibold text-white">
-                    +450 USDC
-                  </p>
+                  <p className="text-xs font-semibold text-white">+450 USDC</p>
                 </div>
               </div>
             </div>
@@ -419,11 +402,7 @@ export default function Hero() {
                 ORBIT LABEL
             ================================================= */}
             <div className="absolute bottom-[18%] right-[7%] z-30 hidden rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 backdrop-blur-xl sm:flex sm:items-center sm:gap-2">
-
-              <FiLayers
-                size={11}
-                className="text-purple-400"
-              />
+              <FiLayers size={11} className="text-purple-400" />
 
               <span className="text-[9px] text-gray-400">
                 Web3 Contributors
@@ -1601,4 +1580,3 @@ export default function Hero() {
     </section>
   );
 }
-
