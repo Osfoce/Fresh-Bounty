@@ -71,7 +71,7 @@ const BountyDetail = () => {
   // Winners distribution
   const [winnerAddresses, setWinnerAddresses] = useState([]);
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   // process.env.REACT_APP_API_URL ||
   const fileInputRef = useRef(null);
 
@@ -173,7 +173,7 @@ const BountyDetail = () => {
   const checkUserEnrollment = async (wallet, bountyId) => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/enrollments/user/${wallet}`,
+        `${API_URL}/user/get-enrollment/${wallet}`,
       );
       const enrollments = response.data.enrollments || [];
       return enrollments.some((e) => e.bountyId === bountyId);
@@ -187,7 +187,7 @@ const BountyDetail = () => {
   const checkUserSubmission = async (wallet, bountyId) => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/submissions/user/${wallet}`,
+        `${API_URL}/bounty/submissions/${wallet}`,
       );
       const submissions = response.data.submissions || [];
       const existing = submissions.find(
@@ -205,20 +205,18 @@ const BountyDetail = () => {
   // Load winners data
   const loadWinnersData = async (bountyId) => {
     try {
-      const response = await axios.get(
-        `${API_URL}/api/task/${bountyId}/winners`,
-      );
+      const response = await axios.get(`${API_URL}/bounty/${bountyId}/winners`);
       setWinnersData(response.data);
 
       // Check claimable amount for current user
       if (address && response.data.isDistributed) {
         const claimableRes = await axios.get(
-          `${API_URL}/api/task/${bountyId}/claimable/${address}`,
+          `${API_URL}/bounty/${bountyId}/claimable/${address}`,
         );
         setOffChainClaimable(claimableRes.data.claimable || 0);
 
         const claimedRes = await axios.get(
-          `${API_URL}/api/task/${bountyId}/has-claimed/${address}`,
+          `${API_URL}/bounty/${bountyId}/has-claimed/${address}`,
         );
         setHasUserClaimedOffChain(claimedRes.data.hasClaimed);
       }
@@ -254,7 +252,7 @@ const BountyDetail = () => {
       if (!id) return;
 
       try {
-        const response = await axios.get(`${API_URL}/api/task/${id}`);
+        const response = await axios.get(`${API_URL}/bounty/${id}`);
         let bountyData = response.data;
 
         // If missing blockchainId but has txHash, try to fetch it
@@ -280,7 +278,7 @@ const BountyDetail = () => {
           const fetchedId = await fetchBountyIdFromTx(bountyData.txHash);
           if (fetchedId) {
             // Update backend and local data
-            await axios.patch(`${API_URL}/api/task/${id}`, {
+            await axios.patch(`${API_URL}/bounty/update/${id}`, {
               blockchainId: fetchedId,
             });
             bountyData = { ...bountyData, blockchainId: fetchedId };
@@ -354,7 +352,7 @@ const BountyDetail = () => {
     const loadingToast = toast.loading("Enrolling in bounty...");
 
     try {
-      const response = await axios.post(`${API_URL}/api/enroll`, {
+      const response = await axios.post(`${API_URL}/user/enrollment`, {
         bountyId: id,
         user: wallet,
       });
@@ -431,8 +429,7 @@ const BountyDetail = () => {
         });
       }
 
-
-
+      // needs a check to support cloudinary
       const submissionData = {
         bountyId: id,
         user: wallet,
@@ -442,7 +439,7 @@ const BountyDetail = () => {
       };
 
       const response = await axios.post(
-        `${API_URL}/api/submission`,
+        `${API_URL}/bounty/submit`,
         submissionData,
       );
 
@@ -518,7 +515,7 @@ const BountyDetail = () => {
     try {
       const { eventData, hash } = await claimReward(blockchainId);
       // Sync with backend
-      await axios.post(`${API_URL}/api/task/${id}/claim`, {
+      await axios.post(`${API_URL}/bounty/${id}/claim`, {
         winnerAddress: address,
         txHash: hash,
       });
@@ -580,7 +577,7 @@ const BountyDetail = () => {
       }
 
       // 🔥 IMPORTANT: DO NOT SEND CALCULATED DATA
-      await axios.post(`${API_URL}/api/task/${id}/distribute`, {
+      await axios.post(`${API_URL}/bounty/${id}/distribute`, {
         txHash: tx.hash,
         blockchainId: bounty.blockchainId,
         chainId: bounty.network,

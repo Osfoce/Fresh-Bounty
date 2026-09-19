@@ -11,7 +11,7 @@ import { listTokensForChain } from "../utils/enums";
 import { CONTRACT_ADDRESSES } from "../utils/chains.address";
 
 function Create() {
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
 
@@ -292,17 +292,13 @@ function Create() {
 
       // 8. Save to backend with blockchain info
       console.log("posting to db");
-      const saveResponse = await axios.post(
-        // REACT_APP_API_URL ||
-        `${API_URL}/api/task`,
-        {
-          ...backendData,
-          blockchainId: Number(blockchainId),
-          txHash: hash,
-          isOnChain: true,
-          creator: address,
-        },
-      );
+      const saveResponse = await axios.post(`${API_URL}/bounty/create`, {
+        ...backendData,
+        blockchainId: Number(blockchainId),
+        txHash: hash,
+        isOnChain: true,
+        creator: address,
+      });
       console.log("posting sucess");
       if (saveResponse.status === 201) {
         toast.success("Bounty created on-chain and saved!");

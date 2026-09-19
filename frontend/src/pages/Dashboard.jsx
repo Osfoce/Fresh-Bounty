@@ -25,10 +25,10 @@ function Dashboard() {
 
   console.log(`Welcome to your dashboard with user ${address}`);
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  const bountyApi = `${API_URL}/api/task`;
-  const userInfoApi = `${API_URL}/api/dashboard/${address}`;
+  const bountyApi = `${API_URL}/bounty/bounties`;
+  const userInfoApi = `${API_URL}/user/details/${address}`;
 
   const loadBounties = async () => {
     setLoading(true);
