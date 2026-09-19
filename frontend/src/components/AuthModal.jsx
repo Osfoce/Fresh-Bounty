@@ -5,7 +5,7 @@ function AuthModal({ isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 mt-[50vh] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md"
+      className="fixed inset-0 z-50 mt-[50vh] flex items-center justify-center  p-4 backdrop-blur-md"
       onClick={onClose}
     >
       <div

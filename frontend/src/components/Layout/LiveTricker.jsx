@@ -8,7 +8,7 @@ function LiveTricker() {
   ];
 
   return (
-    <div className="relative w-full overflow-hidden mt-8 border-y border-white/[0.06] bg-[#090909]/95 backdrop-blur-xl">
+    <div className="relative w-full overflow-hidden mb-2  bg-[#090909]/95 backdrop-blur-xl">
       {/* Left fade */}
       <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#090909] via-[#090909]/80 to-transparent z-20 pointer-events-none" />
 

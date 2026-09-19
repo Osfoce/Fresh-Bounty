@@ -1,176 +1,574 @@
 import { Link } from "react-router-dom";
+import {
+  FiArrowLeft,
+  FiBookOpen,
+  FiShield,
+  FiLayers,
+  FiTarget,
+  FiUsers,
+  FiCheckCircle,
+  FiTrendingUp,
+  FiAlertTriangle,
+  FiArrowRight,
+} from "react-icons/fi";
 
 export default function WhitepaperPage() {
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div className="min-h-screen overflow-x-hidden bg-[#080808] text-white">
+      {/* BACKGROUND */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-[#FF1AC6]/10 blur-[130px]" />
+        <div className="absolute top-1/2 -left-40 h-72 w-72 rounded-full bg-purple-500/[0.04] blur-[120px]" />
+        <div className="absolute -bottom-40 right-0 h-80 w-80 rounded-full bg-[#FF1AC6]/[0.05] blur-[130px]" />
+      </div>
 
-      {/* CONTENT */}
-      <div className="relative z-10 px-5 sm:px-8 md:px-12 py-10 max-w-5xl mx-auto">
+      {/* MAIN CONTENT */}
+      <main className="relative z-10 mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-10 md:px-8 lg:px-10">
 
         {/* BACK BUTTON */}
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-pink-500/30 hover:bg-pink-500/10 transition backdrop-blur-md mb-10"
-        >
-          <span className="text-xl text-pink-400">←</span>
-          <span className="text-sm font-medium text-white">Back</span>
-        </Link>
-
-        {/* HEADER */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-white to-pink-400 bg-clip-text text-transparent mb-6">
-          Whitepaper
-        </h1>
-
-        <p className="text-gray-300 text-lg leading-relaxed mb-12">
-          Welcome to the Happy Bounty Whitepaper. This document explains our mission,
-          ecosystem, rewards system, token utility, governance structure, and long-term vision
-          for a decentralized earning economy.
-        </p>
-
-        {/* SECTIONS */}
-        <div className="space-y-12">
-
-          {/* INTRO */}
-          <section>
-            <h2 className="text-2xl font-bold text-pink-400 mb-3">
-              1. Introduction
-            </h2>
-            <p className="text-gray-300 leading-relaxed">
-              Happy Bounty is a Web3 task-based earning platform designed to connect users
-              with decentralized opportunities. It allows anyone, regardless of background,
-              to earn rewards by completing simple digital tasks.
-            </p>
-          </section>
-
-          {/* HOW IT WORKS */}
-          <section>
-            <h2 className="text-2xl font-bold text-pink-400 mb-3">
-              2. How It Works
-            </h2>
-            <p className="text-gray-300 leading-relaxed">
-              Users participate by completing bounties such as social engagement, referrals,
-              testing dApps, and on-chain interactions. Each task is verified using automated
-              smart verification systems before rewards are distributed.
-            </p>
-          </section>
-
-          {/* REWARDS */}
-          <section>
-            <h2 className="text-2xl font-bold text-pink-400 mb-3">
-              3. Rewards System
-            </h2>
-            <p className="text-gray-300 leading-relaxed">
-              Rewards are distributed in native platform tokens. Task value depends on difficulty,
-              time requirement, and engagement quality. Higher effort tasks yield higher rewards,
-              ensuring fairness and motivation.
-            </p>
-          </section>
-
-          {/* TOKEN UTILITY */}
-          <section>
-            <h2 className="text-2xl font-bold text-pink-400 mb-3">
-              4. Token Utility
-            </h2>
-            <p className="text-gray-300 leading-relaxed">
-              The Happy Bounty token is used for rewards, governance voting, staking, and premium
-              task access. Users can also use tokens to boost visibility for their own bounty listings.
-            </p>
-          </section>
-
-          {/* SECURITY */}
-          <section>
-            <h2 className="text-2xl font-bold text-pink-400 mb-3">
-              5. Security & Verification
-            </h2>
-            <p className="text-gray-300 leading-relaxed">
-              The platform uses fraud detection systems, wallet verification, and automated checks
-              to ensure that all completed tasks are legitimate and fairly rewarded.
-            </p>
-          </section>
-
-          {/* ECOSYSTEM */}
-          <section>
-            <h2 className="text-2xl font-bold text-pink-400 mb-3">
-              6. Ecosystem
-            </h2>
-            <p className="text-gray-300 leading-relaxed">
-              Happy Bounty connects users, advertisers, and developers in one ecosystem.
-              Advertisers post tasks, users complete them, and developers build integrations
-              that expand the platform’s functionality.
-            </p>
-          </section>
-
-          {/* ROADMAP */}
-          <section>
-            <h2 className="text-2xl font-bold text-pink-400 mb-3">
-              7. Roadmap
-            </h2>
-            <ul className="list-disc list-inside text-gray-300 space-y-2">
-              <li>Phase 1: Platform launch and basic bounty system</li>
-              <li>Phase 2: Token integration and wallet support</li>
-              <li>Phase 3: DAO governance and voting system</li>
-              <li>Phase 4: Mobile app and global expansion</li>
-              <li>Phase 5: Full decentralization</li>
-            </ul>
-          </section>
-
-          {/* GOVERNANCE */}
-          <section>
-            <h2 className="text-2xl font-bold text-pink-400 mb-3">
-              8. Governance
-            </h2>
-            <p className="text-gray-300 leading-relaxed">
-              Token holders will have voting power on platform decisions such as task approval
-              systems, reward adjustments, and future development proposals.
-            </p>
-          </section>
-
-          {/* RISK DISCLAIMER */}
-          <section>
-            <h2 className="text-2xl font-bold text-pink-400 mb-3">
-              9. Risk Disclaimer
-            </h2>
-            <p className="text-gray-300 leading-relaxed">
-              Participation in decentralized systems involves risks including token volatility,
-              smart contract bugs, and market fluctuations. Users are encouraged to participate
-              responsibly.
-            </p>
-          </section>
-
-          {/* FUTURE VISION */}
-          <section>
-            <h2 className="text-2xl font-bold text-pink-400 mb-3">
-              10. Future Vision
-            </h2>
-            <p className="text-gray-300 leading-relaxed">
-              Our goal is to build a global decentralized workforce where anyone can earn income
-              by contributing value online without geographical limitations.
-            </p>
-          </section>
-
+        <div className="mb-10 flex w-full justify-start sm:mb-14">
+          <Link
+            to="/"
+            className="
+              inline-flex
+              items-center
+              gap-2
+              rounded-xl
+              border
+              border-white/10
+              bg-white/[0.04]
+              px-3.5
+              py-2
+              text-sm
+              font-medium
+              text-white/70
+              backdrop-blur-md
+              transition-all
+              duration-200
+              hover:border-[#FF1AC6]/30
+              hover:bg-[#FF1AC6]/10
+              hover:text-white
+              active:scale-95
+            "
+          >
+            <FiArrowLeft className="text-base text-[#FF1AC6]" />
+            <span>Back</span>
+          </Link>
         </div>
 
-        {/* FOOTER CTA */}
-        <div className="mt-16 p-8 rounded-3xl bg-white/5 border border-pink-500/20 text-center backdrop-blur-lg">
+        {/* HERO */}
+        <section className="mb-14 text-center sm:mb-16">
+          {/* LABEL */}
+          <div
+            className="
+              mb-5
+              inline-flex
+              items-center
+              gap-2
+              rounded-full
+              border
+              border-[#FF1AC6]/20
+              bg-[#FF1AC6]/[0.06]
+              px-3
+              py-1.5
+            "
+          >
+            <FiBookOpen className="text-xs text-[#FF1AC6]" />
 
-          <h3 className="text-2xl font-bold mb-3">
-            Ready to start earning?
-          </h3>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#FF1AC6] sm:text-xs">
+              Official Documentation
+            </span>
+          </div>
 
-          <p className="text-gray-300 mb-6">
-            Explore bounties and begin your Web3 journey today.
+          {/* TITLE */}
+          <h1
+            className="
+              mx-auto
+              max-w-4xl
+              text-4xl
+              font-black
+              leading-[1.05]
+              tracking-tight
+              sm:text-5xl
+              md:text-6xl
+              lg:text-7xl
+            "
+          >
+            <span className="bg-gradient-to-r from-white via-white to-[#FF1AC6] bg-clip-text text-transparent">
+              Happy Bounty
+            </span>
+
+            <br />
+
+            <span className="text-white/90">
+              Whitepaper
+            </span>
+          </h1>
+
+          {/* DESCRIPTION */}
+          <p
+            className="
+              mx-auto
+              mt-5
+              max-w-2xl
+              text-sm
+              leading-6
+              text-white/45
+              sm:text-base
+              sm:leading-7
+              md:text-lg
+            "
+          >
+            An overview of the Happy Bounty ecosystem, reward economy,
+            governance model, security architecture, and long-term vision
+            for a decentralized earning platform.
           </p>
 
-          <Link
-            to="/dashboard"
-            className="px-6 py-3 rounded-2xl bg-pink-500 hover:bg-pink-400 font-semibold transition"
-          >
-            Explore Bounties
-          </Link>
+          {/* META */}
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+            <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[10px] font-medium text-white/40 sm:text-xs">
+              Web3 Earning Economy
+            </span>
 
+            <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[10px] font-medium text-white/40 sm:text-xs">
+              Decentralized
+            </span>
+
+            <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[10px] font-medium text-white/40 sm:text-xs">
+              Community Driven
+            </span>
+          </div>
+        </section>
+
+        {/* INTRODUCTION CARD */}
+        <section
+          className="
+            mb-12
+            overflow-hidden
+            rounded-2xl
+            border
+            border-[#FF1AC6]/15
+            bg-gradient-to-br
+            from-[#FF1AC6]/[0.07]
+            via-white/[0.025]
+            to-purple-500/[0.03]
+            p-5
+            backdrop-blur-xl
+            sm:rounded-3xl
+            sm:p-7
+          "
+        >
+          <div className="flex items-start gap-4">
+            <div
+              className="
+                flex
+                h-10
+                w-10
+                shrink-0
+                items-center
+                justify-center
+                rounded-xl
+                border
+                border-[#FF1AC6]/20
+                bg-[#FF1AC6]/10
+                text-[#FF1AC6]
+              "
+            >
+              <FiBookOpen />
+            </div>
+
+            <div>
+              <h2 className="text-lg font-bold text-white sm:text-xl">
+                About this document
+              </h2>
+
+              <p className="mt-2 text-sm leading-6 text-white/45 sm:text-[15px] sm:leading-7">
+                This document explains the principles behind Happy Bounty,
+                including how users participate, how rewards are distributed,
+                how the ecosystem operates, and the direction of future
+                development.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTIONS */}
+        <div className="space-y-5 sm:space-y-6">
+
+          {/* 1. INTRODUCTION */}
+          <WhitepaperSection
+            number="01"
+            icon={<FiTarget />}
+            title="Introduction"
+          >
+            <p>
+              Happy Bounty is a Web3 task-based earning platform designed to
+              connect users with decentralized opportunities. It allows anyone,
+              regardless of background, to earn rewards by completing simple
+              digital tasks.
+            </p>
+          </WhitepaperSection>
+
+          {/* 2. HOW IT WORKS */}
+          <WhitepaperSection
+            number="02"
+            icon={<FiLayers />}
+            title="How It Works"
+          >
+            <p>
+              Users participate by completing bounties such as social
+              engagement, referrals, testing dApps, and on-chain interactions.
+              Each task is verified using automated smart verification systems
+              before rewards are distributed.
+            </p>
+          </WhitepaperSection>
+
+          {/* 3. REWARDS */}
+          <WhitepaperSection
+            number="03"
+            icon={<FiTrendingUp />}
+            title="Rewards System"
+          >
+            <p>
+              Rewards are distributed in native platform tokens. Task value
+              depends on difficulty, time requirement, and engagement quality.
+              Higher effort tasks yield higher rewards, ensuring fairness and
+              motivation.
+            </p>
+          </WhitepaperSection>
+
+          {/* 4. TOKEN UTILITY */}
+          <WhitepaperSection
+            number="04"
+            icon={<FiCheckCircle />}
+            title="Token Utility"
+          >
+            <p>
+              The Happy Bounty token is used for rewards, governance voting,
+              staking, and premium task access. Users can also use tokens to
+              boost visibility for their own bounty listings.
+            </p>
+          </WhitepaperSection>
+
+          {/* 5. SECURITY */}
+          <WhitepaperSection
+            number="05"
+            icon={<FiShield />}
+            title="Security & Verification"
+          >
+            <p>
+              The platform uses fraud detection systems, wallet verification,
+              and automated checks to ensure that all completed tasks are
+              legitimate and fairly rewarded.
+            </p>
+          </WhitepaperSection>
+
+          {/* 6. ECOSYSTEM */}
+          <WhitepaperSection
+            number="06"
+            icon={<FiUsers />}
+            title="Ecosystem"
+          >
+            <p>
+              Happy Bounty connects users, advertisers, and developers in one
+              ecosystem. Advertisers post tasks, users complete them, and
+              developers build integrations that expand the platform’s
+              functionality.
+            </p>
+          </WhitepaperSection>
+
+          {/* 7. ROADMAP */}
+          <WhitepaperSection
+            number="07"
+            icon={<FiTrendingUp />}
+            title="Roadmap"
+          >
+            <div className="space-y-3">
+              {[
+                "Phase 1: Platform launch and basic bounty system",
+                "Phase 2: Token integration and wallet support",
+                "Phase 3: DAO governance and voting system",
+                "Phase 4: Mobile app and global expansion",
+                "Phase 5: Full decentralization",
+              ].map((phase, index) => (
+                <div
+                  key={index}
+                  className="
+                    flex
+                    items-start
+                    gap-3
+                    rounded-xl
+                    border
+                    border-white/[0.06]
+                    bg-white/[0.025]
+                    px-4
+                    py-3
+                    transition-colors
+                    hover:border-[#FF1AC6]/20
+                    hover:bg-[#FF1AC6]/[0.03]
+                  "
+                >
+                  <span
+                    className="
+                      mt-1
+                      flex
+                      h-5
+                      w-5
+                      shrink-0
+                      items-center
+                      justify-center
+                      rounded-full
+                      bg-[#FF1AC6]/10
+                      text-[9px]
+                      font-bold
+                      text-[#FF1AC6]
+                    "
+                  >
+                    {index + 1}
+                  </span>
+
+                  <span className="text-sm leading-6 text-white/55">
+                    {phase}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </WhitepaperSection>
+
+          {/* 8. GOVERNANCE */}
+          <WhitepaperSection
+            number="08"
+            icon={<FiUsers />}
+            title="Governance"
+          >
+            <p>
+              Token holders will have voting power on platform decisions such
+              as task approval systems, reward adjustments, and future
+              development proposals.
+            </p>
+          </WhitepaperSection>
+
+          {/* 9. RISK */}
+          <section
+            className="
+              rounded-2xl
+              border
+              border-amber-500/15
+              bg-amber-500/[0.03]
+              p-5
+              sm:rounded-3xl
+              sm:p-7
+            "
+          >
+            <div className="flex items-start gap-4">
+              <div
+                className="
+                  flex
+                  h-10
+                  w-10
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-xl
+                  border
+                  border-amber-500/20
+                  bg-amber-500/10
+                  text-amber-400
+                "
+              >
+                <FiAlertTriangle />
+              </div>
+
+              <div>
+                <div className="mb-2 flex items-center gap-3">
+                  <span className="text-[10px] font-bold tracking-[0.15em] text-amber-400/60">
+                    09
+                  </span>
+
+                  <h2 className="text-lg font-bold text-white sm:text-xl">
+                    Risk Disclaimer
+                  </h2>
+                </div>
+
+                <p className="text-sm leading-6 text-white/45 sm:text-[15px] sm:leading-7">
+                  Participation in decentralized systems involves risks
+                  including token volatility, smart contract bugs, and market
+                  fluctuations. Users are encouraged to participate responsibly.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* 10. FUTURE VISION */}
+          <WhitepaperSection
+            number="10"
+            icon={<FiTarget />}
+            title="Future Vision"
+          >
+            <p>
+              Our goal is to build a global decentralized workforce where
+              anyone can earn income by contributing value online without
+              geographical limitations.
+            </p>
+          </WhitepaperSection>
         </div>
 
-      </div>
+        {/* CTA */}
+        <section
+          className="
+            relative
+            mt-12
+            overflow-hidden
+            rounded-2xl
+            border
+            border-[#FF1AC6]/20
+            bg-gradient-to-br
+            from-[#FF1AC6]/10
+            via-white/[0.025]
+            to-purple-500/[0.05]
+            p-7
+            text-center
+            backdrop-blur-xl
+            sm:mt-16
+            sm:rounded-3xl
+            sm:p-10
+          "
+        >
+          {/* GLOW */}
+          <div className="pointer-events-none absolute -right-20 -top-20 h-40 w-40 rounded-full bg-[#FF1AC6]/10 blur-3xl" />
+
+          <div className="relative z-10">
+            <div
+              className="
+                mx-auto
+                mb-4
+                flex
+                h-12
+                w-12
+                items-center
+                justify-center
+                rounded-xl
+                border
+                border-[#FF1AC6]/20
+                bg-[#FF1AC6]/10
+                text-[#FF1AC6]
+              "
+            >
+              <FiArrowRight className="text-lg" />
+            </div>
+
+            <h3 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              <span className="bg-gradient-to-r from-white to-[#FF1AC6] bg-clip-text text-transparent">
+                Ready to start earning?
+              </span>
+            </h3>
+
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-white/45 sm:text-base">
+              Explore available bounties and begin your Web3 journey today.
+            </p>
+
+            <Link
+              to="/dashboard"
+              className="
+                mt-6
+                inline-flex
+                items-center
+                gap-2
+                rounded-xl
+                bg-[#FF1AC6]
+                px-6
+                py-3
+                text-sm
+                font-bold
+                text-white
+                shadow-[0_8px_25px_rgba(255,26,198,0.18)]
+                transition-all
+                duration-200
+                hover:-translate-y-0.5
+                hover:bg-[#ff3bce]
+                hover:shadow-[0_12px_30px_rgba(255,26,198,0.28)]
+                active:scale-[0.98]
+              "
+            >
+              Explore Bounties
+              <FiArrowRight />
+            </Link>
+          </div>
+        </section>
+
+        {/* FOOTER SPACE */}
+        <div className="h-10 sm:h-14" />
+      </main>
     </div>
+  );
+}
+
+/* -------------------------------- */
+/* REUSABLE WHITEPAPER SECTION */
+/* -------------------------------- */
+
+function WhitepaperSection({ number, icon, title, children }) {
+  return (
+    <section
+      className="
+        group
+        overflow-hidden
+        rounded-2xl
+        border
+        border-white/[0.08]
+        bg-white/[0.025]
+        p-5
+        backdrop-blur-xl
+        transition-all
+        duration-300
+        hover:border-[#FF1AC6]/20
+        hover:bg-white/[0.035]
+        sm:rounded-3xl
+        sm:p-7
+      "
+    >
+      <div className="flex items-start gap-4">
+        {/* ICON */}
+        <div
+          className="
+            flex
+            h-10
+            w-10
+            shrink-0
+            items-center
+            justify-center
+            rounded-xl
+            border
+            border-[#FF1AC6]/15
+            bg-[#FF1AC6]/[0.07]
+            text-[#FF1AC6]
+            transition-all
+            duration-300
+            group-hover:border-[#FF1AC6]/30
+            group-hover:bg-[#FF1AC6]/10
+          "
+        >
+          {icon}
+        </div>
+
+        <div className="min-w-0 flex-1">
+          {/* TITLE */}
+          <div className="mb-3 flex items-center gap-3">
+            <span className="text-[10px] font-bold tracking-[0.15em] text-[#FF1AC6]/50">
+              {number}
+            </span>
+
+            <h2 className="text-lg font-bold text-white sm:text-xl">
+              {title}
+            </h2>
+          </div>
+
+          {/* CONTENT */}
+          <div className="text-sm leading-6 text-white/45 sm:text-[15px] sm:leading-7">
+            {children}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
