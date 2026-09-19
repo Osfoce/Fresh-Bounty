@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -12,7 +11,6 @@ import {
   FiActivity,
   FiBriefcase,
 } from "react-icons/fi";
-
 
 import NavBar from "../components/Layout/NavBar";
 import hero from "../assets/images/hero.jpg";
@@ -55,7 +53,7 @@ function LandingPage() {
   const statsRef = useRef(null);
   const testimonialsRef = useRef(null);
 
-const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // HERO TEXT ROTATION
   useEffect(() => {
@@ -89,8 +87,7 @@ const API_URL = import.meta.env.VITE_API_URL;
           params: { limit: 1 },
         });
 
-        const totalBounties =
-          allBounties.data.pagination?.total || 0;
+        const totalBounties = allBounties.data.pagination?.total || 0;
 
         setStats({
           totalBounties,
@@ -112,15 +109,9 @@ const API_URL = import.meta.env.VITE_API_URL;
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add(
-              "opacity-100",
-              "translate-y-0"
-            );
+            entry.target.classList.add("opacity-100", "translate-y-0");
 
-            entry.target.classList.remove(
-              "opacity-0",
-              "translate-y-10"
-            );
+            entry.target.classList.remove("opacity-0", "translate-y-10");
 
             observer.unobserve(entry.target);
           }
@@ -128,7 +119,7 @@ const API_URL = import.meta.env.VITE_API_URL;
       },
       {
         threshold: 0.3,
-      }
+      },
     );
 
     if (card1Ref.current) observer.observe(card1Ref.current);
@@ -150,9 +141,8 @@ const API_URL = import.meta.env.VITE_API_URL;
       ========================================== */}
       <div className="relative z-50 py-6 mt-5 w-full">
         <NavBar />
-       
       </div>
- <LiveTricker />
+      <LiveTricker />
       {/* =========================================
           HERO SECTION
       ========================================== */}
@@ -172,7 +162,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 
         {/* Purple Glow */}
         <div className="absolute -bottom-40 -right-20 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
-        
 
         {/* HERO CONTENT */}
         <div className="relative z-10">
@@ -184,18 +173,15 @@ const API_URL = import.meta.env.VITE_API_URL;
           HOW IT WORKS
       ========================================== */}
       <div>
-      <HowItWorks />  
+        <HowItWorks />
       </div>
 
-
-      
       {/* =========================================
           LIVE STATS
       ========================================== */}
       <div>
-       <PlatformStats /> 
+        <PlatformStats />
       </div>
-    
 
       {/* =========================================
           FEATURED BOUNTIES
@@ -280,8 +266,8 @@ const API_URL = import.meta.env.VITE_API_URL;
               </h3>
 
               <p className="mt-2 max-w-md text-sm text-gray-500">
-                There are no featured opportunities available right now.
-                New bounties will appear here as soon as they are posted.
+                There are no featured opportunities available right now. New
+                bounties will appear here as soon as they are posted.
               </p>
 
               <Link
@@ -314,27 +300,27 @@ const API_URL = import.meta.env.VITE_API_URL;
       {/* =========================================
           WHY FRESH BOUNTY
       ========================================== */}
-     <div>
-      <Features />
-     </div>
-     
+      <div>
+        <Features />
+      </div>
+
       {/* =========================================
           TESTIMONIALS
       ========================================== */}
       <div>
-<Testimonials />
+        <Testimonials />
       </div>
-      
+
       {/* =========================================
           SUPPORTED NETWORKS & TOKENS
       ========================================== */}
-     <div>
-<SupportedNetworks />
-     </div>
-     
-     <div>
-      <BuiltForWeb3 />
-     </div>
+      <div>
+        <SupportedNetworks />
+      </div>
+
+      <div>
+        <BuiltForWeb3 />
+      </div>
 
       {/* =========================================
           FINAL CTA
@@ -342,7 +328,6 @@ const API_URL = import.meta.env.VITE_API_URL;
       <div>
         <CallToAction />
       </div>
-
 
       {/* =========================================
           FOOTER

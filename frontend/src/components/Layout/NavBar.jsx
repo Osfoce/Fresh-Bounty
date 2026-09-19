@@ -4,10 +4,7 @@ import SignUp from "../SignUp";
 import { useAccount } from "wagmi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {
-  FiArrowRight,
-  FiChevronDown,
-} from "react-icons/fi";
+import { FiArrowRight, FiChevronDown } from "react-icons/fi";
 
 function NavBar() {
   const { address, isConnected } = useAccount();
@@ -26,12 +23,20 @@ function NavBar() {
 
   // Redirect when connected
   useEffect(() => {
-    if (pathname !== "/") return;
+    if (pathname === "/") {
+      const timer = setTimeout(() => {
+        if (address && isConnected) {
+          navigate("/dashboard");
+          console.log(`Connected account: ${address}`);
+        }
+      }, 1000);
 
+      return () => clearTimeout(timer);
+    }
     const timer = setTimeout(() => {
-      if (address && isConnected) {
-        navigate("/dashboard");
-        console.log(`Connected account: ${address}`);
+      if (!address && !isConnected) {
+        navigate("/");
+        // console.log(`User signed out`);
       }
     }, 1000);
 
@@ -49,7 +54,6 @@ function NavBar() {
   return (
     <div className="fixed left-0 top-0 z-50 w-full px-3 pt-3 sm:px-4 md:px-6 lg:px-8">
       <nav className="relative mx-auto flex h-[68px] max-w-[1500px] items-center justify-between overflow-visible rounded-[20px] border border-white/[0.09] bg-[#080808]/85 px-3 shadow-[0_12px_45px_rgba(0,0,0,0.45)] backdrop-blur-2xl sm:px-5 md:px-6">
-
         {/* TOP ACCENT LINE */}
         <div className="pointer-events-none absolute left-1/2 top-0 h-px w-40 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#FF1AC6]/70 to-transparent" />
 
@@ -95,7 +99,6 @@ function NavBar() {
         ====================================================== */}
 
         <div className="relative z-20 flex items-center gap-1.5 font-semibold text-white sm:gap-2 md:gap-4">
-
           {/* =================================================
               RESOURCES
           ================================================== */}
@@ -135,7 +138,6 @@ function NavBar() {
                   : "invisible -translate-y-2 scale-[0.98] opacity-0"
               }`}
             >
-
               {/* DROPDOWN HEADER */}
               <div className="border-b border-white/[0.07] px-4 py-3.5">
                 <div className="flex items-center justify-between">
@@ -223,11 +225,7 @@ function NavBar() {
           ================================================== */}
 
           <div className="flex items-center">
-            {!isConnected && pathname === "/" ? (
-              <SignUp />
-            ) : (
-              <Connect />
-            )}
+            {!isConnected && pathname === "/" ? <SignUp /> : <Connect />}
           </div>
         </div>
       </nav>
