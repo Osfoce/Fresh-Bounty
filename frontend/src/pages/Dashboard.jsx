@@ -1,9 +1,5 @@
 import { useState } from "react";
-import {
-  FiDollarSign,
-  FiCheckCircle,
-  FiActivity,
-} from "react-icons/fi";
+import { FiDollarSign, FiCheckCircle, FiActivity } from "react-icons/fi";
 import toast from "react-hot-toast";
 import axios from "axios";
 import NavBar from "../components/Layout/NavBar";
@@ -29,10 +25,10 @@ function Dashboard() {
 
   console.log(`Welcome to your dashboard with user ${address}`);
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  const bountyApi = `${API_URL}/api/task`;
-  const userInfoApi = `${API_URL}/api/dashboard/${address}`;
+  const bountyApi = `${API_URL}/bounty/bounties`;
+  const userInfoApi = `${API_URL}/user/details/${address}`;
 
   const loadBounties = async () => {
     setLoading(true);
@@ -91,44 +87,42 @@ function Dashboard() {
 
       <main className="flex-grow pt-20 pb-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Welcome Section */}
+          <div className="mb-8 relative">
+            {/* Small accent line */}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#FF1AC6] shadow-[0_0_8px_rgba(255,26,198,0.7)]" />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#FF1AC6]/80">
+                Overview
+              </span>
+            </div>
 
-        {/* Welcome Section */}
-<div className="mb-8 relative">
-  {/* Small accent line */}
-  <div className="flex items-center gap-2 mb-3">
-    <span className="h-1.5 w-1.5 rounded-full bg-[#FF1AC6] shadow-[0_0_8px_rgba(255,26,198,0.7)]" />
-    <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#FF1AC6]/80">
-      Overview
-    </span>
-  </div>
-
-  <h1
-    className="
+            <h1
+              className="
       text-3xl md:text-4xl
       font-bold
       tracking-tight
       text-white
     "
-  >
-    Dashboard
-    <span className="text-[#FF1AC6]">.</span>
-  </h1>
+            >
+              Dashboard
+              <span className="text-[#FF1AC6]">.</span>
+            </h1>
 
-  <p className="mt-2 max-w-xl text-sm md:text-[15px] leading-6 text-white/45">
-    Manage your bounties, monitor activity, and keep track of your progress.
-  </p>
+            <p className="mt-2 max-w-xl text-sm md:text-[15px] leading-6 text-white/45">
+              Manage your bounties, monitor activity, and keep track of your
+              progress.
+            </p>
 
-  {/* Subtle bottom accent */}
-  <div className="mt-5 h-px w-full bg-gradient-to-r from-[#FF1AC6]/30 via-white/[0.06] to-transparent" />
-</div>
+            {/* Subtle bottom accent */}
+            <div className="mt-5 h-px w-full bg-gradient-to-r from-[#FF1AC6]/30 via-white/[0.06] to-transparent" />
+          </div>
 
-
-         {/* Stats Grid - Professional Cards */}
-<div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-10">
-
-  {/* Earnings Card */}
-  <div
-    className="
+          {/* Stats Grid - Professional Cards */}
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-10">
+            {/* Earnings Card */}
+            <div
+              className="
       group relative overflow-hidden
       rounded-2xl
       border border-white/[0.08]
@@ -138,10 +132,10 @@ function Dashboard() {
       hover:border-[#FF1AC6]/40
       hover:shadow-[0_15px_40px_rgba(255,26,198,0.08)]
     "
-  >
-    {/* Hover Glow */}
-    <div
-      className="
+            >
+              {/* Hover Glow */}
+              <div
+                className="
         pointer-events-none absolute
         -right-20 -top-20
         h-40 w-40
@@ -152,15 +146,13 @@ function Dashboard() {
         transition-opacity duration-500
         group-hover:opacity-100
       "
-    />
+              />
 
-    <div className="relative p-6">
-
-      {/* Header */}
-      <div className="mb-5 flex items-center justify-between">
-
-        <div
-          className="
+              <div className="relative p-6">
+                {/* Header */}
+                <div className="mb-5 flex items-center justify-between">
+                  <div
+                    className="
             flex h-11 w-11 items-center justify-center
             rounded-xl
             border border-[#FF1AC6]/20
@@ -170,12 +162,12 @@ function Dashboard() {
             group-hover:bg-[#FF1AC6]/15
             group-hover:shadow-[0_0_20px_rgba(255,26,198,0.12)]
           "
-        >
-          <FiDollarSign className="text-xl" />
-        </div>
+                  >
+                    <FiDollarSign className="text-xl" />
+                  </div>
 
-        <span
-          className="
+                  <span
+                    className="
             rounded-full
             border border-emerald-500/20
             bg-emerald-500/10
@@ -186,28 +178,28 @@ function Dashboard() {
             tracking-wider
             text-emerald-400
           "
-        >
-          Lifetime
-        </span>
-      </div>
+                  >
+                    Lifetime
+                  </span>
+                </div>
 
-      {/* Label */}
-      <p className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-white/35">
-        Total Earnings
-      </p>
+                {/* Label */}
+                <p className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-white/35">
+                  Total Earnings
+                </p>
 
-      {/* Amount */}
-      <p className="text-3xl font-bold tracking-tight text-white">
-        ${dollars}
-        <span className="text-xl font-semibold text-white/40">
-          .{cents}
-        </span>
-      </p>
+                {/* Amount */}
+                <p className="text-3xl font-bold tracking-tight text-white">
+                  ${dollars}
+                  <span className="text-xl font-semibold text-white/40">
+                    .{cents}
+                  </span>
+                </p>
 
-      {/* Progress */}
-      <div className="mt-5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
-        <div
-          className="
+                {/* Progress */}
+                <div className="mt-5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
+                  <div
+                    className="
             h-full w-3/4 rounded-full
             bg-gradient-to-r
             from-[#FF1AC6]
@@ -215,16 +207,14 @@ function Dashboard() {
             transition-all duration-500
             group-hover:w-[82%]
           "
-        />
-      </div>
+                  />
+                </div>
+              </div>
+            </div>
 
-    </div>
-  </div>
-
-
-  {/* Completed Tasks Card */}
-  <div
-    className="
+            {/* Completed Tasks Card */}
+            <div
+              className="
       group relative overflow-hidden
       rounded-2xl
       border border-white/[0.08]
@@ -234,10 +224,10 @@ function Dashboard() {
       hover:border-emerald-500/40
       hover:shadow-[0_15px_40px_rgba(16,185,129,0.08)]
     "
-  >
-    {/* Hover Glow */}
-    <div
-      className="
+            >
+              {/* Hover Glow */}
+              <div
+                className="
         pointer-events-none absolute
         -right-20 -top-20
         h-40 w-40
@@ -248,15 +238,13 @@ function Dashboard() {
         transition-opacity duration-500
         group-hover:opacity-100
       "
-    />
+              />
 
-    <div className="relative p-6">
-
-      {/* Header */}
-      <div className="mb-5 flex items-center justify-between">
-
-        <div
-          className="
+              <div className="relative p-6">
+                {/* Header */}
+                <div className="mb-5 flex items-center justify-between">
+                  <div
+                    className="
             flex h-11 w-11 items-center justify-center
             rounded-xl
             border border-emerald-500/20
@@ -266,12 +254,12 @@ function Dashboard() {
             group-hover:bg-emerald-500/15
             group-hover:shadow-[0_0_20px_rgba(16,185,129,0.12)]
           "
-        >
-          <FiCheckCircle className="text-xl" />
-        </div>
+                  >
+                    <FiCheckCircle className="text-xl" />
+                  </div>
 
-        <span
-          className="
+                  <span
+                    className="
             rounded-full
             border border-emerald-500/20
             bg-emerald-500/10
@@ -282,25 +270,25 @@ function Dashboard() {
             tracking-wider
             text-emerald-400
           "
-        >
-          Achieved
-        </span>
-      </div>
+                  >
+                    Achieved
+                  </span>
+                </div>
 
-      {/* Label */}
-      <p className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-white/35">
-        Completed Tasks
-      </p>
+                {/* Label */}
+                <p className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-white/35">
+                  Completed Tasks
+                </p>
 
-      {/* Number */}
-      <p className="text-3xl font-bold tracking-tight text-white">
-        {stats.completed}
-      </p>
+                {/* Number */}
+                <p className="text-3xl font-bold tracking-tight text-white">
+                  {stats.completed}
+                </p>
 
-      {/* Progress */}
-      <div className="mt-5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
-        <div
-          className="
+                {/* Progress */}
+                <div className="mt-5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
+                  <div
+                    className="
             h-full w-2/3 rounded-full
             bg-gradient-to-r
             from-emerald-500
@@ -308,16 +296,14 @@ function Dashboard() {
             transition-all duration-500
             group-hover:w-3/4
           "
-        />
-      </div>
+                  />
+                </div>
+              </div>
+            </div>
 
-    </div>
-  </div>
-
-
-  {/* In Progress Card */}
-  <div
-    className="
+            {/* In Progress Card */}
+            <div
+              className="
       group relative overflow-hidden
       rounded-2xl
       border border-white/[0.08]
@@ -327,10 +313,10 @@ function Dashboard() {
       hover:border-amber-500/40
       hover:shadow-[0_15px_40px_rgba(245,158,11,0.08)]
     "
-  >
-    {/* Hover Glow */}
-    <div
-      className="
+            >
+              {/* Hover Glow */}
+              <div
+                className="
         pointer-events-none absolute
         -right-20 -top-20
         h-40 w-40
@@ -341,15 +327,13 @@ function Dashboard() {
         transition-opacity duration-500
         group-hover:opacity-100
       "
-    />
+              />
 
-    <div className="relative p-6">
-
-      {/* Header */}
-      <div className="mb-5 flex items-center justify-between">
-
-        <div
-          className="
+              <div className="relative p-6">
+                {/* Header */}
+                <div className="mb-5 flex items-center justify-between">
+                  <div
+                    className="
             flex h-11 w-11 items-center justify-center
             rounded-xl
             border border-amber-500/20
@@ -359,12 +343,12 @@ function Dashboard() {
             group-hover:bg-amber-500/15
             group-hover:shadow-[0_0_20px_rgba(245,158,11,0.12)]
           "
-        >
-          <FiActivity className="text-xl" />
-        </div>
+                  >
+                    <FiActivity className="text-xl" />
+                  </div>
 
-        <span
-          className="
+                  <span
+                    className="
             rounded-full
             border border-amber-500/20
             bg-amber-500/10
@@ -375,25 +359,25 @@ function Dashboard() {
             tracking-wider
             text-amber-400
           "
-        >
-          Active
-        </span>
-      </div>
+                  >
+                    Active
+                  </span>
+                </div>
 
-      {/* Label */}
-      <p className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-white/35">
-        In Progress
-      </p>
+                {/* Label */}
+                <p className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-white/35">
+                  In Progress
+                </p>
 
-      {/* Number */}
-      <p className="text-3xl font-bold tracking-tight text-white">
-        {stats.inProgress}
-      </p>
+                {/* Number */}
+                <p className="text-3xl font-bold tracking-tight text-white">
+                  {stats.inProgress}
+                </p>
 
-      {/* Progress */}
-      <div className="mt-5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
-        <div
-          className="
+                {/* Progress */}
+                <div className="mt-5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
+                  <div
+                    className="
             h-full w-1/2 rounded-full
             bg-gradient-to-r
             from-amber-500
@@ -401,13 +385,11 @@ function Dashboard() {
             transition-all duration-500
             group-hover:w-3/5
           "
-        />
-      </div>
-
-    </div>
-  </div>
-
-</div>
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Filters and Actions Bar */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
