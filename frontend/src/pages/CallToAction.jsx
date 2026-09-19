@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useNav } from "../hooks/useNav";
 import {
   FiArrowUpRight,
   FiCheck,
@@ -12,6 +13,8 @@ import {
 } from "react-icons/fi";
 
 function CallToAction() {
+    const { handleNavigate } = useNav();
+  
   return (
     <section className="relative z-10 mx-6 my-20 md:mx-10 lg:mx-16">
       <style>
@@ -459,6 +462,11 @@ function CallToAction() {
 
             <Link
               to="/dashboard"
+               onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigate("/dashboard");
+                }}
+              
               className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-[#FF1AC6] px-7 py-3.5 text-sm font-bold text-white shadow-[0_10px_40px_rgba(255,26,198,0.2)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ff32ce] hover:shadow-[0_15px_50px_rgba(255,26,198,0.35)] sm:w-auto"
             >
               <span className="relative z-10">
@@ -472,6 +480,10 @@ function CallToAction() {
 
             <Link
               to="/create"
+               onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigate("/create");
+                }}
               className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/[0.1] bg-white/[0.025] px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#FF1AC6]/30 hover:bg-[#FF1AC6]/[0.05] sm:w-auto"
             >
               <FiPlus className="text-gray-500 transition-transform duration-300 group-hover:rotate-90 group-hover:text-[#FF1AC6]" />
