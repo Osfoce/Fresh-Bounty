@@ -1,6 +1,6 @@
 import { parseEther, formatEther, parseEventLogs } from "viem";
 import { BOUNTY_ABI } from "../utils/abi";
-import {CONTRACT_ADDRESSES} from "../utils/chains.address"
+import { CONTRACT_ADDRESSES } from "../utils/chains.address";
 import { resolveTokenType, getPayoutType } from "../utils/enums";
 
 /**
@@ -41,6 +41,14 @@ export const prepareCreateBountyTx = ({ bountyData, account, chainId }) => {
     value: tokenType === 0 ? totalWei : undefined, // ETH only
   };
 };
+
+// Get current bounty counter (used as fallback when event logs are unavailable)
+export const getBountyCounterConfig = ({ chainId }) => ({
+  address: getBountyContract(chainId),
+  abi: BOUNTY_ABI,
+  functionName: "bountyCounter",
+  args: [],
+});
 
 /**
  * Claim reward (prepared config)

@@ -64,6 +64,7 @@ function Create() {
   const currentChainId = useChainId();
   const {
     createBounty,
+    fetchBountyIdFromTx,
     isPending: isContractPending,
     isConfirming,
   } = useBounty();
@@ -71,19 +72,32 @@ function Create() {
 
   // Accepts only http(s) URLs with a valid-looking domain
   const isValidUrl = (value) => {
-    if (!value) return true; // optional field — empty is OK
+    if (!value) return "";
+
+    let url;
     try {
-      const url = new URL(value);
-      return url.protocol === "http:" || url.protocol === "https:";
+      url = new URL(value);
     } catch {
-      return false;
+      return "Enter a full URL, e.g. https://github.com/user/repo";
     }
+
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      return "Only http:// and https:// links are allowed";
+    }
+
+    const hostname = url.hostname;
+    if (
+      !/^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.(?!-)[A-Za-z0-9-]{1,63}(?<!-))*\.[A-Za-z]{2,}$/.test(
+        hostname,
+      )
+    ) {
+      return "Enter a valid domain, e.g. github.com or figma.com";
+    }
+
+    return "";
   };
 
-  const originLinkError =
-    bountyData.originLink && !isValidUrl(bountyData.originLink)
-      ? "Please enter a valid URL starting with http:// or https://"
-      : "";
+  const originLinkError = isValidUrl(bountyData.originLink);
 
   const availableTokens = useMemo(() => {
     if (!currentChainId) return [];
@@ -162,8 +176,9 @@ function Create() {
           toast.error("Please select start and end dates");
           return false;
         }
-        if (bountyData.originLink && !isValidUrl(bountyData.originLink)) {
-          toast.error("Origin link must be a valid URL");
+        const urlErr = isValidUrl(bountyData.originLink);
+        if (urlErr) {
+          toast.error(urlErr);
           return false;
         }
         break;
@@ -269,8 +284,10 @@ function Create() {
     // 1. Validate final step
     if (!validateStep(3)) return;
 
-    if (bountyData.originLink && !isValidUrl(bountyData.originLink)) {
-      toast.error("Origin link is invalid. Please go back and fix it.");
+    // if (bountyData.originLink && !isValidUrl(bountyData.originLink)) {
+    const urlErr = isValidUrl(bountyData.originLink);
+    if (urlErr) {
+      toast.error(urlErr);
       setCurrentStep(2); // send them to the right step
       return;
     }
@@ -282,6 +299,7 @@ function Create() {
     }
 
     // 3. Network verification
+    // Currently there is no sync with the backend on this. if any chain is to be supporte in the future, create a shared file
     const selectedChainId = bountyData.network;
     console.log("Selected chain ID:", selectedChainId);
 
@@ -347,20 +365,36 @@ function Create() {
         percentages: finalPercentages,
       });
 
-      const blockchainId = eventData?.bountyId
+      let blockchainId = eventData?.bountyId
         ? Number(eventData.bountyId)
         : null;
+
       console.log(
         `Token type ${bountyData.token} reward ${bountyData.reward} total amount ${totalAmount} in wei`,
       );
+
       console.log("Full eventData:", eventData);
-      if (!blockchainId) throw new Error("No bountyId from contract event");
+      // This blockchainId is currently causeing error on various networks...
+      if (!blockchainId) {
+        // Fallback chain — handles Injective's sparse logs and Creditcoin's
+        // log-less receipts via explorer API + bountyCounter() contract read.
+        blockchainId = await fetchBountyIdFromTx(hash);
+      }
+
+      if (!blockchainId) {
+        toast.error(
+          "Bounty was created on-chain but we couldn't read its ID. " +
+            "Please check the explorer and contact support.",
+        );
+        return;
+      }
+      // if (hash) return toast.success("Bounty created onchain");
 
       // 8. Save to backend with blockchain info
       console.log("posting to db");
       const saveResponse = await axios.post(`${API_URL}/bounty/create`, {
         ...backendData,
-        blockchainId: Number(blockchainId),
+        blockchainId: blockchainId,
         txHash: hash,
         isOnChain: true,
         creator: address,
