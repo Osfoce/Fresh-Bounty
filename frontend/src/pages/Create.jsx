@@ -365,7 +365,7 @@ function Create() {
         percentages: finalPercentages,
       });
 
-      const blockchainId = eventData?.bountyId
+      let blockchainId = eventData?.bountyId
         ? Number(eventData.bountyId)
         : null;
 
