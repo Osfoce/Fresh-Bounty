@@ -11,7 +11,7 @@ const injectiveTestnet = {
   blockExplorers: {
     default: {
       name: "Injective Explorer",
-      url:  "https://testnet.explorer.injective.network/",
+      url:  "https://testnet.blockscout.injective.network/",
     },
   },
   testnet: true,

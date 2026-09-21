@@ -238,6 +238,13 @@ export const BOUNTY_ABI = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "bountyCounter",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "uint256", name: "bountyId", type: "uint256" }],
     name: "claimReward",
     outputs: [],

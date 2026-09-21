@@ -29,6 +29,7 @@ import {
   getOwnerConfig,
   prepareWithdrawTx,
   formatReward,
+  getBountyCounterConfig,
 } from "../services/bountyService";
 import { BOUNTY_ABI } from "../utils/abi";
 
@@ -167,7 +168,17 @@ export const useBounty = () => {
     const bountyIdFromRetry = await retryWithBackoff(txHash, 3);
     if (bountyIdFromRetry != null) return bountyIdFromRetry;
 
-    // ── Strategy 4: final fallback — ask user / let caller handle ──
+    // ── Strategy 4: explorer REST API (Blockscout-style) ──
+    // const bountyIdFromApi = await fetchBountyIdFromExplorerAPI(txHash, chainId);
+    // if (bountyIdFromApi != null) return bountyIdFromApi;
+
+    // ── Strategy 5: contract counter — works on every chain, no logs needed ──
+    const bountyIdFromCounter = await fetchBountyIdFromCounter(
+      chainId,
+    );
+    if (bountyIdFromCounter != null) return bountyIdFromCounter;
+
+
     console.warn(
       "Could not extract bountyId from receipt logs. Chain may not expose event logs via RPC.",
     );
@@ -249,6 +260,38 @@ export const useBounty = () => {
       }
     }
     return null;
+  }
+
+  async function fetchBountyIdFromCounter(chainId) {
+    try {
+      // config is the current Id gotten from the blockchain
+      const config = getBountyCounterConfig({ chainId });
+      if (!config.address) return null;
+
+      const counter = await publicClient.readContract(config);
+      const latestId = Number(counter);
+
+      // Verify it actually belongs to this creator — protects against a
+      // concurrent create from another wallet landing in between.
+      if (account) {
+        const bountiesByCreator = getBountiesByCreatorConfig({
+          account,
+          chainId,
+        });
+        const creatorIds = await publicClient.readContract(bountiesByCreator);
+        const ids = (creatorIds || []).map(Number);
+        if (!ids.includes(latestId)) {
+          // Someone else's bounty was the most recent one. Fall back to the
+          // creator's own last id if we have one.
+          return ids.length ? ids[ids.length - 1] : null;
+        }
+      }
+
+      return latestId;
+    } catch (err) {
+      console.warn("bountyCounter fallback failed:", err);
+      return null;
+    }
   }
   // const fetchBountyIdFromTx = async (txHash) => {
   //   console.log(`Fetching bountyId from txHash: ${txHash}`);
@@ -459,6 +502,7 @@ export const useBounty = () => {
     txError,
     // Read hooks
     fetchBountyIdFromTx,
+    fetchBountyIdFromCounter,
     useClaimableReward,
     useClaimedStatus,
     useBountyInfo,

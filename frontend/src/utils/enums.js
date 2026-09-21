@@ -1,5 +1,5 @@
 import {
-  CHAIN_IDS,
+  // CHAIN_IDS,
   NATIVE_TOKENS,
   TOKEN_ADDRESSES,
 } from "./chains.address";
@@ -96,16 +96,13 @@ export const getPayoutType = ({ winnersAllowed, payoutType }) => {
   return PayoutType.SINGLE; // default to single if something's off
 };
 
-
-
-
 // ===============================
 // 1. Contract Enum (Solidity mapping)
 // Must match the Solidity enum order exactly.
 // ===============================
 export const TokenType = {
   NATIVE: 0, // Solidity: ETH
-  USDC: 1,   // Solidity: USDC
+  USDC: 1, // Solidity: USDC
   // Add more here if/when the contract enum grows:
   // USDT: 2,
 };
@@ -219,7 +216,10 @@ export const getTokenMeta = (uiToken, chainId) => {
   // ERC20?
   const erc20s = TOKEN_ADDRESSES[chainId] || {};
   for (const token of Object.values(erc20s)) {
-    if (token.symbol?.toUpperCase() === upper || token.address?.toLowerCase() === uiToken.toLowerCase()) {
+    if (
+      token.symbol?.toUpperCase() === upper ||
+      token.address?.toLowerCase() === uiToken.toLowerCase()
+    ) {
       return {
         kind: "erc20",
         symbol: token.symbol,

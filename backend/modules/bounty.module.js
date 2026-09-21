@@ -135,15 +135,7 @@ const bountySchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
       enum: {
-        values: [
-          "injective",
-          "ethereum",
-          "solana",
-          "polygon",
-          "arbitrum",
-          "optimism",
-          "base",
-        ],
+        values: ["1439", "102031"],
         message: "{VALUE} is not a supported network",
       },
     },
@@ -164,7 +156,7 @@ const bountySchema = new mongoose.Schema(
       trim: true,
       uppercase: true,
       enum: {
-        values: ["USDC", "USDT", "ETH", "INJ", "SOL", "MATIC", "ARB", "OP"],
+        values: ["USDC", "NATIVE"],
         message: "{VALUE} is not a supported token",
       },
     },
@@ -172,16 +164,16 @@ const bountySchema = new mongoose.Schema(
       type: Number,
       default: 1,
       min: [1, "At least 1 winner allowed"],
-      max: [100, "Cannot have more than 100 winners"],
+      max: [5, "Cannot have more than 5 winners"],
     },
     payoutType: {
       type: String,
       required: [true, "Payout type is required"],
       enum: {
-        values: ["single", "split", "percentage"],
+        values: ["SINGLE", "MULTI_EQUAL", "MULTI_PERCENTAGE"],
         message: "{VALUE} is not a valid payout type",
       },
-      default: "single",
+      default: "SINGLE",
     },
     percentages: {
       type: [Number],
