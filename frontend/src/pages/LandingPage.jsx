@@ -1,7 +1,17 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useNav } from "../hooks/useNav";
 import axios from "axios";
-import { FiZap, FiArrowRight, FiBriefcase } from "react-icons/fi";
+import {
+  FiZap,
+  FiShield,
+  FiCheck,
+  FiUsers,
+  FiArrowRight,
+  FiGlobe,
+  FiActivity,
+  FiBriefcase,
+} from "react-icons/fi";
 
 import NavBar from "../components/Layout/NavBar";
 import hero from "../assets/images/hero.jpg";
@@ -20,6 +30,7 @@ import Footer from "../components/Layout/Footer";
 function LandingPage() {
   const [featuredBounties, setFeaturedBounties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { handleNavigate } = useNav();
 
   const [stats, setStats] = useState({
     totalBounties: 0,
@@ -44,10 +55,7 @@ function LandingPage() {
   const statsRef = useRef(null);
   const testimonialsRef = useRef(null);
 
-  /*
-    BACKEND / API — UNCHANGED
-  */
-  const API_URL = "https://fresh-bounty.onrender.com/api";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // HERO TEXT ROTATION
   useEffect(() => {
@@ -63,12 +71,8 @@ function LandingPage() {
   useEffect(() => {
     const fetchFeaturedBounties = async () => {
       try {
-        const response = await axios.get(`${API_URL}/task`, {
-          params: {
-            status: "active",
-            limit: 3,
-            page: 0,
-          },
+        const response = await axios.get(`${API_URL}/bounty/bounties`, {
+          params: { status: "active", limit: 3, page: 0 },
         });
 
         setFeaturedBounties(response.data.bounties || []);
@@ -81,10 +85,9 @@ function LandingPage() {
 
     const fetchStats = async () => {
       try {
-        const allBounties = await axios.get(`${API_URL}/task`, {
-          params: {
-            limit: 1,
-          },
+        // Example: get total bounties count
+        const allBounties = await axios.get(`${API_URL}/bounty/bounties`, {
+          params: { limit: 1 },
         });
 
         const totalBounties = allBounties.data.pagination?.total || 0;
@@ -142,9 +145,7 @@ function LandingPage() {
       <div className="relative z-50 mt-5 w-full py-6">
         <NavBar />
       </div>
-
       <LiveTricker />
-
       {/* =========================================
           HERO SECTION
       ========================================== */}
@@ -162,7 +163,8 @@ function LandingPage() {
         {/* Soft gold atmosphere */}
         <div className="pointer-events-none absolute -left-32 -top-32 h-80 w-80 rounded-full bg-[#D4AF37]/10 blur-[110px]" />
 
-        <div className="pointer-events-none absolute -bottom-40 -right-20 h-96 w-96 rounded-full bg-[#B28B20]/10 blur-[120px]" />
+        {/* Purple Glow */}
+        <div className="absolute -bottom-40 -right-20 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
 
         {/* HERO CONTENT */}
         <div className="relative z-10">
@@ -225,7 +227,11 @@ function LandingPage() {
           {/* VIEW ALL */}
           <Link
             to="/dashboard"
-            className="group flex items-center gap-2 rounded-xl bg-[#D4AF37] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-300 hover:bg-[#B28B20] hover:shadow-lg hover:shadow-[#D4AF37]/20"
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigate("/dashboard");
+            }}
+            className="group flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] text-sm font-medium text-gray-300 transition-all duration-300 hover:border-[#FF1AC6]/30 hover:bg-[#FF1AC6]/5 hover:text-[#FF1AC6]"
           >
             <span>View all bounties</span>
 
@@ -281,14 +287,18 @@ function LandingPage() {
                 No active bounties
               </h3>
 
-              <p className="mt-2 max-w-md text-sm text-[#737373]">
+              <p className="mt-2 max-w-md text-sm text-gray-500">
                 There are no featured opportunities available right now. New
                 bounties will appear here as soon as they are posted.
               </p>
 
               <Link
                 to="/dashboard"
-                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#B28B20] hover:shadow-lg hover:shadow-[#D4AF37]/20"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigate("/dashboard");
+                }}
+                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#FF1AC6] px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#e916b1] hover:shadow-lg hover:shadow-[#FF1AC6]/20"
               >
                 Browse bounties
                 <FiArrowRight className="h-4 w-4 text-[#D4AF37]" />
@@ -339,9 +349,6 @@ function LandingPage() {
         <SupportedNetworks />
       </div>
 
-      {/* =========================================
-          BUILT FOR WEB3
-      ========================================== */}
       <div>
         <BuiltForWeb3 />
       </div>

@@ -1,4 +1,5 @@
-const mongoose =  require("mongoose")
+const mongoose = require("mongoose");
+const validator = require("validator");
 // Schema for submissions subdocument
 const submissionSchema = new mongoose.Schema(
   {
@@ -54,22 +55,28 @@ const bountySchema = new mongoose.Schema(
       type: String,
       required: [true, "Category is required"],
       trim: true,
-      enum: {
-        values: ["Design", "Development", "Writing", "Marketing", "Other"],
-        message: "{VALUE} is not a valid category",
-      },
     },
     tags: {
       type: [String],
       default: [],
-      trim: true,
-      lowercase: true,
-      validate: {
-        validator: function (v) {
-          return v.length <= 10; // Max 10 tags
+      validate: [
+        {
+          validator: (v) => v.length <= 5,
+          message: "Cannot have more than 5 tags",
         },
-        message: "Cannot have more than 10 tags",
-      },
+        {
+          validator: (v) =>
+            v.every((tag) => typeof tag === "string" && tag.trim().length > 0),
+          message: "Tags cannot be empty",
+        },
+        {
+          validator: (v) => {
+            const normalized = v.map((t) => t.trim().toLowerCase());
+            return new Set(normalized).size === normalized.length;
+          },
+          message: "Duplicate tags are not allowed",
+        },
+      ],
     },
     // The backend extracts the creators address
     creator: {
@@ -118,13 +125,7 @@ const bountySchema = new mongoose.Schema(
       type: String,
       trim: true,
       validate: {
-        validator: function (v) {
-          if (!v) return true; // Optional field
-          // Basic URL validation
-          return /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/.test(
-            v,
-          );
-        },
+        validator: (v) => !v || validator.isURL(v),
         message: "Invalid URL format",
       },
     },
@@ -134,15 +135,7 @@ const bountySchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
       enum: {
-        values: [
-          "injective",
-          "ethereum",
-          "solana",
-          "polygon",
-          "arbitrum",
-          "optimism",
-          "base",
-        ],
+        values: ["1439", "102031"],
         message: "{VALUE} is not a supported network",
       },
     },
@@ -150,12 +143,12 @@ const bountySchema = new mongoose.Schema(
       type: Number,
       required: [true, "Reward is required"],
       min: [0, "Reward cannot be negative"],
-      validate: {
-        validator: function (v) {
-          return Number.isFinite(v) && v >= 0;
-        },
-        message: "Reward must be a valid number",
-      },
+      // validate: {
+      //   validator: function (v) {
+      //     return Number.isFinite(v) && v >= 0;
+      //   },
+      //   message: "Reward must be a valid number",
+      // },
     },
     token: {
       type: String,
@@ -163,7 +156,7 @@ const bountySchema = new mongoose.Schema(
       trim: true,
       uppercase: true,
       enum: {
-        values: ["USDC", "USDT", "ETH", "INJ", "SOL", "MATIC", "ARB", "OP"],
+        values: ["USDC", "NATIVE"],
         message: "{VALUE} is not a supported token",
       },
     },
@@ -171,16 +164,16 @@ const bountySchema = new mongoose.Schema(
       type: Number,
       default: 1,
       min: [1, "At least 1 winner allowed"],
-      max: [100, "Cannot have more than 100 winners"],
+      max: [5, "Cannot have more than 5 winners"],
     },
     payoutType: {
       type: String,
       required: [true, "Payout type is required"],
       enum: {
-        values: ["single", "split", "percentage"],
+        values: ["SINGLE", "MULTI_EQUAL", "MULTI_PERCENTAGE"],
         message: "{VALUE} is not a valid payout type",
       },
-      default: "single",
+      default: "SINGLE",
     },
     percentages: {
       type: [Number],
@@ -282,26 +275,29 @@ bountySchema.index({ createdAt: -1 }); // For sorting by newest
 bountySchema.index({ status: 1, category: 1, deadline: 1 });
 
 // Middleware: Validate percentages when payoutType is 'percentage'
-bountySchema.pre("validate", function (next) {
-  if (this.payoutType === "percentage") {
-    if (!this.percentages || this.percentages.length === 0) {
-      this.invalidate(
-        "percentages",
-        "Percentages are required when payoutType is percentage",
-      );
-    }
-    if (this.percentages.length !== this.winnersAllowed) {
-      this.invalidate(
-        "percentages",
-        "Number of percentages must equal winnersAllowed",
-      );
-    }
-    const sum = this.percentages.reduce((acc, val) => acc + val, 0);
-    if (Math.abs(sum - 100) > 0.01) {
-      this.invalidate("percentages", "Percentages must sum to 100");
-    }
+bountySchema.pre("validate", function () {
+  if (this.payoutType !== "percentage") return;
+
+  const p = this.percentages || [];
+
+  if (p.length === 0) {
+    return this.invalidate(
+      "percentages",
+      "Percentages are required when payoutType is percentage",
+    );
   }
-  next();
+
+  if (p.length !== this.winnersAllowed) {
+    return this.invalidate(
+      "percentages",
+      "Number of percentages must equal winnersAllowed",
+    );
+  }
+
+  const sum = p.reduce((acc, val) => acc + val, 0);
+  if (Math.abs(sum - 100) > 0.01) {
+    return this.invalidate("percentages", "Percentages must sum to 100");
+  }
 });
 
 // Instance method: Add a submission
@@ -375,7 +371,7 @@ bountySchema.methods.cancel = function () {
 bountySchema.statics.getActive = function () {
   const now = new Date();
   return this.find({
-    lifecycleStatus: "null",
+    lifecycleStatus: null,
     startDate: { $lte: now },
     deadline: { $gte: now },
   }).sort({ createdAt: -1 });

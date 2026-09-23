@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useNav } from "../hooks/useNav";
 import {
   FiArrowUpRight,
   FiCheck,
@@ -10,6 +11,8 @@ import {
 } from "react-icons/fi";
 
 function CallToAction() {
+    const { handleNavigate } = useNav();
+  
   return (
     <section className="relative z-10 mx-6 my-16 md:mx-10 lg:mx-16">
       <style>
@@ -153,8 +156,51 @@ function CallToAction() {
             <div className="absolute right-4 top-4 flex items-center gap-2 rounded-xl border border-black/[0.07] bg-white px-3 py-2 shadow-[0_10px_30px_rgba(0,0,0,0.07)]">
               <FiShield className="h-3.5 w-3.5 text-[#B28B20]" />
 
-              <span className="text-[10px] font-semibold text-[#555]">
-                Secure
+            <Link
+              to="/dashboard"
+               onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigate("/dashboard");
+                }}
+              
+              className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-[#FF1AC6] px-7 py-3.5 text-sm font-bold text-white shadow-[0_10px_40px_rgba(255,26,198,0.2)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ff32ce] hover:shadow-[0_15px_50px_rgba(255,26,198,0.35)] sm:w-auto"
+            >
+              <span className="relative z-10">
+                Explore Bounties
+              </span>
+
+              <FiArrowUpRight className="relative z-10 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+
+              <span className="cta-scan absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            </Link>
+
+            <Link
+              to="/create"
+               onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigate("/create");
+                }}
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/[0.1] bg-white/[0.025] px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#FF1AC6]/30 hover:bg-[#FF1AC6]/[0.05] sm:w-auto"
+            >
+              <FiPlus className="text-gray-500 transition-transform duration-300 group-hover:rotate-90 group-hover:text-[#FF1AC6]" />
+
+              <span>
+                Create a Bounty
+              </span>
+            </Link>
+          </div>
+
+          {/* =================================================
+              TRUST FEATURES
+          ================================================== */}
+
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+
+            <div className="flex items-center gap-2">
+              <FiShield className="h-3.5 w-3.5 text-green-400" />
+
+              <span className="text-[10px] font-medium text-gray-500">
+                Secure Payments
               </span>
             </div>
 

@@ -9,10 +9,12 @@ import {
   FiArrowRight,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { useNav } from "../hooks/useNav";
 
 function Features() {
   const sectionRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const { handleNavigate } = useNav();
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -28,7 +30,7 @@ function Features() {
       },
       {
         threshold: 0.15,
-      }
+      },
     );
 
     observer.observe(section);
@@ -287,9 +289,9 @@ function Features() {
 
                   <div className="mt-4 h-px w-10 bg-[#D4AF37]/70 transition-all duration-500 group-hover:w-16" />
 
-                  <p className="mt-4 text-sm leading-6 text-gray-600">
-                    Move from approved contributions to rewards through a
-                    streamlined and transparent process.
+                  <p className="mt-4 text-sm leading-6 text-gray-500">
+                    Complete approved tasks and get rewarded without unnecessary
+                    delays.
                   </p>
                 </div>
 
@@ -325,9 +327,9 @@ function Features() {
 
                   <div className="mt-4 h-px w-10 bg-[#D4AF37]/70 transition-all duration-500 group-hover:w-16" />
 
-                  <p className="mt-4 text-sm leading-6 text-gray-600">
-                    Track opportunities, submissions, and rewards through a
-                    transparent infrastructure designed for onchain work.
+                  <p className="mt-4 text-sm leading-6 text-gray-500">
+                    Track bounty activity, submissions, and rewards through a
+                    transparent Web3 ecosystem.
                   </p>
                 </div>
 
@@ -365,7 +367,11 @@ function Features() {
 
             <Link
               to="/dashboard"
-              className="group flex items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_25px_rgba(212,175,55,0.18)] transition-all duration-300 hover:bg-[#B28B20] hover:shadow-[0_10px_35px_rgba(212,175,55,0.25)]"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavigate("/dashboard");
+              }}
+              className="group flex items-center gap-2 rounded-xl border border-[#FF1AC6]/25 bg-[#FF1AC6]/[0.07] px-5 py-2.5 text-sm font-semibold text-[#FF1AC6] transition-all duration-300 hover:border-[#FF1AC6] hover:bg-[#FF1AC6] hover:text-white hover:shadow-[0_8px_30px_rgba(255,26,198,0.2)]"
             >
               <span>Explore Opportunities</span>
 

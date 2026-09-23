@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FiArrowUpRight } from "react-icons/fi";
+import { useNav } from "../hooks/useNav";
+import {
+  FiArrowUpRight,
+  FiCheck,
+  FiDollarSign,
+  FiLayers,
+  FiStar,
+  FiZap,
+} from "react-icons/fi";
 
 const heroMessages = [
   "Find Bounties.",
@@ -52,6 +60,7 @@ export default function Hero() {
   const [heroText, setHeroText] = useState(0);
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const { handleNavigate } = useNav();
 
   useEffect(() => {
     const currentMessage = heroMessages[heroText];
@@ -59,10 +68,7 @@ export default function Hero() {
 
     const timer = setTimeout(() => {
       if (!isDeleting) {
-        const nextText = currentMessage.slice(
-          0,
-          displayText.length + 1
-        );
+        const nextText = currentMessage.slice(0, displayText.length + 1);
 
         setDisplayText(nextText);
 
@@ -72,18 +78,13 @@ export default function Hero() {
           }, 1400);
         }
       } else {
-        const nextText = currentMessage.slice(
-          0,
-          displayText.length - 1
-        );
+        const nextText = currentMessage.slice(0, displayText.length - 1);
 
         setDisplayText(nextText);
 
         if (nextText.length === 0) {
           setIsDeleting(false);
-          setHeroText(
-            (prev) => (prev + 1) % heroMessages.length
-          );
+          setHeroText((prev) => (prev + 1) % heroMessages.length);
         }
       }
     }, typingSpeed);
@@ -102,14 +103,60 @@ export default function Hero() {
         <div className="absolute bottom-[-200px] left-1/2 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-black/[0.025] blur-[110px]" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-[590px] max-w-full items-center bg-white px-5 py-12 sm:min-h-[620px] sm:px-8 lg:px-10">
-        <div className="grid w-full items-center gap-8 lg:grid-cols-2 lg:gap-4">
+      {/* =====================================================
+          STARS
+      ===================================================== */}
+      <span className="hero-star star-1">
+        <FiStar />
+      </span>
 
-          {/* LEFT */}
+      <span className="hero-star star-2">
+        <FiStar />
+      </span>
+
+      <span className="hero-star star-3">
+        <FiStar />
+      </span>
+
+      <span className="hero-star star-4">
+        <FiStar />
+      </span>
+
+      <span className="hero-star star-5">
+        <FiStar />
+      </span>
+
+      <span className="hero-star star-6">
+        <FiStar />
+      </span>
+
+      <span className="hero-star star-7">
+        <FiStar />
+      </span>
+
+      <span className="hero-star star-8">
+        <FiStar />
+      </span>
+
+      <span className="hero-star star-9">
+        <FiStar />
+      </span>
+
+      <span className="hero-star star-10">
+        <FiStar />
+      </span>
+
+      {/* =====================================================
+          MAIN CONTAINER
+      ===================================================== */}
+      <div className="relative z-10 mx-auto flex min-h-[620px] max-w-7xl items-center px-5 py-12 sm:min-h-[650px] sm:px-8 sm:py-16 lg:px-10">
+        <div className="grid w-full items-center gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:gap-8">
+          {/* =================================================
+              LEFT SIDE — UNCHANGED
+          ================================================= */}
           <div className="max-w-2xl text-center sm:text-left">
-
-            {/* Badge */}
-            <div className="hero-badge mb-5 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 shadow-sm">
+            {/* BADGE */}
+            <div className="hero-badge mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 backdrop-blur-xl">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#D4AF37] opacity-30" />
 
@@ -142,37 +189,40 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* Description */}
-            <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-black/55 sm:mx-0 sm:text-base">
-              Complete quests and earn cryptocurrency, tokens, and
-              digital rewards. Post bounties and get quality work
-              done — fully on-chain.
+            {/* DESCRIPTION */}
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-gray-400 sm:mx-0 sm:text-base md:mt-4">
+              Complete quests and earn cryptocurrency, tokens, and digital
+              rewards. Post bounties and get quality work done — fully on-chain.
             </p>
 
             {/* Buttons */}
             <div className="mt-6 flex flex-wrap justify-center gap-3 sm:justify-start">
               <Link
                 to="/dashboard"
-                className="group flex items-center gap-2 rounded-xl bg-[#D4AF37] px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#D4AF37]/20 transition-all duration-300 hover:-translate-y-1 hover:bg-[#B28B20] hover:shadow-xl hover:shadow-[#D4AF37]/25"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigate("/dashboard");
+                }}
+                className="group relative overflow-hidden rounded-lg bg-[#FF1AC6] px-6 py-3 text-sm font-semibold text-white shadow-[0_0_30px_rgba(255,26,198,0.12)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#e915ad] hover:shadow-[0_0_35px_rgba(255,26,198,0.25)]"
               >
-                Explore Bounties
+                <span className="relative z-10 flex items-center gap-2">
+                  Explore Bounties
+                  <FiArrowUpRight className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </span>
 
-                <FiArrowUpRight
-                  className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  size={17}
-                />
+                <span className="absolute inset-0 translate-x-[-100%] bg-white/20 transition-transform duration-700 group-hover:translate-x-[100%]" />
               </Link>
 
               <Link
                 to="/create"
-                className="group flex items-center gap-2 rounded-xl border border-black/10 bg-white px-6 py-3.5 text-sm font-semibold text-black/70 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/40 hover:bg-[#D4AF37]/5 hover:text-black"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigate("/create");
+                }}
+                className="group flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-6 py-3 text-sm font-semibold text-gray-200 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/[0.08]"
               >
                 Create a Bounty
-
-                <FiArrowUpRight
-                  className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  size={17}
-                />
+                <FiArrowUpRight className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
             </div>
 
@@ -197,58 +247,109 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* RIGHT — 3D CUBE */}
-          <div className="relative flex min-h-[320px] items-center justify-center sm:min-h-[380px] lg:min-h-[430px]">
+          {/* =================================================
+              RIGHT SIDE — UPGRADED 3D ORBIT SYSTEM
+          ================================================= */}
+          <div className="relative flex min-h-[360px] items-center justify-center sm:min-h-[430px] lg:min-h-[500px]">
+            {/* =================================================
+                ATMOSPHERIC ENERGY
+            ================================================= */}
+            <div className="orbit-energy absolute h-[280px] w-[280px] rounded-full bg-[#FF1AC6]/10 blur-[100px] sm:h-[350px] sm:w-[350px]" />
 
-            {/* Very subtle glow */}
-            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/[0.025] blur-[70px] sm:h-[320px] sm:w-[320px]" />
+            <div className="orbit-energy-two absolute h-[210px] w-[210px] rounded-full bg-purple-600/10 blur-[80px] sm:h-[270px] sm:w-[270px]" />
 
-            {/* Orbit rings */}
-            <div className="hero-orbit hero-orbit-one" />
-            <div className="hero-orbit hero-orbit-two" />
+            {/* Subtle center pulse */}
+            <div className="core-pulse absolute h-[180px] w-[180px] rounded-full border border-[#FF1AC6]/5 sm:h-[220px] sm:w-[220px]" />
 
-            <div className="hero-3d-perspective relative flex h-[300px] w-[300px] items-center justify-center sm:h-[350px] sm:w-[350px] lg:h-[390px] lg:w-[390px]">
+            {/* =================================================
+                3D ORBIT CONTAINER
+            ================================================= */}
+            <div className="orbit-system absolute h-[330px] w-[330px] sm:h-[420px] sm:w-[420px] lg:h-[460px] lg:w-[460px]">
+              {/* =================================================
+                  OUTER ORBIT
+              ================================================= */}
+              <div className="orbit orbit-outer absolute inset-0 rounded-full border border-white/[0.075]">
+                <span className="orbit-node node-pink" />
 
-              <div className="hero-3d-object relative h-[210px] w-[210px] sm:h-[240px] sm:w-[240px] lg:h-[270px] lg:w-[270px]">
+                <span className="orbit-particle particle-one" />
+                <span className="orbit-particle particle-two" />
+              </div>
 
-                {/* OUTER CUBE */}
-                {cubeFaces.map((face, index) => (
-                  <div
-                    key={`outer-${index}`}
-                    className="hero-cube-face absolute inset-0 overflow-hidden border border-black/[0.16] bg-white/[0.018]"
-                    style={{
-                      transform: `
-                        rotateX(${face.rotateX || 0}deg)
-                        rotateY(${face.rotateY || 0}deg)
-                        translateZ(${face.translateZ}px)
-                      `,
-                    }}
-                  >
-                    {/* Clean grid */}
-                    <div className="absolute inset-0 grid grid-cols-4 grid-rows-4">
-                      {Array.from({ length: 16 }).map(
-                        (_, gridIndex) => (
-                          <div
-                            key={gridIndex}
-                            className="border border-black/[0.035]"
-                          />
-                        )
-                      )}
-                    </div>
+              {/* =================================================
+                  SECOND OUTER ORBIT
+              ================================================= */}
+              <div className="orbit orbit-outer-secondary absolute inset-[14px] rounded-full border border-purple-400/[0.045]">
+                <span className="orbit-node node-purple-secondary" />
+              </div>
 
-                    {/* Outer frame */}
-                    <div className="absolute inset-0 border border-black/[0.12]" />
+              {/* =================================================
+                  MIDDLE ORBIT
+              ================================================= */}
+              <div className="orbit orbit-middle absolute inset-[28px] rounded-full border border-[#FF1AC6]/10 sm:inset-[35px]">
+                <span className="orbit-node node-purple" />
 
-                    {/* Sharp corner brackets */}
-                    <div className="absolute left-0 top-0 h-8 w-8 border-l border-t border-black/[0.28]" />
+                <span className="orbit-particle particle-three" />
+              </div>
 
-                    <div className="absolute right-0 top-0 h-8 w-8 border-r border-t border-black/[0.22]" />
+              {/* =================================================
+                  INNER ORBIT
+              ================================================= */}
+              <div className="orbit orbit-inner absolute inset-[58px] rounded-full border border-white/[0.055] sm:inset-[65px]">
+                <span className="orbit-node node-white" />
 
-                    <div className="absolute bottom-0 left-0 h-8 w-8 border-b border-l border-black/[0.22]" />
+                <span className="orbit-particle particle-four" />
+              </div>
 
-                    <div className="absolute bottom-0 right-0 h-8 w-8 border-b border-r border-black/[0.28]" />
-                  </div>
-                ))}
+              {/* =================================================
+                  HORIZONTAL ORBIT
+              ================================================= */}
+              <div className="orbit-horizontal absolute left-[-18px] right-[-18px] top-1/2 h-[125px] -translate-y-1/2 rounded-[50%] border border-[#FF1AC6]/10 sm:left-[-25px] sm:right-[-25px] sm:h-[150px]">
+                <span className="horizontal-particle" />
+              </div>
+
+              {/* =================================================
+                  DIAGONAL ORBIT
+              ================================================= */}
+              <div className="orbit-diagonal absolute left-[15px] right-[15px] top-1/2 h-[190px] -translate-y-1/2 rounded-[50%] border border-purple-500/10 sm:left-[20px] sm:right-[20px] sm:h-[220px]">
+                <span className="diagonal-particle" />
+              </div>
+
+              {/* =================================================
+                  FINE ENERGY RINGS
+              ================================================= */}
+              <div className="energy-ring energy-ring-one absolute inset-[80px] rounded-full" />
+
+              <div className="energy-ring energy-ring-two absolute inset-[95px] rounded-full" />
+            </div>
+
+            {/* =================================================
+                CENTRAL 3D CORE
+            ================================================= */}
+            <div className="hero-core relative z-20 h-[165px] w-[165px] sm:h-[205px] sm:w-[205px] lg:h-[225px] lg:w-[225px]">
+              {/* Deep glow */}
+              <div className="absolute -inset-12 rounded-full bg-[#FF1AC6]/10 blur-[55px]" />
+
+              <div className="absolute -inset-6 rounded-full border border-[#FF1AC6]/5 shadow-[0_0_80px_rgba(255,26,198,0.08)]" />
+
+              {/* =================================================
+                  GLASS OUTER SHELL
+              ================================================= */}
+              <div className="absolute inset-0 rounded-full border border-white/10 bg-white/[0.025] shadow-[inset_0_0_40px_rgba(255,255,255,0.025),0_25px_60px_rgba(0,0,0,0.7)] backdrop-blur-xl" />
+
+              {/* Rotating shell */}
+              <div className="core-shell absolute inset-[6px] rounded-full border border-[#FF1AC6]/10" />
+
+              {/* Inner rings */}
+              <div className="absolute inset-[12px] rounded-full border border-[#FF1AC6]/20" />
+
+              <div className="absolute inset-[22px] rounded-full border border-purple-500/10" />
+
+              {/* =================================================
+                  3D SPHERE
+              ================================================= */}
+              <div className="hero-sphere absolute inset-[34px] overflow-hidden rounded-full bg-gradient-to-br from-[#ff4bd1]/35 via-[#161116] to-purple-900/45 shadow-[inset_-18px_-20px_35px_rgba(0,0,0,0.85),inset_12px_10px_25px_rgba(255,255,255,0.08),0_0_50px_rgba(255,26,198,0.2)]">
+                {/* Sphere atmospheric layer */}
+                <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.16),transparent_25%),radial-gradient(circle_at_70%_75%,rgba(168,85,247,0.18),transparent_45%)]" />
 
                 {/* Structural frame */}
                 <div className="hero-structural-frame absolute inset-0">
@@ -335,28 +436,49 @@ export default function Hero() {
                 <div className="core-beam core-beam-bottom" />
                 <div className="core-beam core-beam-left" />
 
-                {/* CENTER */}
-                <div className="hero-core absolute left-1/2 top-1/2 z-20 h-[70px] w-[70px] -translate-x-1/2 -translate-y-1/2 border border-black/[0.45] bg-white/[0.82] shadow-[0_15px_40px_rgba(0,0,0,0.1)] backdrop-blur-sm sm:h-[80px] sm:w-[80px] lg:h-[90px] lg:w-[90px]">
-
-                  <div className="absolute inset-2 border border-black/[0.08]" />
+            {/* =================================================
+                NETWORK CARD
+            ================================================= */}
+            <div className="orbit-data-card absolute right-[0%] top-[5%] z-30 w-[130px] rounded-2xl border border-white/10 bg-[#101011]/80 p-3 shadow-[0_20px_45px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:right-[3%] sm:w-[145px]">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-[8px] uppercase tracking-[0.16em] text-gray-500">
+                  Network
+                </span>
 
                   <div className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
 
-                  <div className="absolute left-1/2 top-0 h-2.5 w-px -translate-x-1/2 bg-black/[0.2]" />
+              <div className="text-sm font-semibold text-white">On-chain</div>
 
                   <div className="absolute bottom-0 left-1/2 h-2.5 w-px -translate-x-1/2 bg-black/[0.2]" />
 
-                  <div className="absolute left-0 top-1/2 h-px w-2.5 -translate-y-1/2 bg-black/[0.2]" />
-
-                  <div className="absolute right-0 top-1/2 h-px w-2.5 -translate-y-1/2 bg-black/[0.2]" />
+            {/* =================================================
+                REWARD CARD
+            ================================================= */}
+            <div className="orbit-reward-card absolute bottom-[5%] left-[0%] z-30 w-[140px] rounded-2xl border border-white/10 bg-[#101011]/85 p-3 shadow-[0_20px_45px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:left-[3%] sm:w-[155px]">
+              <div className="flex items-center gap-2">
+                <div className="reward-icon flex h-8 w-8 items-center justify-center rounded-xl bg-[#FF1AC6]/10">
+                  <FiDollarSign size={14} className="text-[#FF1AC6]" />
                 </div>
 
-                {/* Floating particles */}
-                <span className="cube-particle particle-one" />
-                <span className="cube-particle particle-two" />
-                <span className="cube-particle particle-three" />
-                <span className="cube-particle particle-four" />
+                <div>
+                  <p className="text-[8px] uppercase tracking-[0.15em] text-gray-500">
+                    Reward
+                  </p>
+
+                  <p className="text-xs font-semibold text-white">+450 USDC</p>
+                </div>
               </div>
+            </div>
+
+            {/* =================================================
+                ORBIT LABEL
+            ================================================= */}
+            <div className="absolute bottom-[18%] right-[7%] z-30 hidden rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 backdrop-blur-xl sm:flex sm:items-center sm:gap-2">
+              <FiLayers size={11} className="text-purple-400" />
+
+              <span className="text-[9px] text-gray-400">
+                Web3 Contributors
+              </span>
             </div>
           </div>
         </div>

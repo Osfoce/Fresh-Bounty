@@ -6,15 +6,17 @@ const { connectDB } = require("./config/db");
 const startStatusUpdateJob = require("./jobs/updateStatusJob");
 
 // Import routes
-const bountyRoutes = require("./routes/bountyRoutes");
-const userRoutes = require("./routes/userRoutes");
-const submissionRoutes = require("./routes/submissionRoutes");
-const enrollmentRoutes = require("./routes/enrollmentRoutes");
-const rewardRoutes = require("./routes/rewardRoutes");
+// const bountyRoutes = require("./routes/bountyRoutes");
+// const userRoutes = require("./routes/userRoutes");
+const userRoutes = require("./routes/user.route");
+const submissionRoutes = require("./routes/submission.route");
+const enrollmentRoutes = require("./routes/enrollment.route");
+const rewardRoutes = require("./routes/reward.route");
 const bountyRoute = require("./routes/bounty.route");
 
 const app = express();
 const port = process.env.PORT || 5000;
+console.log(port);
 
 // Middleware
 app.use(cors()); // For production, restrict origins as needed
@@ -22,30 +24,41 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // Routes
-app.use("/api", bountyRoutes);
+// app.use("/api", bountyRoutes);
 app.use("/api", userRoutes);
 app.use("/api", submissionRoutes);
 app.use("/api", enrollmentRoutes);
 app.use("/api", rewardRoutes);
-app.use("/api/v1/bounty", bountyRoute);
+app.use("/api", bountyRoute);
 
 // Test route
 app.get("/", (req, res) => {
+  //http://localhost:5000/api/bounty/bounties
+  // http://localhost:5000/api/bounty/id
+  // http://localhost:5000/api/bounty/create
+  // http://localhost:5000/api/bounty/delete/id
+  // http://localhost:5000/api/bounty/update/id
+
   res.json({ message: "API working" });
 });
 
 // Connect to DB and start server
-connectDB(async (err) => {
-  if (err) {
-    console.error("Database connection failed:", err);
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    console.log("Connected to database");
+
+    // Start the cron job only after DB is ready
+    startStatusUpdateJob();
+
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("Database connection failed:", error);
     process.exit(1);
   }
-  console.log("Connected to database");
+};
 
-  // Start the cron job (only after DB is ready)
-  startStatusUpdateJob();
-
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
-});
+startServer();
