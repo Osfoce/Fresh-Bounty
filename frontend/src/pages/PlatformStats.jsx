@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from "react";
 import {
   FiArrowUpRight,
@@ -12,35 +11,32 @@ import {
 const platformHighlights = [
   {
     icon: FiLayers,
-    value: "3",
-    label: "Supported Networks",
+    value: "1",
+    label: "Supported Network",
     description:
-      "Multi-chain infrastructure for Web3 bounty activity.",
-    accent: "pink",
+      "Botchain is the network powering bounty activity and on-chain workflows.",
+    accent: "gold",
   },
   {
     icon: FiCode,
     value: "4",
     label: "Web3 Core Features",
-    description:
-      "Smart contracts, wallets, escrow, and on-chain rewards.",
-    accent: "purple",
+    description: "Smart contracts, wallets, escrow, and on-chain rewards.",
+    accent: "black",
   },
   {
     icon: FiLock,
     value: "On-chain",
     label: "Bounty Infrastructure",
-    description:
-      "Bounty and reward logic can be secured through blockchain.",
-    accent: "pink",
+    description: "Bounty and reward logic can be secured through blockchain.",
+    accent: "gold",
   },
   {
     icon: FiDollarSign,
     value: "10%",
     label: "Creator Fee",
-    description:
-      "A transparent platform fee applied to bounty creators.",
-    accent: "purple",
+    description: "A transparent platform fee applied to bounty creators.",
+    accent: "black",
   },
 ];
 
@@ -66,7 +62,7 @@ const PlatformStats = () => {
       },
       {
         threshold: 0.15,
-      }
+      },
     );
 
     observer.observe(section);
@@ -76,38 +72,35 @@ const PlatformStats = () => {
 
   return (
     <>
-      <section
-        ref={sectionRef}
-        className="platform-stats-section"
-      >
+      <section ref={sectionRef} className="platform-stats-section">
         {/* =====================================================
             BACKGROUND
         ===================================================== */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          {/* LEFT PINK GLOW */}
+          {/* LEFT GOLD GLOW */}
           <div
             className="absolute left-[-180px] top-[5%] h-[400px] w-[400px] rounded-full blur-[140px]"
             style={{
               background:
-                "radial-gradient(circle, rgba(255,26,198,0.12), transparent 70%)",
+                "radial-gradient(circle, rgba(212,175,55,0.10), transparent 70%)",
             }}
           />
 
-          {/* RIGHT PURPLE GLOW */}
+          {/* RIGHT BLACK / GOLD GLOW */}
           <div
             className="absolute bottom-[-180px] right-[-120px] h-[420px] w-[420px] rounded-full blur-[140px]"
             style={{
               background:
-                "radial-gradient(circle, rgba(168,85,247,0.10), transparent 70%)",
+                "radial-gradient(circle, rgba(0,0,0,0.06), transparent 70%)",
             }}
           />
 
-          {/* CENTER GLOW */}
+          {/* CENTER GOLD GLOW */}
           <div
             className="absolute left-1/2 top-1/2 h-[300px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[130px]"
             style={{
               background:
-                "radial-gradient(circle, rgba(255,26,198,0.045), transparent 70%)",
+                "radial-gradient(circle, rgba(212,175,55,0.045), transparent 70%)",
             }}
           />
         </div>
@@ -124,35 +117,31 @@ const PlatformStats = () => {
             <div
               className="mx-auto mb-4 flex w-fit items-center gap-2 rounded-full border px-3 py-1.5"
               style={{
-                borderColor: "rgba(255,26,198,0.25)",
-                backgroundColor: "rgba(255,26,198,0.08)",
-                boxShadow:
-                  "0 0 25px rgba(255,26,198,0.05)",
+                borderColor: "rgba(212,175,55,0.30)",
+                backgroundColor: "rgba(212,175,55,0.08)",
+                boxShadow: "0 0 25px rgba(212,175,55,0.05)",
               }}
             >
-              <FiCheckCircle
-                size={12}
-                className="text-[#FF1AC6]"
-              />
+              <FiCheckCircle size={12} className="text-[#B28B20]" />
 
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-300">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-black/55">
                 Platform Highlights
               </span>
             </div>
 
             {/* TITLE */}
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+            <h2 className="text-3xl font-bold tracking-tight text-black sm:text-4xl lg:text-5xl">
               Built for{" "}
-              <span className="bg-gradient-to-r from-[#FF1AC6] via-pink-400 to-purple-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#8F6B12] via-[#D4AF37] to-[#B28B20] bg-clip-text text-transparent">
                 On-chain Work
               </span>
             </h2>
 
             {/* DESCRIPTION */}
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gray-400 sm:text-base">
-              A Web3 bounty infrastructure designed to connect
-              creators and contributors through transparent,
-              blockchain-powered workflows.
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-black/55 sm:text-base">
+              A Web3 bounty infrastructure designed to connect creators and
+              contributors through transparent, blockchain-powered workflows on
+              Botchain.
             </p>
           </div>
 
@@ -163,34 +152,36 @@ const PlatformStats = () => {
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {platformHighlights.map((item, index) => {
                 const Icon = item.icon;
-                const isPink = item.accent === "pink";
+                const isGold = item.accent === "gold";
 
                 return (
                   <div
                     key={item.label}
-                    className={`highlight-card highlight-card-${index + 1} group`}
+                    className={`highlight-card highlight-card-${
+                      index + 1
+                    } group`}
                   >
                     <div
                       className="relative h-full overflow-hidden rounded-2xl border p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2"
                       style={{
-                        borderColor: isPink
-                          ? "rgba(255,26,198,0.16)"
-                          : "rgba(168,85,247,0.16)",
+                        borderColor: isGold
+                          ? "rgba(212,175,55,0.25)"
+                          : "rgba(0,0,0,0.10)",
 
-                        background:
-                          "linear-gradient(145deg, rgba(24,24,27,0.96), rgba(13,13,15,0.96))",
+                        background: isGold
+                          ? "linear-gradient(145deg, rgba(255,253,246,0.98), rgba(248,246,238,0.96))"
+                          : "linear-gradient(145deg, rgba(255,255,255,0.98), rgba(247,247,245,0.96))",
 
-                        boxShadow:
-                          "0 15px 50px rgba(0,0,0,0.35)",
+                        boxShadow: "0 15px 50px rgba(0,0,0,0.07)",
                       }}
                     >
                       {/* TOP LINE */}
                       <div
-                        className="absolute left-6 right-6 top-0 h-px opacity-50"
+                        className="absolute left-6 right-6 top-0 h-px opacity-60"
                         style={{
-                          background: isPink
-                            ? "linear-gradient(to right, transparent, rgba(255,26,198,0.7), transparent)"
-                            : "linear-gradient(to right, transparent, rgba(168,85,247,0.7), transparent)",
+                          background: isGold
+                            ? "linear-gradient(to right, transparent, rgba(212,175,55,0.8), transparent)"
+                            : "linear-gradient(to right, transparent, rgba(0,0,0,0.35), transparent)",
                         }}
                       />
 
@@ -198,14 +189,14 @@ const PlatformStats = () => {
                       <div
                         className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full blur-[60px] opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                         style={{
-                          backgroundColor: isPink
-                            ? "rgba(255,26,198,0.16)"
-                            : "rgba(168,85,247,0.16)",
+                          backgroundColor: isGold
+                            ? "rgba(212,175,55,0.12)"
+                            : "rgba(0,0,0,0.05)",
                         }}
                       />
 
                       {/* NUMBER */}
-                      <div className="absolute right-5 top-5 text-[10px] font-bold tracking-[0.2em] text-white/20">
+                      <div className="absolute right-5 top-5 text-[10px] font-bold tracking-[0.2em] text-black/15">
                         0{index + 1}
                       </div>
 
@@ -213,40 +204,36 @@ const PlatformStats = () => {
                       <div
                         className="relative mb-7 flex h-12 w-12 items-center justify-center rounded-xl border transition-all duration-500 group-hover:scale-110"
                         style={{
-                          borderColor: isPink
-                            ? "rgba(255,26,198,0.25)"
-                            : "rgba(168,85,247,0.25)",
+                          borderColor: isGold
+                            ? "rgba(212,175,55,0.30)"
+                            : "rgba(0,0,0,0.12)",
 
-                          backgroundColor: isPink
-                            ? "rgba(255,26,198,0.10)"
-                            : "rgba(168,85,247,0.10)",
+                          backgroundColor: isGold
+                            ? "rgba(212,175,55,0.09)"
+                            : "rgba(0,0,0,0.045)",
 
-                          boxShadow: isPink
-                            ? "0 0 25px rgba(255,26,198,0.08)"
-                            : "0 0 25px rgba(168,85,247,0.08)",
+                          boxShadow: isGold
+                            ? "0 0 25px rgba(212,175,55,0.08)"
+                            : "0 0 25px rgba(0,0,0,0.04)",
                         }}
                       >
                         <Icon
                           size={20}
-                          className={
-                            isPink
-                              ? "text-[#FF1AC6]"
-                              : "text-purple-400"
-                          }
+                          className={isGold ? "text-[#B28B20]" : "text-black"}
                         />
                       </div>
 
                       {/* VALUE */}
                       <div className="relative">
-                        <h3 className="text-3xl font-bold tracking-tight text-white">
+                        <h3 className="text-3xl font-bold tracking-tight text-black">
                           {item.value}
                         </h3>
 
-                        <p className="mt-2 text-sm font-semibold text-gray-200">
+                        <p className="mt-2 text-sm font-semibold text-black/80">
                           {item.label}
                         </p>
 
-                        <p className="mt-3 text-xs leading-relaxed text-gray-500">
+                        <p className="mt-3 text-xs leading-relaxed text-black/50">
                           {item.description}
                         </p>
                       </div>
@@ -256,17 +243,15 @@ const PlatformStats = () => {
                         <span
                           className="h-1.5 w-1.5 rounded-full"
                           style={{
-                            backgroundColor: isPink
-                              ? "#FF1AC6"
-                              : "#A855F7",
+                            backgroundColor: isGold ? "#D4AF37" : "#111111",
 
-                            boxShadow: isPink
-                              ? "0 0 10px rgba(255,26,198,0.9)"
-                              : "0 0 10px rgba(168,85,247,0.9)",
+                            boxShadow: isGold
+                              ? "0 0 10px rgba(212,175,55,0.65)"
+                              : "none",
                           }}
                         />
 
-                        <span className="text-[9px] font-medium uppercase tracking-[0.14em] text-gray-600">
+                        <span className="text-[9px] font-medium uppercase tracking-[0.14em] text-black/40">
                           Platform Feature
                         </span>
                       </div>
@@ -284,19 +269,18 @@ const PlatformStats = () => {
             <div
               className="relative overflow-hidden rounded-2xl border p-5 sm:p-6"
               style={{
-                borderColor: "rgba(255,255,255,0.10)",
+                borderColor: "rgba(0,0,0,0.10)",
                 background:
-                  "linear-gradient(135deg, rgba(24,24,27,0.98), rgba(15,15,18,0.98))",
-                boxShadow:
-                  "0 20px 60px rgba(0,0,0,0.3)",
+                  "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(247,246,241,0.98))",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.07)",
               }}
             >
-              {/* GLOW */}
+              {/* GOLD GLOW */}
               <div
                 className="pointer-events-none absolute left-1/2 top-0 h-[140px] w-[420px] -translate-x-1/2 rounded-full blur-[90px]"
                 style={{
                   background:
-                    "radial-gradient(circle, rgba(255,26,198,0.08), transparent 70%)",
+                    "radial-gradient(circle, rgba(212,175,55,0.08), transparent 70%)",
                 }}
               />
 
@@ -306,28 +290,22 @@ const PlatformStats = () => {
                   <div
                     className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border"
                     style={{
-                      borderColor:
-                        "rgba(255,26,198,0.20)",
-                      backgroundColor:
-                        "rgba(255,26,198,0.07)",
+                      borderColor: "rgba(212,175,55,0.25)",
+                      backgroundColor: "rgba(212,175,55,0.08)",
                     }}
                   >
-                    <FiCheckCircle
-                      size={18}
-                      className="text-[#FF1AC6]"
-                    />
+                    <FiCheckCircle size={18} className="text-[#B28B20]" />
                   </div>
 
                   <div>
-                    <p className="text-sm font-semibold text-white">
+                    <p className="text-sm font-semibold text-black">
                       Designed for transparent Web3 work
                     </p>
 
-                    <p className="mt-1 max-w-2xl text-xs leading-relaxed text-gray-500">
-                      Happy Bounty brings bounty creation,
-                      contributor workflows, escrow, and
-                      blockchain-based rewards together in one
-                      Web3 experience.
+                    <p className="mt-1 max-w-2xl text-xs leading-relaxed text-black/50">
+                      Happy Bounty brings bounty creation, contributor
+                      workflows, escrow, and blockchain-based rewards together
+                      in one Web3 experience on Botchain.
                     </p>
                   </div>
                 </div>
@@ -336,22 +314,17 @@ const PlatformStats = () => {
                 <div
                   className="flex shrink-0 items-center gap-2 self-start rounded-full border px-3 py-2 sm:self-auto"
                   style={{
-                    borderColor:
-                      "rgba(255,26,198,0.15)",
-                    backgroundColor:
-                      "rgba(255,26,198,0.04)",
+                    borderColor: "rgba(212,175,55,0.22)",
+                    backgroundColor: "rgba(212,175,55,0.05)",
                   }}
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#FF1AC6] shadow-[0_0_10px_rgba(255,26,198,0.9)]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.7)]" />
 
-                  <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-gray-400">
-                    Web3 Native
+                  <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-black/50">
+                    Botchain Native
                   </span>
 
-                  <FiArrowUpRight
-                    size={11}
-                    className="text-gray-500"
-                  />
+                  <FiArrowUpRight size={11} className="text-black/40" />
                 </div>
               </div>
             </div>
@@ -371,11 +344,11 @@ const PlatformStats = () => {
           background:
             radial-gradient(
               circle at 50% 0%,
-              rgba(255, 26, 198, 0.025),
+              rgba(212, 175, 55, 0.025),
               transparent 35%
             ),
-            #070708;
-          color: white;
+            #f6f5ef;
+          color: #111111;
         }
 
         .platform-stats-inner {

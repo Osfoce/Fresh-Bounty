@@ -3,26 +3,26 @@
 @tailwind utilities;
 
 :root {
-  --text: #a8a2b3;
-  --text-h: #ffffff;
+  --text: #5f5f5f;
+  --text-h: #111111;
 
-  --bg: #050505;
+  /* Botchain pure white background */
+  --bg: #ffffff;
 
-  --border: rgba(255, 255, 255, 0.08);
-  --code-bg: #111111;
+  --border: rgba(17, 17, 17, 0.08);
+  --code-bg: #ffffff;
 
-  /* Happy Bounty */
-  --accent: #ff1ac6;
-  --accent-secondary: #8b5cf6;
+  /* Botchain */
+  --accent: #d4af37;
+  --accent-secondary: #b28b20;
+  --accent-bg: rgba(212, 175, 55, 0.1);
+  --accent-border: rgba(212, 175, 55, 0.35);
 
-  --accent-bg: rgba(255, 26, 198, 0.1);
-  --accent-border: rgba(255, 26, 198, 0.35);
-
-  --social-bg: rgba(255, 255, 255, 0.05);
+  --social-bg: rgba(17, 17, 17, 0.04);
 
   --shadow:
-    rgba(0, 0, 0, 0.35) 0 20px 40px -10px,
-    rgba(0, 0, 0, 0.2) 0 10px 20px -5px;
+    rgba(0, 0, 0, 0.08) 0 20px 40px -10px,
+    rgba(0, 0, 0, 0.05) 0 10px 20px -5px;
 
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --heading: system-ui, "Segoe UI", Roboto, sans-serif;
@@ -30,10 +30,8 @@
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-
   color: var(--text);
-  background: #050505;
-
+  background: #ffffff;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -44,7 +42,7 @@ html,
 body,
 #root {
   min-height: 100%;
-  background: #050505;
+  background: #ffffff;
 }
 
 body {
@@ -52,14 +50,13 @@ body {
   overflow-x: hidden;
 }
 
-
-
 /* =========================================================
-   HAPPY BOUNTY — HOW IT WORKS PREMIUM ANIMATIONS
+   BOTCHAIN — HOW IT WORKS PREMIUM ANIMATIONS
    Colors/layout remain unchanged
 ========================================================= */
 
 /* Floating cards */
+
 @keyframes howItWorksFloat {
   0%,
   100% {
@@ -72,6 +69,7 @@ body {
 }
 
 /* Slightly different movement for each card */
+
 @keyframes howItWorksFloat2 {
   0%,
   100% {
@@ -95,6 +93,7 @@ body {
 }
 
 /* Moving light across cards */
+
 @keyframes howItWorksShimmer {
   0% {
     transform: translateX(-120%) rotate(12deg);
@@ -124,20 +123,22 @@ body {
 }
 
 /* Number badge breathing */
+
 @keyframes howItWorksPulse {
   0%,
   100% {
     transform: scale(1);
-    box-shadow: 0 0 0 rgba(255, 26, 198, 0);
+    box-shadow: 0 0 0 rgba(212, 175, 55, 0);
   }
 
   50% {
     transform: scale(1.06);
-    box-shadow: 0 0 25px rgba(255, 26, 198, 0.18);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.18);
   }
 }
 
-/* Purple orb breathing */
+/* Gold orb breathing */
+
 @keyframes howItWorksGlow {
   0%,
   100% {
@@ -152,6 +153,7 @@ body {
 }
 
 /* Orbiting particle */
+
 @keyframes howItWorksOrbit {
   from {
     transform: rotate(0deg) translateX(72px) rotate(0deg);
@@ -163,6 +165,7 @@ body {
 }
 
 /* Small floating particle */
+
 @keyframes howItWorksParticle {
   0%,
   100% {
@@ -177,6 +180,7 @@ body {
 }
 
 /* Illustration floating */
+
 @keyframes howItWorksIllustration {
   0%,
   100% {
@@ -189,6 +193,7 @@ body {
 }
 
 /* Energy bolt movement */
+
 @keyframes howItWorksEnergy {
   0%,
   100% {
@@ -203,6 +208,7 @@ body {
 }
 
 /* Card border breathing */
+
 @keyframes howItWorksBorder {
   0%,
   100% {
@@ -213,7 +219,6 @@ body {
     opacity: 0.65;
   }
 }
-
 
 /* =========================================================
    CARD ANIMATION
@@ -232,7 +237,6 @@ body {
   animation: howItWorksFloat3 5.5s ease-in-out infinite;
   animation-delay: -2.5s;
 }
-
 
 /* =========================================================
    SHIMMER
@@ -253,7 +257,7 @@ body {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.08),
+    rgba(212, 175, 55, 0.08),
     transparent
   );
   transform: translateX(-120%) rotate(12deg);
@@ -261,7 +265,6 @@ body {
   z-index: 20;
   animation: howItWorksShimmer 7s ease-in-out infinite;
 }
-
 
 /* =========================================================
    NUMBER BADGE
@@ -271,7 +274,6 @@ body {
   animation: howItWorksPulse 3s ease-in-out infinite;
 }
 
-
 /* =========================================================
    BACKGROUND GLOWS
 ========================================================= */
@@ -280,7 +282,6 @@ body {
   animation: howItWorksGlow 4s ease-in-out infinite;
 }
 
-
 /* =========================================================
    CARD 1 ILLUSTRATION
 ========================================================= */
@@ -288,7 +289,6 @@ body {
 .how-it-works-wallet {
   animation: howItWorksIllustration 4s ease-in-out infinite;
 }
-
 
 /* =========================================================
    CARD 3 ENERGY
@@ -302,7 +302,6 @@ body {
   animation: howItWorksEnergy 2.2s ease-in-out infinite;
   animation-delay: -0.8s;
 }
-
 
 /* =========================================================
    ORBITING PARTICLE
@@ -323,7 +322,6 @@ body {
   pointer-events: none;
 }
 
-
 /* =========================================================
    SMALL PARTICLES
 ========================================================= */
@@ -339,7 +337,6 @@ body {
 .how-it-works-particle-delay-2 {
   animation-delay: -2s;
 }
-
 
 /* =========================================================
    HOVER — MAKE THE CARD FEEL ALIVE
@@ -362,7 +359,6 @@ body {
   animation-duration: 0.8s;
 }
 
-
 /* =========================================================
    REDUCED MOTION
 ========================================================= */
@@ -382,4 +378,3 @@ body {
     animation: none !important;
   }
 }
-

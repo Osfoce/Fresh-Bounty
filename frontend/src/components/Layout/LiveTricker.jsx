@@ -1,6 +1,6 @@
 function LiveTricker() {
   const items = [
-    { label: "Welcome to Happy Bounty", type: "LIVE" },
+    { label: "Welcome to Botchain", type: "LIVE" },
     { label: "Earn Rewards", type: "REWARD" },
     { label: "Complete Tasks", type: "TASK" },
     { label: "Instant Payouts", type: "FAST" },
@@ -8,15 +8,15 @@ function LiveTricker() {
   ];
 
   return (
-    <div className="relative w-full overflow-hidden mb-2  bg-[#090909]/95 backdrop-blur-xl">
+    <div className="relative mt-3 w-full overflow-hidden bg-white">
       {/* Left fade */}
-      <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#090909] via-[#090909]/80 to-transparent z-20 pointer-events-none" />
+      <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-20 w-24 bg-gradient-to-r from-white via-white/80 to-transparent" />
 
       {/* Right fade */}
-      <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#090909] via-[#090909]/80 to-transparent z-20 pointer-events-none" />
+      <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-20 w-24 bg-gradient-to-l from-white via-white/80 to-transparent" />
 
-      {/* Pink glow */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-8 bg-[#FF1AC6]/10 blur-3xl pointer-events-none" />
+      {/* Gold glow */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-8 w-72 -translate-x-1/2 -translate-y-1/2 bg-[#D4AF37]/10 blur-3xl" />
 
       <div className="ticker-track">
         {[1, 2, 3].map((_, index) => (
@@ -29,8 +29,8 @@ function LiveTricker() {
                     item.type === "LIVE"
                       ? "live"
                       : item.type === "NEW"
-                        ? "pink"
-                        : "purple"
+                        ? "gold"
+                        : "dark"
                   }`}
                 />
 
@@ -75,7 +75,7 @@ function LiveTricker() {
         }
 
         .ticker-label {
-          color: #e5e5e5;
+          color: #171717;
           font-size: 13px;
           font-weight: 500;
           letter-spacing: 0.01em;
@@ -85,16 +85,16 @@ function LiveTricker() {
           font-size: 9px;
           font-weight: 700;
           letter-spacing: 0.12em;
-          color: #FF1AC6;
+          color: #B28B20;
           padding: 3px 7px;
           border-radius: 999px;
-          border: 1px solid rgba(255, 26, 198, 0.2);
-          background: rgba(255, 26, 198, 0.06);
+          border: 1px solid rgba(212, 175, 55, 0.3);
+          background: rgba(212, 175, 55, 0.08);
         }
 
         .ticker-separator {
           margin-left: 8px;
-          color: rgba(255, 255, 255, 0.12);
+          color: rgba(17, 17, 17, 0.12);
           font-size: 18px;
         }
 
@@ -107,23 +107,23 @@ function LiveTricker() {
         }
 
         .status-dot.live {
-          background: #22c55e;
+          background: #D4AF37;
           box-shadow:
-            0 0 6px rgba(34, 197, 94, 0.8),
-            0 0 12px rgba(34, 197, 94, 0.4);
+            0 0 6px rgba(212, 175, 55, 0.8),
+            0 0 12px rgba(212, 175, 55, 0.35);
           animation: livePulse 2s ease-in-out infinite;
         }
 
-        .status-dot.pink {
-          background: #FF1AC6;
-          box-shadow: 0 0 8px rgba(255, 26, 198, 0.7);
-          animation: pinkPulse 2.5s ease-in-out infinite;
+        .status-dot.gold {
+          background: #B28B20;
+          box-shadow: 0 0 8px rgba(178, 139, 32, 0.6);
+          animation: goldPulse 2.5s ease-in-out infinite;
         }
 
-        .status-dot.purple {
-          background: #8b5cf6;
-          box-shadow: 0 0 8px rgba(139, 92, 246, 0.7);
-          animation: purplePulse 2.5s ease-in-out infinite;
+        .status-dot.dark {
+          background: #171717;
+          box-shadow: 0 0 7px rgba(17, 17, 17, 0.25);
+          animation: darkPulse 2.5s ease-in-out infinite;
         }
 
         @keyframes tickerScroll {
@@ -148,30 +148,28 @@ function LiveTricker() {
           }
         }
 
-        @keyframes pinkPulse {
+        @keyframes goldPulse {
           0%, 100% {
             opacity: 0.7;
-            box-shadow: 0 0 5px rgba(255, 26, 198, 0.4);
+            box-shadow: 0 0 5px rgba(178, 139, 32, 0.4);
           }
 
           50% {
             opacity: 1;
             box-shadow:
-              0 0 8px rgba(255, 26, 198, 0.8),
-              0 0 14px rgba(255, 26, 198, 0.3);
+              0 0 8px rgba(178, 139, 32, 0.8),
+              0 0 14px rgba(212, 175, 55, 0.3);
           }
         }
 
-        @keyframes purplePulse {
+        @keyframes darkPulse {
           0%, 100% {
-            opacity: 0.7;
+            opacity: 0.65;
           }
 
           50% {
             opacity: 1;
-            box-shadow:
-              0 0 8px rgba(139, 92, 246, 0.8),
-              0 0 14px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 8px rgba(17, 17, 17, 0.3);
           }
         }
 

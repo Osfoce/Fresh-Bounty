@@ -20,24 +20,24 @@ function Footer() {
   };
 
   return (
-    <footer className="relative mt-24 overflow-hidden border-t border-white/[0.08] bg-[#080808] text-white">
+    <footer className="relative mt-24 overflow-hidden border-t border-black/[0.08] bg-[#f6f5ef] text-[#171717]">
       {/* =====================================================
           BACKGROUND GLOWS
       ====================================================== */}
 
-      <div className="pointer-events-none absolute -top-32 left-1/4 h-72 w-72 rounded-full bg-[#FF1AC6]/10 blur-[120px]" />
+      <div className="pointer-events-none absolute -top-32 left-1/4 h-72 w-72 rounded-full bg-[#D4AF37]/10 blur-[120px]" />
 
-      <div className="pointer-events-none absolute -bottom-32 right-1/4 h-72 w-72 rounded-full bg-purple-600/10 blur-[120px]" />
+      <div className="pointer-events-none absolute -bottom-32 right-1/4 h-72 w-72 rounded-full bg-[#B28B20]/[0.08] blur-[120px]" />
 
       {/* =====================================================
           SUBTLE GRID
       ====================================================== */}
 
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.025]"
+        className="pointer-events-none absolute inset-0 opacity-[0.035]"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+            "linear-gradient(rgba(23,23,23,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(23,23,23,0.35) 1px, transparent 1px)",
           backgroundSize: "40px 40px",
         }}
       />
@@ -74,42 +74,40 @@ function Footer() {
           <div className="lg:col-span-1">
             <div className="mb-5 flex items-center gap-3">
               {/* Logo */}
-              <div className="group relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-[#FF1AC6]/30 bg-[#FF1AC6]/10 shadow-[0_0_25px_rgba(255,26,198,0.12)]">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#FF1AC6]/20 to-purple-600/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="group relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-[#D4AF37]/30 bg-white shadow-[0_8px_30px_rgba(212,175,55,0.12)]">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/15 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                 <img
                   src={HappyBounty}
-                  alt="Happy Bounty logo"
+                  alt="Botchain logo"
                   className="relative z-10 h-7 w-7 object-contain transition-transform duration-300 group-hover:scale-110"
                 />
               </div>
 
               {/* Brand Name */}
               <div>
-                <h3 className="text-xl font-bold tracking-tight">
-                  Happy{" "}
-                  <span className="text-[#FF1AC6]">
-                    Bounty
-                  </span>
+                <h3 className="text-xl font-bold tracking-tight text-[#171717]">
+                  Botchain
                 </h3>
 
-                <p className="text-[10px] uppercase tracking-[0.2em] text-gray-600">
-                  Web3 Bounty Platform
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[#8f6f16]">
+                  Onchain Opportunity Platform
                 </p>
               </div>
             </div>
 
-            <p className="max-w-xs text-sm leading-relaxed text-gray-400">
-              Complete Web3 tasks, contribute your skills, and earn
-              cryptocurrency rewards across multiple networks.
+            <p className="max-w-xs text-sm leading-relaxed text-gray-600">
+              A professional platform connecting builders, contributors, and
+              organizations through meaningful onchain opportunities and
+              transparent rewards.
             </p>
 
             {/* STATUS */}
-            <div className="mt-6 flex w-fit items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-3 py-1.5">
+            <div className="mt-6 flex w-fit items-center gap-2 rounded-full border border-[#D4AF37]/20 bg-white px-3 py-1.5 shadow-sm">
               <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-60" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#D4AF37] opacity-50" />
 
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-400" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#D4AF37]" />
               </span>
 
               <span className="text-xs text-gray-500">
@@ -123,7 +121,7 @@ function Footer() {
           ================================================== */}
 
           <div>
-            <h4 className="mb-5 text-sm font-semibold uppercase tracking-[0.15em] text-white">
+            <h4 className="mb-5 text-sm font-semibold uppercase tracking-[0.15em] text-[#171717]">
               Platform
             </h4>
 
@@ -131,16 +129,16 @@ function Footer() {
               <li>
                 <a
                   href="/dashboard"
-                  className="text-gray-500 transition-colors duration-200 hover:text-[#FF1AC6]"
+                  className="text-gray-600 transition-colors duration-200 hover:text-[#B28B20]"
                 >
-                  Browse Bounties
+                  Browse Opportunities
                 </a>
               </li>
 
               <li>
                 <a
                   href="/dashboard"
-                  className="text-gray-500 transition-colors duration-200 hover:text-[#FF1AC6]"
+                  className="text-gray-600 transition-colors duration-200 hover:text-[#B28B20]"
                 >
                   Categories
                 </a>
@@ -149,7 +147,7 @@ function Footer() {
               <li>
                 <a
                   href="/leaderboard"
-                  className="text-gray-500 transition-colors duration-200 hover:text-[#FF1AC6]"
+                  className="text-gray-600 transition-colors duration-200 hover:text-[#B28B20]"
                 >
                   Leaderboard
                 </a>
@@ -158,7 +156,7 @@ function Footer() {
               <li>
                 <a
                   href="/rewards"
-                  className="text-gray-500 transition-colors duration-200 hover:text-[#FF1AC6]"
+                  className="text-gray-600 transition-colors duration-200 hover:text-[#B28B20]"
                 >
                   Rewards
                 </a>
@@ -171,7 +169,7 @@ function Footer() {
           ================================================== */}
 
           <div>
-            <h4 className="mb-5 text-sm font-semibold uppercase tracking-[0.15em] text-white">
+            <h4 className="mb-5 text-sm font-semibold uppercase tracking-[0.15em] text-[#171717]">
               Resources
             </h4>
 
@@ -179,7 +177,7 @@ function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-gray-500 transition-colors duration-200 hover:text-[#FF1AC6]"
+                  className="text-gray-600 transition-colors duration-200 hover:text-[#B28B20]"
                 >
                   Documentation
                 </a>
@@ -188,7 +186,7 @@ function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-gray-500 transition-colors duration-200 hover:text-[#FF1AC6]"
+                  className="text-gray-600 transition-colors duration-200 hover:text-[#B28B20]"
                 >
                   Blog
                 </a>
@@ -197,7 +195,7 @@ function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-gray-500 transition-colors duration-200 hover:text-[#FF1AC6]"
+                  className="text-gray-600 transition-colors duration-200 hover:text-[#B28B20]"
                 >
                   Help Center
                 </a>
@@ -206,7 +204,7 @@ function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-gray-500 transition-colors duration-200 hover:text-[#FF1AC6]"
+                  className="text-gray-600 transition-colors duration-200 hover:text-[#B28B20]"
                 >
                   Community
                 </a>
@@ -219,13 +217,13 @@ function Footer() {
           ================================================== */}
 
           <div>
-            <h4 className="mb-5 text-sm font-semibold uppercase tracking-[0.15em] text-white">
+            <h4 className="mb-5 text-sm font-semibold uppercase tracking-[0.15em] text-[#171717]">
               Connect
             </h4>
 
-            <p className="mb-5 max-w-xs text-sm leading-relaxed text-gray-500">
-              Follow Happy Bounty and stay updated with new bounties,
-              platform updates, and Web3 opportunities.
+            <p className="mb-5 max-w-xs text-sm leading-relaxed text-gray-600">
+              Stay connected with Botchain and follow new opportunities,
+              ecosystem updates, and developments across the platform.
             </p>
 
             <div className="flex gap-3">
@@ -234,8 +232,8 @@ function Footer() {
                 href="https://x.com/Happy_bounty"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Happy Bounty on X"
-                className="group flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-gray-400 transition-all duration-300 hover:-translate-y-1 hover:border-[#FF1AC6]/40 hover:bg-[#FF1AC6]/10 hover:text-[#FF1AC6]"
+                aria-label="Botchain on X"
+                className="group flex h-11 w-11 items-center justify-center rounded-xl border border-black/[0.08] bg-white text-gray-500 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#B28B20]"
               >
                 <FaTwitter className="text-lg transition-transform duration-300 group-hover:scale-110" />
               </a>
@@ -243,8 +241,8 @@ function Footer() {
               {/* Discord */}
               <a
                 href="#"
-                aria-label="Happy Bounty Discord"
-                className="group flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-gray-400 transition-all duration-300 hover:-translate-y-1 hover:border-[#5865F2]/40 hover:bg-[#5865F2]/10 hover:text-[#5865F2]"
+                aria-label="Botchain Discord"
+                className="group flex h-11 w-11 items-center justify-center rounded-xl border border-black/[0.08] bg-white text-gray-500 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#B28B20]"
               >
                 <FaDiscord className="text-lg transition-transform duration-300 group-hover:scale-110" />
               </a>
@@ -252,8 +250,8 @@ function Footer() {
               {/* GitHub */}
               <a
                 href="#"
-                aria-label="Happy Bounty GitHub"
-                className="group flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-gray-400 transition-all duration-300 hover:-translate-y-1 hover:border-white/30 hover:bg-white/10 hover:text-white"
+                aria-label="Botchain GitHub"
+                className="group flex h-11 w-11 items-center justify-center rounded-xl border border-black/[0.08] bg-white text-gray-500 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#B28B20]"
               >
                 <FaGithub className="text-lg transition-transform duration-300 group-hover:scale-110" />
               </a>
@@ -265,7 +263,7 @@ function Footer() {
             DIVIDER
         ==================================================== */}
 
-        <div className="my-10 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
+        <div className="my-10 h-px bg-gradient-to-r from-transparent via-black/[0.1] to-transparent" />
 
         {/* ===================================================
             BOTTOM SECTION
@@ -273,45 +271,43 @@ function Footer() {
 
         <div className="flex flex-col items-center justify-between gap-5 text-center md:flex-row md:text-left">
           {/* Copyright */}
-          <p className="text-xs text-gray-600">
-            © 2026 Happy Bounty. All rights reserved.
+          <p className="text-xs text-gray-500">
+            © 2026 Botchain. All rights reserved.
           </p>
 
           {/* Legal */}
-          <div className="flex flex-wrap justify-center gap-6 text-xs text-gray-600">
+          <div className="flex flex-wrap justify-center gap-6 text-xs text-gray-500">
             <a
               href="#"
-              className="transition-colors hover:text-gray-300"
+              className="transition-colors hover:text-[#B28B20]"
             >
               Privacy Policy
             </a>
 
             <a
               href="#"
-              className="transition-colors hover:text-gray-300"
+              className="transition-colors hover:text-[#B28B20]"
             >
               Terms of Service
             </a>
 
             <a
               href="#"
-              className="transition-colors hover:text-gray-300"
+              className="transition-colors hover:text-[#B28B20]"
             >
               Security
             </a>
           </div>
 
           {/* Built For */}
-          <div className="flex items-center gap-2 text-xs text-gray-600">
-            <span>
-              Built for
+          <div className="flex items-center gap-2 text-xs text-gray-500">
+            <span>Built for</span>
+
+            <span className="font-medium text-[#B28B20]">
+              Onchain Work
             </span>
 
-            <span className="font-medium text-[#FF1AC6]">
-              Web3
-            </span>
-
-            <FiCheck className="h-3.5 w-3.5 text-green-400" />
+            <FiCheck className="h-3.5 w-3.5 text-[#D4AF37]" />
           </div>
         </div>
 
@@ -324,14 +320,12 @@ function Footer() {
             type="button"
             onClick={scrollToTop}
             aria-label="Back to top"
-            className="group inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.025] px-4 py-2.5 text-xs font-medium text-gray-500 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#FF1AC6]/30 hover:bg-[#FF1AC6]/[0.05] hover:text-white"
+            className="group inline-flex items-center gap-2 rounded-full border border-black/[0.08] bg-white px-4 py-2.5 text-xs font-medium text-gray-500 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/40 hover:bg-[#D4AF37]/[0.06] hover:text-[#B28B20]"
           >
-            <span>
-              Back to top
-            </span>
+            <span>Back to top</span>
 
-            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.04] transition-all duration-300 group-hover:border-[#FF1AC6]/30 group-hover:bg-[#FF1AC6]/10">
-              <FiArrowUp className="h-3.5 w-3.5 text-gray-500 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:text-[#FF1AC6]" />
+            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-black/[0.08] bg-[#f6f5ef] transition-all duration-300 group-hover:border-[#D4AF37]/40 group-hover:bg-[#D4AF37]/10">
+              <FiArrowUp className="h-3.5 w-3.5 text-[#B28B20] transition-transform duration-300 group-hover:-translate-y-0.5" />
             </span>
           </button>
         </div>
@@ -346,7 +340,7 @@ function Footer() {
           position: absolute;
           width: 12px;
           height: 12px;
-          color: rgba(255, 255, 255, 0.45);
+          color: rgba(178, 139, 32, 0.35);
           animation: footerStarShine 4s ease-in-out infinite;
         }
 
@@ -403,15 +397,15 @@ function Footer() {
           100% {
             opacity: 0.1;
             transform: scale(0.7) rotate(0deg);
-            filter: drop-shadow(0 0 0 rgba(255, 26, 198, 0));
+            filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0));
           }
 
           50% {
-            opacity: 1;
+            opacity: 0.8;
             transform: scale(1.25) rotate(45deg);
             filter:
-              drop-shadow(0 0 5px rgba(255, 255, 255, 0.8))
-              drop-shadow(0 0 12px rgba(255, 26, 198, 0.7));
+              drop-shadow(0 0 5px rgba(212, 175, 55, 0.5))
+              drop-shadow(0 0 12px rgba(212, 175, 55, 0.3));
           }
         }
 
