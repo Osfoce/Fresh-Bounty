@@ -1,22 +1,46 @@
+
+import { useEffect } from "react";
 import ConnectConfig from "./ConnectConfig";
 
 function AuthModal({ isOpen, onClose }) {
+  // Prevent background page from scrolling while modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 mt-[50vh] flex items-center justify-center  p-4 backdrop-blur-md"
+      className="
+        fixed inset-0 z-[100]
+        flex min-h-screen
+        items-center justify-center
+        overflow-y-auto
+        bg-black/10
+        p-4
+        backdrop-blur-md
+        sm:p-6
+      "
       onClick={onClose}
     >
       <div
         className="
           relative w-full max-w-sm
           rounded-2xl
-          border border-white/[0.08]
-          bg-[#151515]
+          border border-black/[0.08]
+          bg-white
           px-5 py-5
-          text-white
-          shadow-[0_25px_80px_rgba(0,0,0,0.65)]
+          text-[#111111]
+          shadow-[0_25px_80px_rgba(0,0,0,0.22)]
           sm:px-6 sm:py-6
           animate-[modalIn_0.25s_ease-out]
         "
@@ -31,10 +55,10 @@ function AuthModal({ isOpen, onClose }) {
             absolute right-3.5 top-3.5
             flex h-8 w-8 items-center justify-center
             rounded-full
-            text-sm text-white/40
+            text-sm text-black/40
             transition-all duration-200
-            hover:bg-white/[0.07]
-            hover:text-white
+            hover:bg-[#D4AF37]/10
+            hover:text-[#D4AF37]
           "
         >
           ✕
@@ -47,18 +71,19 @@ function AuthModal({ isOpen, onClose }) {
               mx-auto mb-3
               flex h-10 w-10 items-center justify-center
               rounded-xl
-              bg-gradient-to-br from-[#FF1AC6] to-[#8B5CF6]
-              shadow-[0_0_25px_rgba(255,26,198,0.18)]
+              bg-[#D4AF37]
+              text-white
+              shadow-[0_8px_25px_rgba(212,175,55,0.25)]
             "
           >
-            <span className="text-sm font-bold">HB</span>
+            <span className="text-sm font-black">HB</span>
           </div>
 
-          <h2 className="text-xl font-bold tracking-tight sm:text-2xl">
+          <h2 className="text-xl font-black tracking-tight text-[#111111] sm:text-2xl">
             Welcome to Happy Bounty
           </h2>
 
-          <p className="mt-1.5 text-xs text-white/40 sm:text-sm">
+          <p className="mt-1.5 text-xs font-medium text-black/50 sm:text-sm">
             Connect your wallet to continue
           </p>
         </div>
@@ -70,19 +95,19 @@ function AuthModal({ isOpen, onClose }) {
 
         {/* DIVIDER */}
         <div className="my-4 flex items-center gap-3">
-          <div className="h-px flex-1 bg-white/[0.08]" />
+          <div className="h-px flex-1 bg-black/[0.09]" />
 
-          <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-white/30">
+          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-black/35">
             Or
           </span>
 
-          <div className="h-px flex-1 bg-white/[0.08]" />
+          <div className="h-px flex-1 bg-black/[0.09]" />
         </div>
 
         {/* EMAIL LOGIN */}
         <form className="space-y-2.5">
           <div>
-            <label className="mb-1.5 block text-[11px] font-medium text-white/45">
+            <label className="mb-1.5 block text-[11px] font-bold text-black/60">
               Email
             </label>
 
@@ -93,11 +118,11 @@ function AuthModal({ isOpen, onClose }) {
               className="
                 w-full
                 rounded-xl
-                border border-white/[0.08]
-                bg-white/[0.025]
+                border border-black/[0.08]
+                bg-black/[0.025]
                 px-3.5 py-2.5
-                text-sm text-white/40
-                placeholder:text-white/20
+                text-sm font-medium text-black/40
+                placeholder:text-black/25
                 outline-none
                 cursor-not-allowed
               "
@@ -110,11 +135,11 @@ function AuthModal({ isOpen, onClose }) {
             className="
               w-full
               rounded-xl
-              border border-white/[0.06]
-              bg-white/[0.06]
+              border border-black/[0.07]
+              bg-black/[0.045]
               py-2.5
-              text-sm font-semibold
-              text-white/30
+              text-sm font-bold
+              text-black/35
               cursor-not-allowed
             "
           >
@@ -123,12 +148,25 @@ function AuthModal({ isOpen, onClose }) {
         </form>
 
         {/* FOOTER */}
-        <p className="mt-4 text-center text-[10px] leading-relaxed text-white/25 sm:text-xs">
+        <p className="mt-4 text-center text-[10px] font-medium leading-relaxed text-black/40 sm:text-xs">
           By connecting, you agree to Happy Bounty's terms and conditions.
         </p>
+
+        {/* GOLD ACCENT */}
+        <div
+          className="
+            pointer-events-none
+            absolute bottom-0 left-1/2
+            h-[2px] w-24
+            -translate-x-1/2
+            rounded-full
+            bg-[#D4AF37]
+          "
+        />
       </div>
     </div>
   );
 }
 
 export default AuthModal;
+

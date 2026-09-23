@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import {
   FiBriefcase,
@@ -33,7 +32,7 @@ export default function HowItWorks() {
       },
       {
         threshold: 0.2,
-      }
+      },
     );
 
     observer.observe(section);
@@ -54,17 +53,16 @@ export default function HowItWorks() {
       <div className="how-it-works-header">
         <span className="how-it-works-label">
           <span className="label-dot" />
-          HOW IT WORKS
+          HOW BOTCHAIN WORKS
         </span>
 
         <h2>
-          Work. Earn.{" "}
-          <span>Build.</span>
+          Work. Earn. <span>Build.</span>
         </h2>
 
         <p>
-          A simple way to discover Web3 opportunities, complete
-          meaningful work, and earn rewards.
+          Discover opportunities, contribute your skills, complete meaningful
+          work, and earn rewards through Botchain.
         </p>
       </div>
 
@@ -98,11 +96,11 @@ export default function HowItWorks() {
               </div>
 
               <div className="discover-orbit orbit-one">
-                <span className="orbit-dot pink-dot" />
+                <span className="orbit-dot gold-dot" />
               </div>
 
               <div className="discover-orbit orbit-two">
-                <span className="orbit-dot purple-dot" />
+                <span className="orbit-dot dark-gold-dot" />
               </div>
 
               <FiZap className="discover-icon" />
@@ -117,8 +115,8 @@ export default function HowItWorks() {
             <h3>Discover Bounties</h3>
 
             <p>
-              Explore opportunities from Web3 projects and
-              find work that matches your skills.
+              Explore opportunities from Web3 projects and find work that
+              matches your skills.
             </p>
           </div>
         </div>
@@ -182,8 +180,8 @@ export default function HowItWorks() {
             <h3>Connect & Contribute</h3>
 
             <p>
-              Join projects, submit your work, and collaborate
-              with teams building the next generation of Web3.
+              Join projects, submit your work, and collaborate with teams
+              building the next generation of Web3.
             </p>
           </div>
         </div>
@@ -239,8 +237,8 @@ export default function HowItWorks() {
             <h3>Complete the Work</h3>
 
             <p>
-              Deliver quality work, meet the requirements, and
-              get your contribution reviewed by the project.
+              Deliver quality work, meet the requirements, and get your
+              contribution reviewed by the project.
             </p>
           </div>
         </div>
@@ -283,8 +281,8 @@ export default function HowItWorks() {
             <h3>Get Rewarded</h3>
 
             <p>
-              Receive your rewards and build your reputation
-              while contributing to the Web3 ecosystem.
+              Receive your rewards and build your reputation while contributing
+              to the Web3 ecosystem.
             </p>
           </div>
         </div>
@@ -303,8 +301,8 @@ export default function HowItWorks() {
           width: 100%;
           padding: 80px 24px;
           overflow: hidden;
-          background: #070708;
-          color: white;
+          background: #f6f5ef;
+          color: #111111;
         }
 
         /* ========================================
@@ -324,10 +322,10 @@ export default function HowItWorks() {
           align-items: center;
           gap: 8px;
           padding: 8px 14px;
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(17, 17, 17, 0.1);
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.03);
-          color: #9ca3af;
+          background: rgba(255, 255, 255, 0.7);
+          color: rgba(17, 17, 17, 0.55);
           font-size: 10px;
           font-weight: 600;
           letter-spacing: 0.16em;
@@ -337,8 +335,8 @@ export default function HowItWorks() {
           width: 6px;
           height: 6px;
           border-radius: 999px;
-          background: #ff1ac6;
-          box-shadow: 0 0 10px rgba(255, 26, 198, 0.8);
+          background: #d4af37;
+          box-shadow: 0 0 10px rgba(212, 175, 55, 0.55);
         }
 
         .how-it-works-header h2 {
@@ -347,14 +345,15 @@ export default function HowItWorks() {
           line-height: 1;
           font-weight: 700;
           letter-spacing: -0.04em;
+          color: #111111;
         }
 
         .how-it-works-header h2 span {
           background: linear-gradient(
             90deg,
-            #ff1ac6,
-            #ff62d8,
-            #a855f7
+            #b28b20 0%,
+            #d4af37 55%,
+            #e2c45c 100%
           );
           -webkit-background-clip: text;
           background-clip: text;
@@ -364,7 +363,7 @@ export default function HowItWorks() {
         .how-it-works-header p {
           max-width: 580px;
           margin: 0 auto;
-          color: #71717a;
+          color: rgba(17, 17, 17, 0.55);
           font-size: 14px;
           line-height: 1.7;
         }
@@ -385,7 +384,6 @@ export default function HowItWorks() {
 
         /* ========================================
            OUTER CARD
-           KEPT AS THE ORIGINAL STYLE
         ======================================== */
 
         .how-it-works-card {
@@ -393,14 +391,12 @@ export default function HowItWorks() {
           min-height: 350px;
           padding: 22px 20px;
           overflow: hidden;
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(17, 17, 17, 0.08);
           border-radius: 22px;
-          background:
-            linear-gradient(
-              145deg,
-              rgba(255, 255, 255, 0.045),
-              rgba(255, 255, 255, 0.015)
-            );
+          background: rgba(255, 255, 255, 0.72);
+          box-shadow:
+            0 8px 30px rgba(17, 17, 17, 0.035),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
           transition:
             border-color 0.35s ease,
             background 0.35s ease,
@@ -408,23 +404,33 @@ export default function HowItWorks() {
             box-shadow 0.35s ease;
         }
 
-        .how-it-works-card:hover {
-          border-color: rgba(255, 26, 198, 0.18);
+        .how-it-works-card::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
           background:
-            linear-gradient(
-              145deg,
-              rgba(255, 255, 255, 0.06),
-              rgba(255, 255, 255, 0.02)
+            radial-gradient(
+              circle at 50% 0%,
+              rgba(212, 175, 55, 0.06),
+              transparent 42%
             );
+        }
+
+        .how-it-works-card:hover {
+          border-color: rgba(212, 175, 55, 0.3);
+          background: rgba(255, 255, 255, 0.9);
           transform: translateY(-4px);
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+          box-shadow:
+            0 20px 50px rgba(17, 17, 17, 0.08),
+            0 0 0 1px rgba(212, 175, 55, 0.04);
         }
 
         .card-number {
           position: absolute;
           top: 16px;
           right: 18px;
-          color: rgba(255, 255, 255, 0.2);
+          color: rgba(17, 17, 17, 0.25);
           font-size: 10px;
           font-weight: 600;
           letter-spacing: 0.12em;
@@ -460,23 +466,23 @@ export default function HowItWorks() {
           width: 30px;
           height: 30px;
           margin-bottom: 12px;
-          border: 1px solid rgba(255, 26, 198, 0.14);
+          border: 1px solid rgba(212, 175, 55, 0.25);
           border-radius: 9px;
-          background: rgba(255, 26, 198, 0.07);
-          color: #ff1ac6;
+          background: rgba(212, 175, 55, 0.09);
+          color: #b28b20;
           font-size: 14px;
         }
 
         .card-content h3 {
           margin: 0 0 8px;
-          color: white;
+          color: #111111;
           font-size: 16px;
           font-weight: 600;
         }
 
         .card-content p {
           margin: 0;
-          color: #71717a;
+          color: rgba(17, 17, 17, 0.55);
           font-size: 12px;
           line-height: 1.65;
         }
@@ -499,12 +505,12 @@ export default function HowItWorks() {
           width: 110px;
           height: 68px;
           transform: translate(-50%, -50%);
-          border: 1px solid rgba(255, 255, 255, 0.12);
+          border: 1px solid rgba(17, 17, 17, 0.1);
           border-radius: 12px;
-          background: rgba(16, 16, 17, 0.92);
+          background: rgba(255, 255, 255, 0.92);
           box-shadow:
-            0 15px 35px rgba(0, 0, 0, 0.45),
-            inset 0 0 20px rgba(255, 255, 255, 0.025);
+            0 15px 35px rgba(17, 17, 17, 0.1),
+            inset 0 0 20px rgba(17, 17, 17, 0.015);
           backdrop-filter: blur(15px);
         }
 
@@ -514,14 +520,14 @@ export default function HowItWorks() {
           gap: 4px;
           height: 18px;
           padding: 0 8px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          border-bottom: 1px solid rgba(17, 17, 17, 0.07);
         }
 
         .wallet-top span {
           width: 4px;
           height: 4px;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.25);
+          background: rgba(17, 17, 17, 0.22);
         }
 
         .wallet-screen {
@@ -532,9 +538,11 @@ export default function HowItWorks() {
         }
 
         .wallet-icon {
-          color: #ff1ac6;
+          color: #d4af37;
           font-size: 16px;
-          filter: drop-shadow(0 0 8px rgba(255, 26, 198, 0.6));
+          filter: drop-shadow(
+            0 0 7px rgba(212, 175, 55, 0.35)
+          );
         }
 
         .wallet-lines {
@@ -547,7 +555,7 @@ export default function HowItWorks() {
         .wallet-lines span {
           height: 3px;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(17, 17, 17, 0.1);
         }
 
         .wallet-lines span:nth-child(1) {
@@ -566,7 +574,7 @@ export default function HowItWorks() {
           position: absolute;
           left: 50%;
           top: 50%;
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(17, 17, 17, 0.08);
           border-radius: 50%;
           transform: translate(-50%, -50%);
         }
@@ -582,7 +590,7 @@ export default function HowItWorks() {
         .orbit-two {
           width: 155px;
           height: 68px;
-          border-color: rgba(168, 85, 247, 0.1);
+          border-color: rgba(212, 175, 55, 0.18);
           transform:
             translate(-50%, -50%)
             rotate(25deg);
@@ -598,25 +606,25 @@ export default function HowItWorks() {
           transform: translateX(-50%);
         }
 
-        .pink-dot {
-          background: #ff1ac6;
+        .gold-dot {
+          background: #d4af37;
           box-shadow:
-            0 0 8px #ff1ac6,
-            0 0 18px rgba(255, 26, 198, 0.7);
+            0 0 8px rgba(212, 175, 55, 0.7),
+            0 0 18px rgba(212, 175, 55, 0.3);
         }
 
-        .purple-dot {
-          background: #a855f7;
+        .dark-gold-dot {
+          background: #b28b20;
           box-shadow:
-            0 0 8px #a855f7,
-            0 0 18px rgba(168, 85, 247, 0.7);
+            0 0 8px rgba(178, 139, 32, 0.65),
+            0 0 18px rgba(178, 139, 32, 0.25);
         }
 
         .discover-icon {
           position: absolute;
           right: 7px;
           top: 8px;
-          color: rgba(255, 26, 198, 0.6);
+          color: rgba(212, 175, 55, 0.65);
           font-size: 13px;
         }
 
@@ -639,10 +647,10 @@ export default function HowItWorks() {
           height: 88px;
           overflow: hidden;
           transform: translate(-50%, -50%);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(17, 17, 17, 0.1);
           border-radius: 11px;
-          background: rgba(15, 15, 17, 0.95);
-          box-shadow: 0 18px 35px rgba(0, 0, 0, 0.4);
+          background: rgba(255, 255, 255, 0.95);
+          box-shadow: 0 18px 35px rgba(17, 17, 17, 0.09);
         }
 
         .dashboard-header {
@@ -651,14 +659,14 @@ export default function HowItWorks() {
           gap: 4px;
           height: 17px;
           padding: 0 7px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          border-bottom: 1px solid rgba(17, 17, 17, 0.06);
         }
 
         .dashboard-header span {
           width: 4px;
           height: 4px;
           border-radius: 50%;
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(17, 17, 17, 0.2);
         }
 
         .dashboard-body {
@@ -672,18 +680,18 @@ export default function HowItWorks() {
           flex-direction: column;
           gap: 7px;
           padding: 8px 7px;
-          border-right: 1px solid rgba(255, 255, 255, 0.05);
+          border-right: 1px solid rgba(17, 17, 17, 0.05);
         }
 
         .dashboard-sidebar span {
           width: 100%;
           height: 3px;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.08);
+          background: rgba(17, 17, 17, 0.09);
         }
 
         .dashboard-sidebar span:first-child {
-          background: rgba(255, 26, 198, 0.5);
+          background: rgba(212, 175, 55, 0.7);
         }
 
         .dashboard-main {
@@ -696,7 +704,7 @@ export default function HowItWorks() {
           height: 5px;
           margin-bottom: 8px;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.16);
+          background: rgba(17, 17, 17, 0.16);
         }
 
         .dashboard-cards {
@@ -708,14 +716,14 @@ export default function HowItWorks() {
         .dashboard-cards span {
           flex: 1;
           height: 22px;
-          border: 1px solid rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(17, 17, 17, 0.06);
           border-radius: 5px;
-          background: rgba(255, 255, 255, 0.035);
+          background: rgba(17, 17, 17, 0.025);
         }
 
         .dashboard-cards span:first-child {
-          border-color: rgba(255, 26, 198, 0.15);
-          background: rgba(255, 26, 198, 0.06);
+          border-color: rgba(212, 175, 55, 0.25);
+          background: rgba(212, 175, 55, 0.08);
         }
 
         .dashboard-line {
@@ -723,7 +731,7 @@ export default function HowItWorks() {
           height: 3px;
           margin-bottom: 5px;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.08);
+          background: rgba(17, 17, 17, 0.08);
         }
 
         .dashboard-line.short {
@@ -738,12 +746,14 @@ export default function HowItWorks() {
           justify-content: center;
           width: 25px;
           height: 25px;
-          border: 1px solid rgba(255, 26, 198, 0.2);
+          border: 1px solid rgba(212, 175, 55, 0.28);
           border-radius: 50%;
-          background: rgba(20, 20, 22, 0.95);
-          color: #ff1ac6;
+          background: rgba(255, 255, 255, 0.95);
+          color: #b28b20;
           font-size: 11px;
-          box-shadow: 0 0 18px rgba(255, 26, 198, 0.12);
+          box-shadow:
+            0 0 18px rgba(212, 175, 55, 0.12),
+            0 5px 15px rgba(17, 17, 17, 0.08);
         }
 
         .user-one {
@@ -754,8 +764,8 @@ export default function HowItWorks() {
         .user-two {
           right: -3px;
           bottom: 13px;
-          color: #a855f7;
-          border-color: rgba(168, 85, 247, 0.2);
+          color: #b28b20;
+          border-color: rgba(212, 175, 55, 0.28);
         }
 
         .connection-line {
@@ -765,8 +775,8 @@ export default function HowItWorks() {
           width: 35px;
           background: linear-gradient(
             90deg,
-            rgba(255, 26, 198, 0),
-            rgba(255, 26, 198, 0.4)
+            rgba(212, 175, 55, 0),
+            rgba(212, 175, 55, 0.5)
           );
         }
 
@@ -782,8 +792,8 @@ export default function HowItWorks() {
           transform: rotate(20deg);
           background: linear-gradient(
             90deg,
-            rgba(168, 85, 247, 0.4),
-            rgba(168, 85, 247, 0)
+            rgba(212, 175, 55, 0.5),
+            rgba(212, 175, 55, 0)
           );
         }
 
@@ -806,10 +816,10 @@ export default function HowItWorks() {
           height: 65px;
           padding: 9px 11px;
           transform: translate(-50%, -50%);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(17, 17, 17, 0.1);
           border-radius: 11px;
-          background: rgba(15, 15, 17, 0.94);
-          box-shadow: 0 18px 35px rgba(0, 0, 0, 0.4);
+          background: rgba(255, 255, 255, 0.95);
+          box-shadow: 0 18px 35px rgba(17, 17, 17, 0.09);
           backdrop-filter: blur(15px);
         }
 
@@ -817,7 +827,7 @@ export default function HowItWorks() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          color: #5f626a;
+          color: rgba(17, 17, 17, 0.45);
           font-size: 7px;
           letter-spacing: 0.12em;
         }
@@ -826,7 +836,7 @@ export default function HowItWorks() {
           display: flex;
           align-items: center;
           gap: 4px;
-          color: #6d7280;
+          color: rgba(17, 17, 17, 0.45);
           font-size: 6px;
         }
 
@@ -834,8 +844,8 @@ export default function HowItWorks() {
           width: 4px;
           height: 4px;
           border-radius: 50%;
-          background: #ff1ac6;
-          box-shadow: 0 0 7px #ff1ac6;
+          background: #d4af37;
+          box-shadow: 0 0 7px rgba(212, 175, 55, 0.65);
         }
 
         .task-title {
@@ -850,7 +860,7 @@ export default function HowItWorks() {
           width: 60%;
           height: 4px;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.15);
+          background: rgba(17, 17, 17, 0.14);
         }
 
         .task-title span:last-child {
@@ -863,7 +873,7 @@ export default function HowItWorks() {
           margin-top: 8px;
           overflow: hidden;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.06);
+          background: rgba(17, 17, 17, 0.06);
         }
 
         .task-progress div {
@@ -872,10 +882,11 @@ export default function HowItWorks() {
           border-radius: inherit;
           background: linear-gradient(
             90deg,
-            #ff1ac6,
-            #a855f7
+            #b28b20,
+            #d4af37,
+            #e2c45c
           );
-          box-shadow: 0 0 10px rgba(255, 26, 198, 0.4);
+          box-shadow: 0 0 10px rgba(212, 175, 55, 0.35);
         }
 
         .task-bottom {
@@ -883,12 +894,12 @@ export default function HowItWorks() {
           align-items: center;
           gap: 5px;
           margin-top: 7px;
-          color: #6b7280;
+          color: rgba(17, 17, 17, 0.45);
           font-size: 6px;
         }
 
         .task-bottom svg {
-          color: #ff1ac6;
+          color: #b28b20;
           font-size: 9px;
         }
 
@@ -896,7 +907,7 @@ export default function HowItWorks() {
           position: absolute;
           left: 50%;
           top: 50%;
-          border: 1px solid rgba(255, 26, 198, 0.1);
+          border: 1px solid rgba(212, 175, 55, 0.13);
           border-radius: 50%;
           transform: translate(-50%, -50%);
         }
@@ -912,7 +923,7 @@ export default function HowItWorks() {
         .ring-two {
           width: 145px;
           height: 100px;
-          border-color: rgba(168, 85, 247, 0.08);
+          border-color: rgba(17, 17, 17, 0.07);
           transform:
             translate(-50%, -50%)
             rotate(25deg);
@@ -927,12 +938,12 @@ export default function HowItWorks() {
           justify-content: center;
           width: 24px;
           height: 24px;
-          border: 1px solid rgba(255, 26, 198, 0.18);
+          border: 1px solid rgba(212, 175, 55, 0.3);
           border-radius: 50%;
-          background: rgba(255, 26, 198, 0.08);
-          color: #ff1ac6;
+          background: rgba(212, 175, 55, 0.1);
+          color: #b28b20;
           font-size: 11px;
-          box-shadow: 0 0 18px rgba(255, 26, 198, 0.15);
+          box-shadow: 0 0 18px rgba(212, 175, 55, 0.12);
         }
 
         /* ========================================
@@ -957,12 +968,12 @@ export default function HowItWorks() {
           height: 65px;
           padding: 10px;
           transform: translate(-50%, -50%);
-          border: 1px solid rgba(255, 26, 198, 0.14);
+          border: 1px solid rgba(212, 175, 55, 0.2);
           border-radius: 12px;
-          background: rgba(16, 16, 17, 0.95);
+          background: rgba(255, 255, 255, 0.95);
           box-shadow:
-            0 18px 35px rgba(0, 0, 0, 0.45),
-            0 0 30px rgba(255, 26, 198, 0.05);
+            0 18px 35px rgba(17, 17, 17, 0.1),
+            0 0 30px rgba(212, 175, 55, 0.05);
           backdrop-filter: blur(15px);
         }
 
@@ -973,11 +984,11 @@ export default function HowItWorks() {
           width: 34px;
           height: 34px;
           flex-shrink: 0;
-          border: 1px solid rgba(255, 26, 198, 0.15);
+          border: 1px solid rgba(212, 175, 55, 0.25);
           border-radius: 10px;
-          background: rgba(255, 26, 198, 0.08);
-          color: #ff1ac6;
-          box-shadow: 0 0 18px rgba(255, 26, 198, 0.08);
+          background: rgba(212, 175, 55, 0.09);
+          color: #b28b20;
+          box-shadow: 0 0 18px rgba(212, 175, 55, 0.08);
         }
 
         .earning-info {
@@ -987,13 +998,13 @@ export default function HowItWorks() {
         }
 
         .earning-info span {
-          color: #666a74;
+          color: rgba(17, 17, 17, 0.4);
           font-size: 7px;
           letter-spacing: 0.14em;
         }
 
         .earning-info strong {
-          color: white;
+          color: #111111;
           font-size: 12px;
         }
 
@@ -1001,7 +1012,7 @@ export default function HowItWorks() {
           position: absolute;
           left: 50%;
           top: 50%;
-          border: 1px solid rgba(255, 26, 198, 0.1);
+          border: 1px solid rgba(212, 175, 55, 0.13);
           border-radius: 50%;
           transform: translate(-50%, -50%);
         }
@@ -1017,7 +1028,7 @@ export default function HowItWorks() {
         .energy-two {
           width: 145px;
           height: 65px;
-          border-color: rgba(168, 85, 247, 0.09);
+          border-color: rgba(17, 17, 17, 0.07);
           transform:
             translate(-50%, -50%)
             rotate(28deg);
@@ -1033,29 +1044,29 @@ export default function HowItWorks() {
         .particle-one {
           top: 3px;
           left: 24px;
-          background: #ff1ac6;
-          box-shadow: 0 0 10px #ff1ac6;
+          background: #d4af37;
+          box-shadow: 0 0 10px rgba(212, 175, 55, 0.65);
         }
 
         .particle-two {
           right: 20px;
           bottom: 7px;
-          background: #a855f7;
-          box-shadow: 0 0 10px #a855f7;
+          background: #b28b20;
+          box-shadow: 0 0 10px rgba(178, 139, 32, 0.55);
         }
 
         .particle-three {
           right: 3px;
           top: 24px;
-          background: white;
-          box-shadow: 0 0 9px white;
+          background: #111111;
+          box-shadow: 0 0 9px rgba(17, 17, 17, 0.2);
         }
 
         .earn-shield {
           position: absolute;
           left: 1px;
           bottom: 2px;
-          color: rgba(255, 26, 198, 0.55);
+          color: rgba(178, 139, 32, 0.65);
           font-size: 13px;
         }
 

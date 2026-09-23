@@ -1,18 +1,7 @@
-
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import {
-  FiZap,
-  FiShield,
-  FiCheck,
-  FiUsers,
-  FiArrowRight,
-  FiGlobe,
-  FiActivity,
-  FiBriefcase,
-} from "react-icons/fi";
-
+import { FiZap, FiArrowRight, FiBriefcase } from "react-icons/fi";
 
 import NavBar from "../components/Layout/NavBar";
 import hero from "../assets/images/hero.jpg";
@@ -55,6 +44,9 @@ function LandingPage() {
   const statsRef = useRef(null);
   const testimonialsRef = useRef(null);
 
+  /*
+    BACKEND / API — UNCHANGED
+  */
   const API_URL = "https://fresh-bounty.onrender.com/api";
 
   // HERO TEXT ROTATION
@@ -67,6 +59,7 @@ function LandingPage() {
   }, []);
 
   // Fetch featured bounties and stats
+  // BACKEND / API LOGIC — UNCHANGED
   useEffect(() => {
     const fetchFeaturedBounties = async () => {
       try {
@@ -94,8 +87,7 @@ function LandingPage() {
           },
         });
 
-        const totalBounties =
-          allBounties.data.pagination?.total || 0;
+        const totalBounties = allBounties.data.pagination?.total || 0;
 
         setStats({
           totalBounties,
@@ -117,15 +109,9 @@ function LandingPage() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add(
-              "opacity-100",
-              "translate-y-0"
-            );
+            entry.target.classList.add("opacity-100", "translate-y-0");
 
-            entry.target.classList.remove(
-              "opacity-0",
-              "translate-y-10"
-            );
+            entry.target.classList.remove("opacity-0", "translate-y-10");
 
             observer.unobserve(entry.target);
           }
@@ -133,7 +119,7 @@ function LandingPage() {
       },
       {
         threshold: 0.3,
-      }
+      },
     );
 
     if (card1Ref.current) observer.observe(card1Ref.current);
@@ -149,35 +135,34 @@ function LandingPage() {
   }, []);
 
   return (
-    <div className="relative z-10 min-h-screen flex flex-col overflow-x-hidden text-white">
+    <div className="relative z-10 min-h-screen overflow-x-hidden bg-[#f6f5ef] text-[#111111]">
       {/* =========================================
           NAVIGATION
       ========================================== */}
-      <div className="relative z-50 py-6 mt-5 w-full">
+      <div className="relative z-50 mt-5 w-full py-6">
         <NavBar />
-       
       </div>
- <LiveTricker />
+
+      <LiveTricker />
+
       {/* =========================================
           HERO SECTION
       ========================================== */}
       <div
-        className="relative z-10 rounded-xl mx-4 my-2 md:mx-8 lg:mx-14 mt-5 overflow-hidden bg-cover bg-center"
+        className="relative z-10 mx-4 my-2 mt-5 overflow-hidden rounded-xl md:mx-8 lg:mx-14"
         style={{
           backgroundImage: `url(${hero})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/70 pointer-events-none" />
+        {/* Light overlay instead of dark overlay */}
+        <div className="pointer-events-none absolute inset-0 bg-[#f6f5ef]/80" />
 
-        {/* Pink Glow */}
-        <div className="absolute -top-32 -left-32 w-80 h-80 bg-[#FF1AC6]/10 rounded-full blur-[100px] pointer-events-none" />
+        {/* Soft gold atmosphere */}
+        <div className="pointer-events-none absolute -left-32 -top-32 h-80 w-80 rounded-full bg-[#D4AF37]/10 blur-[110px]" />
 
-        {/* Purple Glow */}
-        <div className="absolute -bottom-40 -right-20 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
-        
+        <div className="pointer-events-none absolute -bottom-40 -right-20 h-96 w-96 rounded-full bg-[#B28B20]/10 blur-[120px]" />
 
         {/* HERO CONTENT */}
         <div className="relative z-10">
@@ -189,125 +174,142 @@ function LandingPage() {
           HOW IT WORKS
       ========================================== */}
       <div>
-      <HowItWorks />  
+        <HowItWorks />
       </div>
 
-
-      
       {/* =========================================
-          LIVE STATS
+          PLATFORM STATS
       ========================================== */}
       <div>
-       <PlatformStats /> 
+        <PlatformStats />
       </div>
-    
 
       {/* =========================================
           FEATURED BOUNTIES
       ========================================== */}
-      <section className="relative z-10 px-6 md:px-10 lg:px-16 my-14 overflow-hidden">
-        <div className="absolute -top-32 left-1/4 w-72 h-72 bg-[#FF1AC6]/5 rounded-full blur-[120px] pointer-events-none" />
+      <section className="relative z-10 my-14 overflow-hidden px-6 md:px-10 lg:px-16">
+        {/* Soft gold background glow */}
+        <div className="pointer-events-none absolute -left-32 top-0 h-72 w-72 rounded-full bg-[#D4AF37]/8 blur-[120px]" />
 
-        <div className="absolute -bottom-32 right-1/4 w-72 h-72 bg-purple-600/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="pointer-events-none absolute -bottom-32 right-0 h-72 w-72 rounded-full bg-[#B28B20]/6 blur-[120px]" />
 
-        <div className="relative z-10 flex items-end justify-between mb-8 flex-wrap gap-5">
+        {/* HEADER */}
+        <div className="relative z-10 mb-8 flex flex-wrap items-end justify-between gap-5">
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-[#FF1AC6]/10 border border-[#FF1AC6]/20 text-[#FF1AC6]">
-                <FiZap className="w-4 h-4" />
+            {/* SECTION LABEL */}
+            <div className="mb-3 flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#B28B20]">
+                <FiZap className="h-4 w-4" />
               </div>
 
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#FF1AC6]">
-                Opportunities
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#B28B20]">
+                Botchain Opportunities
               </span>
             </div>
 
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
+            {/* TITLE */}
+            <h2 className="text-3xl font-bold tracking-tight text-[#171717] md:text-4xl">
               Featured{" "}
-              <span className="bg-gradient-to-r from-[#FF1AC6] via-pink-400 to-purple-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#D4AF37] via-[#B28B20] to-[#8f6f16] bg-clip-text text-transparent">
                 Bounties
               </span>
             </h2>
 
-            <p className="mt-2 text-sm text-gray-500 max-w-xl">
-              Discover active opportunities and earn rewards by completing
-              bounties that match your skills.
+            {/* DESCRIPTION */}
+            <p className="mt-2 max-w-xl text-sm text-[#737373]">
+              Discover active opportunities, complete meaningful work, and earn
+              rewards through Botchain.
             </p>
           </div>
 
+          {/* VIEW ALL */}
           <Link
             to="/dashboard"
-            className="group flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] text-sm font-medium text-gray-300 transition-all duration-300 hover:border-[#FF1AC6]/30 hover:bg-[#FF1AC6]/5 hover:text-[#FF1AC6]"
+            className="group flex items-center gap-2 rounded-xl bg-[#D4AF37] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-300 hover:bg-[#B28B20] hover:shadow-lg hover:shadow-[#D4AF37]/20"
           >
             <span>View all bounties</span>
 
-            <FiArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+            <FiArrowRight className="h-4 w-4 text-[#D4AF37] transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </div>
 
+        {/* =========================================
+            LOADING
+        ========================================== */}
         {loading ? (
-          <div className="relative z-10 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="relative z-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((item) => (
               <div
                 key={item}
-                className="h-[280px] rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5 animate-pulse"
+                className="h-[280px] animate-pulse rounded-2xl border border-black/[0.06] bg-white/70 p-5"
               >
-                <div className="flex justify-between mb-6">
-                  <div className="h-10 w-10 rounded-xl bg-white/[0.06]" />
-                  <div className="h-6 w-20 rounded-full bg-white/[0.06]" />
+                <div className="mb-6 flex justify-between">
+                  <div className="h-10 w-10 rounded-xl bg-black/[0.06]" />
+
+                  <div className="h-6 w-20 rounded-full bg-black/[0.06]" />
                 </div>
 
-                <div className="h-5 w-3/4 rounded bg-white/[0.06] mb-3" />
+                <div className="mb-3 h-5 w-3/4 rounded bg-black/[0.06]" />
 
-                <div className="h-3 w-full rounded bg-white/[0.04] mb-2" />
-                <div className="h-3 w-5/6 rounded bg-white/[0.04] mb-6" />
+                <div className="mb-2 h-3 w-full rounded bg-black/[0.04]" />
+
+                <div className="mb-6 h-3 w-5/6 rounded bg-black/[0.04]" />
 
                 <div className="flex gap-2">
-                  <div className="h-7 w-16 rounded-lg bg-white/[0.05]" />
-                  <div className="h-7 w-20 rounded-lg bg-white/[0.05]" />
+                  <div className="h-7 w-16 rounded-lg bg-black/[0.05]" />
+
+                  <div className="h-7 w-20 rounded-lg bg-black/[0.05]" />
                 </div>
 
-                <div className="mt-8 h-9 w-full rounded-xl bg-white/[0.05]" />
+                <div className="mt-8 h-9 w-full rounded-xl bg-black/[0.05]" />
               </div>
             ))}
           </div>
         ) : featuredBounties.length === 0 ? (
-          <div className="relative z-10 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#171717] to-[#101010]">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-[#FF1AC6]/5 blur-[80px]" />
+          /* =========================================
+              EMPTY STATE
+          ========================================== */
+          <div className="relative z-10 overflow-hidden rounded-2xl border border-black/10 bg-white">
+            <div className="pointer-events-none absolute left-1/2 top-0 h-32 w-64 -translate-x-1/2 bg-[#D4AF37]/8 blur-[80px]" />
 
-            <div className="relative flex flex-col items-center justify-center text-center px-6 py-16">
-              <div className="flex items-center justify-center w-16 h-16 rounded-2xl border border-white/10 bg-white/[0.03] text-gray-500 mb-5">
-                <FiBriefcase className="w-8 h-8" />
+            <div className="relative flex flex-col items-center justify-center px-6 py-16 text-center">
+              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-black/10 bg-[#f6f5ef] text-[#888]">
+                <FiBriefcase className="h-8 w-8" />
               </div>
 
-              <h3 className="text-lg font-semibold text-white">
+              <h3 className="text-lg font-semibold text-[#171717]">
                 No active bounties
               </h3>
 
-              <p className="mt-2 max-w-md text-sm text-gray-500">
-                There are no featured opportunities available right now.
-                New bounties will appear here as soon as they are posted.
+              <p className="mt-2 max-w-md text-sm text-[#737373]">
+                There are no featured opportunities available right now. New
+                bounties will appear here as soon as they are posted.
               </p>
 
               <Link
                 to="/dashboard"
-                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#FF1AC6] px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#e916b1] hover:shadow-lg hover:shadow-[#FF1AC6]/20"
+                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#B28B20] hover:shadow-lg hover:shadow-[#D4AF37]/20"
               >
                 Browse bounties
-                <FiArrowRight className="w-4 h-4" />
+                <FiArrowRight className="h-4 w-4 text-[#D4AF37]" />
               </Link>
             </div>
           </div>
         ) : (
-          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          /* =========================================
+              FEATURED BOUNTIES
+          ========================================== */
+          <div className="relative z-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {featuredBounties.map((bounty) => (
               <div
                 key={bounty._id}
                 className="group relative transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#FF1AC6]/0 via-[#FF1AC6]/0 to-purple-500/0 opacity-0 blur-xl transition-all duration-500 group-hover:from-[#FF1AC6]/10 group-hover:via-purple-500/5 group-hover:to-[#FF1AC6]/10 group-hover:opacity-100" />
+                {/* Gold hover glow */}
+                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#D4AF37]/0 via-[#D4AF37]/0 to-[#B28B20]/0 opacity-0 blur-xl transition-all duration-500 group-hover:from-[#D4AF37]/10 group-hover:via-[#B28B20]/5 group-hover:to-[#D4AF37]/10 group-hover:opacity-100" />
 
                 <div className="relative">
+                  {/* BountyCard untouched */}
                   <BountyCard bounty={bounty} />
                 </div>
               </div>
@@ -319,27 +321,30 @@ function LandingPage() {
       {/* =========================================
           WHY FRESH BOUNTY
       ========================================== */}
-     <div>
-      <Features />
-     </div>
-     
+      <div>
+        <Features />
+      </div>
+
       {/* =========================================
           TESTIMONIALS
       ========================================== */}
       <div>
-<Testimonials />
+        <Testimonials />
       </div>
-      
+
       {/* =========================================
           SUPPORTED NETWORKS & TOKENS
       ========================================== */}
-     <div>
-<SupportedNetworks />
-     </div>
-     
-     <div>
-      <BuiltForWeb3 />
-     </div>
+      <div>
+        <SupportedNetworks />
+      </div>
+
+      {/* =========================================
+          BUILT FOR WEB3
+      ========================================== */}
+      <div>
+        <BuiltForWeb3 />
+      </div>
 
       {/* =========================================
           FINAL CTA
@@ -347,7 +352,6 @@ function LandingPage() {
       <div>
         <CallToAction />
       </div>
-
 
       {/* =========================================
           FOOTER
